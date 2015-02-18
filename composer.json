@@ -1,0 +1,47 @@
+{
+  "name": "tenside/core",
+  "description": "Tenside is a wrapper around composer that helps you manage composer projects, either from CLI or browser.",
+  "keywords": ["package", "dependency", "autoload"],
+  "homepage": "https://github.com/tenside/",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christian Schiffler",
+      "email": "c.schiffler@cyberspectrum.de",
+      "homepage": "https://www.cyberspectrum.de"
+    }
+  ],
+  "support": {
+    "irc": "irc://irc.freenode.org/tenside",
+    "issues": "https://github.com/tenside/core/issues"
+  },
+  "require": {
+    "php": ">=5.3.2",
+    "composer/composer": "dev-master",
+    "symfony/http-kernel": "~2.6",
+    "symfony/http-foundation": "~2.6",
+    "symfony/routing": "~2.6"
+  },
+  "require-dev": {
+    "phpcq/all-tasks": "~1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tenside\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tenside\\Test\\": "tests"
+    }
+  },
+  "bin": [
+    "bin/tenside"
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
