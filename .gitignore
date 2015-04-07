@@ -17,5 +17,7 @@ vendor/
 # build
 build/
 build.properties
-
 tenside.phar
+
+# vendor files
+/vendor/

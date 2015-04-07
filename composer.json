@@ -17,11 +17,14 @@
     "issues": "https://github.com/tenside/core/issues"
   },
   "require": {
-    "php": ">=5.3.2",
+    "php": ">=5.4",
+    "ext-zip": "*",
+    "ext-openssl": "*",
     "composer/composer": "dev-master",
     "symfony/http-kernel": "~2.6",
     "symfony/http-foundation": "~2.6",
-    "symfony/routing": "~2.6"
+    "symfony/routing": "~2.6",
+    "tenside/ui": "~1.0@dev"
   },
   "require-dev": {
     "phpcq/all-tasks": "~1.0"
