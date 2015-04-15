@@ -1,0 +1,8 @@
+{
+  "name": "test/website",
+  "description": "Some description",
+  "license": "MIT",
+  "require": {
+    "somevendor/somepackage": "~1.0"
+  }
+}
