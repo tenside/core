@@ -52,23 +52,57 @@ class PackageConverter
     }
 
     /**
+     * Convert a package version into string representation.
+     *
+     * @param PackageInterface $package       The package to extract the version from.
+     *
+     * @param bool             $fullReference Flag if the complete reference shall be added or an abbreviated form.
+     *
+     * @return string
+     *
+     * @throws \RuntimeException If the package is a dev package and does not have valid reference information.
+     */
+    public function convertPackageVersion(PackageInterface $package, $fullReference = false)
+    {
+        $version = $package->getPrettyVersion();
+
+        if ('dev' === $package->getStability()) {
+            if (null === ($reference = $package->getDistReference())) {
+                if (null === ($reference = $package->getSourceReference())) {
+                    throw new \RuntimeException('Unable to determine reference for ' . $package->getPrettyName());
+                }
+            }
+
+            $version .= '#' . (!$fullReference ? substr($reference, 0, 8) : $reference);
+        }
+
+        return $version;
+    }
+
+    /**
      * Convert a package to array information used by json API.
      *
-     * @param PackageInterface $package The package to convert.
+     * @param PackageInterface $package        The package to convert.
+     *
+     * @param null|string      $upgradeVersion The package version to show as upgradable to.
      *
      * @return JsonArray
      */
-    public function convertPackageToArray(PackageInterface $package)
+    public function convertPackageToArray(PackageInterface $package, $upgradeVersion = null)
     {
         $name = $package->getPrettyName();
         $data = new JsonArray([
             'name' => $name,
-            'version' => $package->getPrettyVersion(),
+            'version' => $this->convertPackageVersion($package),
             'constraint' => $this->getConstraint($name),
             'type' => $package->getType(),
-            'upgrade_version' => 'FIXME: detect latest version',
             'locked' => $this->isLocked($name)
         ]);
+
+        if (null !== $upgradeVersion) {
+            $data->set('upgrade_version', $upgradeVersion);
+        }
+
         if ($package instanceof CompletePackageInterface) {
             $data->set('description', $package->getDescription());
         }
@@ -83,23 +117,34 @@ class PackageConverter
      *
      * @param bool                $requiredOnly If true, return only the packages added to the root package as require.
      *
+     * @param JsonArray           $upgradeList  The package version to show as upgradable to.
+     *
      * @return JsonArray
      */
-    public function convertRepositoryToArray(RepositoryInterface $repository, $requiredOnly = false)
-    {
+    public function convertRepositoryToArray(
+        RepositoryInterface $repository,
+        $requiredOnly = false,
+        JsonArray $upgradeList = null
+    ) {
         $requires = $requiredOnly ? $this->rootPackage->getRequires() : false;
         $packages = new JsonArray();
         /** @var \Composer\Package\PackageInterface $package */
         foreach ($repository->getPackages() as $package) {
-            if (false === $requires || (isset($requires[$package->getPrettyName()]))) {
+            $name = $package->getPrettyName();
+            $esc  = $packages->escape($name);
+            if (false === $requires || (isset($requires[$name]))) {
+                $upgradeVersion = null;
+                if ($upgradeList && $upgradeList->has($esc)) {
+                    $upgradeVersion = $upgradeList->get($esc);
+                }
                 $packages->set(
-                    $packages->escape($package->getPrettyName()),
-                    $this->convertPackageToArray($package)->getData()
+                    $esc,
+                    $this->convertPackageToArray($package, $upgradeVersion)->getData()
                 );
             }
         }
 
-        $packages->uasort(array($this, 'packageCompare'));
+        $packages->uasort([$this, 'packageCompare']);
 
         return $packages;
     }
@@ -143,13 +188,7 @@ class PackageConverter
             $composerJson->set($lock, false);
         }
 
-        $version = $package->getPrettyVersion();
-
-        if ('dev' === $package->getStability()) {
-            $version .= '@' . $package->getSourceReference();
-        }
-
-        $composerJson->requirePackage($package->getPrettyName(), $version);
+        $composerJson->requirePackage($package->getPrettyName(), $this->convertPackageVersion($package, true));
         $this->updateExtra($composerJson->get('extra'));
     }
 

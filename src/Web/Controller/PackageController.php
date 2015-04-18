@@ -20,12 +20,14 @@
 
 namespace Tenside\Web\Controller;
 
+use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Package\PackageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouteCollection;
 use Tenside\Composer\PackageConverter;
+use Tenside\Composer\SolverRunner;
 use Tenside\Util\JsonArray;
 use Tenside\Web\UserInformation;
 
@@ -80,9 +82,23 @@ class PackageController extends AbstractRestrictedController
     {
         $composer  = $this->getTenside()->getComposer();
         $converter = new PackageConverter($composer->getPackage());
-        $packages  = $converter->convertRepositoryToArray(
+
+        $solver   = new SolverRunner($this->getTenside()->getComposer());
+        $jobs     = $solver->solve();
+        $upgrades = new JsonArray();
+        foreach ($jobs as $job) {
+            if ($job instanceof UpdateOperation) {
+                $upgrades->set(
+                    $upgrades->escape($job->getInitialPackage()->getPrettyName()),
+                    $converter->convertPackageVersion($job->getTargetPackage())
+                );
+            }
+        }
+
+        $packages = $converter->convertRepositoryToArray(
             $composer->getRepositoryManager()->getLocalRepository(),
-            !$request->query->has('all')
+            !$request->query->has('all'),
+            $upgrades
         );
 
         return new JsonResponse($packages->getData(), 200);
