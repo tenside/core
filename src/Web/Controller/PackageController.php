@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouteCollection;
 use Tenside\Composer\PackageConverter;
+use Tenside\Util\JsonArray;
 use Tenside\Web\UserInformation;
 
 /**
@@ -84,7 +85,7 @@ class PackageController extends AbstractRestrictedController
             $request->query->has('all')
         );
 
-        return new JsonResponse($packages, 200);
+        return new JsonResponse($packages->getData(), 200);
     }
 
     /**

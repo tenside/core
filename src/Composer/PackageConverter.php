@@ -20,11 +20,14 @@
 
 namespace Tenside\Composer;
 
+use Composer\Package\AliasPackage;
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Link;
+use Composer\Package\Package;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
 use Composer\Repository\RepositoryInterface;
+use Tenside\Util\JsonArray;
 
 /**
  * The main entry point.
@@ -53,21 +56,21 @@ class PackageConverter
      *
      * @param PackageInterface $package The package to convert.
      *
-     * @return array
+     * @return JsonArray
      */
     public function convertPackageToArray(PackageInterface $package)
     {
         $name = $package->getPrettyName();
-        $data = [
+        $data = new JsonArray([
             'name' => $name,
             'version' => $package->getPrettyVersion(),
             'constraint' => $this->getConstraint($name),
             'type' => $package->getType(),
             'upgrade_version' => 'FIXME: detect latest version',
             'locked' => $this->isLocked($name)
-        ];
+        ]);
         if ($package instanceof CompletePackageInterface) {
-            $data['description'] = $package->getDescription();
+            $data->set('description', $package->getDescription());
         }
 
         return $data;
@@ -80,22 +83,27 @@ class PackageConverter
      *
      * @param bool                $requiredOnly If true, return only the packages added to the root package as require.
      *
-     * @return array
+     * @return JsonArray
      */
     public function convertRepositoryToArray(RepositoryInterface $repository, $requiredOnly = false)
     {
         $requires = $requiredOnly ? $this->rootPackage->getRequires() : false;
-        $packages = [];
+        $packages = new JsonArray();
         /** @var \Composer\Package\PackageInterface $package */
         foreach ($repository->getPackages() as $package) {
             if (false === $requires || (isset($requires[$package->getPrettyName()]))) {
-                $packages[$package->getPrettyName()] = $this->convertPackageToArray($package);
+                $packages->set(
+                    $packages->escape($package->getPrettyName()),
+                    $this->convertPackageToArray($package)->getData()
+                );
             }
         }
 
-        usort($packages, array($this, 'packageCompare'));
+        $packages->uasort(array($this, 'packageCompare'));
 
-        return array_values($packages);
+        return $packages;
+    }
+
     }
 
     /**
@@ -124,7 +132,7 @@ class PackageConverter
     private function isLocked($packageName)
     {
         $extra = $this->rootPackage->getExtra();
-        return isset($extra['contao']['version-locks'][$packageName]);
+        return isset($extra['tenside']['version-locks'][$packageName]);
     }
 
     /**
