@@ -82,13 +82,15 @@ class JsonFile extends JsonArray
      *
      * @param mixed  $value The value to set.
      *
-     * @return void
+     * @return JsonFile
      */
     public function set($path, $value)
     {
         parent::set($path, $value);
 
         $this->save();
+
+        return $this;
     }
 
     /**
@@ -122,7 +124,7 @@ class JsonFile extends JsonArray
     /**
      * Save the file data.
      *
-     * @return void
+     * @return JsonFile
      */
     public function save()
     {
@@ -132,6 +134,8 @@ class JsonFile extends JsonArray
             mkdir(dirname($this->filename), 0700, true);
         }
 
-        file_put_contents($this->filename, $this->getData());
+        file_put_contents($this->filename, (string) $this);
+
+        return $this;
     }
 }

@@ -25,7 +25,7 @@ namespace Tenside\Util;
  *
  * @author Christian Schiffler <https://github.com/discordier>
  */
-class JsonArray
+class JsonArray implements \JsonSerializable
 {
     /**
      * The json data.
@@ -78,11 +78,11 @@ class JsonArray
     /**
      * Retrieve the data as json string.
      *
-     * @return string
+     * @return array
      */
     public function getData()
     {
-        return json_encode($this->data, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        return $this->data;
     }
 
     /**
@@ -90,7 +90,7 @@ class JsonArray
      *
      * @param string $data The json data.
      *
-     * @return void
+     * @return JsonArray
      *
      * @throws \RuntimeException When the data is invalid.
      */
@@ -100,7 +100,10 @@ class JsonArray
         if ($data === null) {
             throw new \RuntimeException('Error: json data is invalid. ' . json_last_error_msg(), 1);
         }
+
         $this->setData($data);
+
+        return $this;
     }
 
     /**
@@ -112,7 +115,31 @@ class JsonArray
      */
     protected function splitPath($path)
     {
-        return preg_split('#(?<!\\\)\/#', $path);
+        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', $path));
+    }
+
+    /**
+     * Escape a string to be used as literal path.
+     *
+     * @param string $path The string to escape.
+     *
+     * @return string
+     */
+    public function unescape($path)
+    {
+        return str_replace('\/', '/', $path);
+    }
+
+    /**
+     * Escape a string to be used as literal path.
+     *
+     * @param string $path The string to escape.
+     *
+     * @return string
+     */
+    public function escape($path)
+    {
+        return str_replace('/', '\/', $path);
     }
 
     /**
@@ -126,6 +153,11 @@ class JsonArray
      */
     public function get($path, $forceArray = false)
     {
+        // special case, root element.
+        if ($path === '/') {
+            return $this->data;
+        }
+
         $chunks = $this->splitPath($path);
         $scope  = $this->data;
 
@@ -158,16 +190,22 @@ class JsonArray
      *
      * @param mixed  $value The value to set.
      *
-     * @return void
+     * @return JsonArray
      */
     public function set($path, $value)
     {
+        // special case, root element.
+        if ($path === '/') {
+            $this->data = $value;
+            return $this;
+        }
+
         $chunks = $this->splitPath($path);
         $scope  = &$this->data;
         $count  = count($chunks);
 
         if (empty($chunks)) {
-            return;
+            return $this;
         }
 
         while ($count > 1) {
@@ -186,10 +224,12 @@ class JsonArray
         if ($value === null) {
             unset($scope[$sub]);
 
-            return;
+            return $this;
         }
 
         $scope[$sub] = $value;
+
+        return $this;
     }
 
     /**
@@ -217,5 +257,29 @@ class JsonArray
         }
 
         return true;
+    }
+
+    /**
+     * Unset a value.
+     *
+
+    /**
+     * Encode the array as string and return it.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return json_encode($this, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+
+    /**
+     * Return the data which should be serialized to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
 }
