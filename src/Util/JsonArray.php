@@ -262,6 +262,47 @@ class JsonArray implements \JsonSerializable
     /**
      * Unset a value.
      *
+     * @param string $path The path of the value.
+     *
+     * @return JsonArray
+     */
+    public function remove($path)
+    {
+        return $this->set($path, null);
+    }
+
+    /**
+     * Check if a given path has an empty value (or does not exist).
+     *
+     * @param string $path The sub path to be sorted.
+     *
+     * @return bool
+     */
+    public function isEmpty($path)
+    {
+        return (null !== ($value = $this->get($path))) && !empty($value);
+    }
+
+    /**
+     * Sort the array by the provided user function.
+     *
+     * @param callable $callback The callback function to use.
+     *
+     * @param string   $path     The sub path to be sorted.
+     *
+     * @return void
+     */
+    public function uasort($callback, $path = '/')
+    {
+        $value = $this->get($path);
+        if (null === $value || !is_array($value)) {
+            return;
+        }
+
+        uasort($value, $callback);
+
+        $this->set($path, $value);
+    }
 
     /**
      * Encode the array as string and return it.
