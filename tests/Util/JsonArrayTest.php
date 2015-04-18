@@ -51,10 +51,33 @@ class JsonArrayTest extends \PHPUnit_Framework_TestCase
     public function testPath()
     {
         $json = new JsonArray(['foo' => ['bar' => 'baz']]);
+        $json->set('bar/bar\/baz', 'foo');
+
         $this->assertFalse($json->has('foo\/bar'));
         $this->assertTrue($json->has('foo/bar'));
         $this->assertFalse($json->has('foo/bar/baz'));
         $this->assertEquals('baz', $json->get('foo/bar'));
         $this->assertNull($json->get('foo\/bar'));
+        $this->assertTrue($json->has('bar/bar\/baz'));
+        $this->assertEquals('foo', $json->get('bar/bar\/baz'));
+        $this->assertEquals(['bar/baz' => 'foo'], $json->get('bar'));
+    }
+
+    /**
+     * Test that array values below a path are absorbed.
+     *
+     * @return void
+     */
+    public function testPathSubArray()
+    {
+        $json = new JsonArray(['top1' => ['sub1.1' => 'top1.sub1.1.content']]);
+
+        $json->set('top2', ['sub2.1' => []]);
+        $json->set('top2/sub2.2', ['top2.sub2.2.content']);
+        $this->assertEquals(['sub2.1' => [], 'sub2.2' => ['top2.sub2.2.content']], $json->get('top2'));
+        $this->assertEquals([], $json->get('top2/sub2.1'));
+        $this->assertEquals(['top2.sub2.2.content'], $json->get('top2/sub2.2'));
+        $json->set('top2', 'top2.content');
+        $this->assertEquals('top2.content', $json->get('top2'));
     }
 }
