@@ -24,6 +24,7 @@ use Composer\Composer;
 use Composer\Factory as ComposerFactory;
 use Composer\IO\IOInterface;
 use Composer\Util\RemoteFilesystem;
+use Tenside\Composer\ComposerJson;
 use Tenside\Config\SourceInterface;
 
 /**
@@ -96,6 +97,16 @@ class Tenside
     public function getConfigSource()
     {
         return $this->configSource;
+    }
+
+    /**
+     * Retrieve the configuration source.
+     *
+     * @return ComposerJson
+     */
+    public function getComposerJson()
+    {
+        return new ComposerJson($this->getHomeDir() . '/composer.json');
     }
 
     /**

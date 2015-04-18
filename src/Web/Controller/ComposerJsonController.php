@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouteCollection;
-use Tenside\Util\JsonFile;
+use Tenside\Composer\ComposerJson;
 
 /**
  * Controller for manipulating the composer.json file.
@@ -48,7 +48,7 @@ class ComposerJsonController extends AbstractRestrictedController
      */
     public function getComposerJsonAction()
     {
-        return new Response(file_get_contents($this->getComposerJsonPath()));
+        return new Response($this->getTenside()->getComposerJson());
     }
 
     /**
@@ -67,7 +67,7 @@ class ComposerJsonController extends AbstractRestrictedController
         } else {
             $errors['status'] = 'OK';
 
-            $file = new JsonFile($this->getComposerJsonPath());
+            $file = $this->getTenside()->getComposerJson();
             $file->load($request->getContent());
             $file->save();
         }
@@ -101,15 +101,5 @@ class ComposerJsonController extends AbstractRestrictedController
             'error'   => $errors,
             'warning' => $warnings,
         );
-    }
-
-    /**
-     * Retrieve the path to composer.json.
-     *
-     * @return string
-     */
-    private function getComposerJsonPath()
-    {
-        return $this->getTenside()->getHomeDir() . '/composer.json';
     }
 }
