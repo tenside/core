@@ -119,29 +119,38 @@ class PackageController extends AbstractRestrictedController
     /**
      * Retrieve a package.
      *
-     * @param string $vendor  The name of the vendor.
+     * @param string  $vendor  The name of the vendor.
      *
-     * @param string $package The name of the package.
+     * @param string  $package The name of the package.
+     *
+     * @param Request $request The request to process.
      *
      * @return JsonResponse
      *
      * @api
      */
-    public function putPackageAction($vendor, $package)
+    public function putPackageAction($vendor, $package, Request $request)
     {
         $packageName = $vendor . '/' . $package;
+        $info        = new JsonArray($request->getContent());
+
+        if ($info->get('name') !== $packageName) {
+            return new Response('Invalid payload', Response::HTTP_BAD_REQUEST);
+        }
 
         $composer  = $this->getTenside()->getComposer();
         $converter = new PackageConverter($composer->getPackage());
 
-        foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
-            /** @var PackageInterface $package */
-            if ($package->getPrettyName() === $packageName) {
-                return new JsonResponse($converter->convertPackageToArray($package), 200);
-            }
+        try {
+            $new = $converter->updatePackageFromArray(
+                $info,
+                $composer->getRepositoryManager()->getLocalRepository(),
+                $this->getTenside()->getComposerJson()
+            );
+            return new JsonResponse($new, 200);
+        } catch (\InvalidArgumentException $exception) {
+            return new Response('Not found', 404);
         }
-
-        return new Response('Not found', 404);
     }
 
     /**

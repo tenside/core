@@ -104,6 +104,153 @@ class PackageConverter
         return $packages;
     }
 
+    /**
+     * Update the extra information in the root package.
+     *
+     * @param array $extra The extra information.
+     *
+     * @return void
+     */
+    private function updateExtra($extra)
+    {
+        if ($this->rootPackage instanceof Package) {
+            $this->rootPackage->setExtra($extra);
+        }
+    }
+
+    /**
+     * Unlock a locked package version.
+     *
+     * @param PackageInterface $package      The repository holding the packages to convert.
+     *
+     * @param ComposerJson     $composerJson The composer json to manipulate.
+     *
+     * @return void
+     */
+    private function lockPackage(PackageInterface $package, ComposerJson $composerJson)
+    {
+        $name = $package->getPrettyName();
+        $lock = 'extra/tenside/version-locks/' . $composerJson->escape($name);
+
+        // Nothing to do?
+        if ($composerJson->has($lock)) {
+            return;
+        }
+
+        if ($composerJson->isRequiring($name)) {
+            $composerJson->set($lock, $composerJson->getRequire($name));
+        } else {
+            $composerJson->set($lock, false);
+        }
+
+        $version = $package->getPrettyVersion();
+
+        if ('dev' === $package->getStability()) {
+            $version .= '@' . $package->getSourceReference();
+        }
+
+        $composerJson->requirePackage($package->getPrettyName(), $version);
+        $this->updateExtra($composerJson->get('extra'));
+    }
+
+    /**
+     * Unlock a locked package version.
+     *
+     * @param PackageInterface $package      The repository holding the packages to convert.
+     *
+     * @param ComposerJson     $composerJson The composer json to manipulate.
+     *
+     * @return void
+     */
+    private function unlockPackage(PackageInterface $package, ComposerJson $composerJson)
+    {
+        $name = $package->getPrettyName();
+        $lock = 'extra/tenside/version-locks/' . $composerJson->escape($name);
+
+        // Nothing to do?
+        if (!$composerJson->has($lock)) {
+            return;
+        }
+
+        if (false === ($constraint = $composerJson->get($lock))) {
+            $composerJson->remove($lock);
+            $composerJson->requirePackage($name, null);
+            $this->updateExtra($composerJson->get('extra'));
+
+            return;
+        }
+
+        $composerJson->requirePackage($name, $constraint);
+        $composerJson->remove($lock);
+        if ($composerJson->isEmpty('extra/tenside/version-locks')) {
+            $composerJson->remove('extra/tenside/version-locks');
+        }
+        $this->updateExtra($composerJson->get('extra'));
+    }
+
+    /**
+     * Search the repository for a package.
+     *
+     * @param string              $name       The pretty name of the package to search.
+     *
+     * @param RepositoryInterface $repository The repository to be searched.
+     *
+     * @return null|PackageInterface
+     */
+    private function findPackage($name, RepositoryInterface $repository)
+    {
+        /** @var PackageInterface[] $packages */
+        $packages = $repository->findPackages($name);
+
+        while (!empty($packages) && $packages[0] instanceof AliasPackage) {
+            array_shift($packages);
+        }
+
+        if (empty($packages)) {
+            return null;
+        }
+
+        return $packages[0];
+    }
+
+    /**
+     * Update some package from an array.
+     *
+     * This method only allows changing of the constraint and/or the locking of the package version.
+     *
+     * @param JsonArray           $array        The package information to update the package from.
+     *
+     * @param RepositoryInterface $repository   The repository holding the packages to convert.
+     *
+     * @param ComposerJson        $composerJson The composer json to manipulate.
+     *
+     * @return JsonArray
+     *
+     * @throws \InvalidArgumentException When the package information is invalid or the package has not been found.
+     */
+    public function updatePackageFromArray(
+        JsonArray $array,
+        RepositoryInterface $repository,
+        ComposerJson $composerJson
+    ) {
+        if (!($array->has('name') && $array->has('locked') && $array->has('constraint'))) {
+            throw new \InvalidArgumentException('Invalid package information.');
+        }
+
+        $name    = $array->get('name');
+        $package = $this->findPackage($name, $repository);
+
+        if (null === $package) {
+            throw new \InvalidArgumentException('Package not found.');
+        }
+
+        if ($array->get('locked') && !$this->isLocked($name)) {
+            $this->lockPackage($package, $composerJson);
+        } elseif (!$array->get('locked') && $this->isLocked($name)) {
+            $this->unlockPackage($package, $composerJson);
+        }
+
+        return $this->convertPackageToArray($package);
     }
 
     /**
