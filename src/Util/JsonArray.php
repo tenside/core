@@ -280,7 +280,7 @@ class JsonArray implements \JsonSerializable
      */
     public function isEmpty($path)
     {
-        return (null !== ($value = $this->get($path))) && !empty($value);
+        return (null === ($value = $this->get($path))) || empty($value);
     }
 
     /**
