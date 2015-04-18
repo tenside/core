@@ -334,13 +334,13 @@ class PackageConverter
         if (isset($requires[$packageName])) {
             /** @var Link $link */
             $link = $requires[$packageName];
-            return $link->getConstraint();
+            return (string) $link->getConstraint();
         }
 
         foreach ($requires as $link) {
             /** @var Link $link */
             if ($link->getTarget() == $packageName) {
-                return $link->getConstraint();
+                return (string) $link->getConstraint();
             }
         }
 
