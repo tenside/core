@@ -82,7 +82,7 @@ class PackageController extends AbstractRestrictedController
         $converter = new PackageConverter($composer->getPackage());
         $packages  = $converter->convertRepositoryToArray(
             $composer->getRepositoryManager()->getLocalRepository(),
-            $request->query->has('all')
+            !$request->query->has('all')
         );
 
         return new JsonResponse($packages->getData(), 200);
