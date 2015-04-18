@@ -320,12 +320,17 @@ class Application
         if ('' !== \Phar::running()) {
             $home = \Phar::running();
         } else {
-            // FIXME: really only one up?
-            $home = getcwd();
+            if (false === ($home = getenv('TENSIDE_HOME'))) {
+                // FIXME: really only one up?
+                $home = getcwd();
+            };
         }
 
         if (substr($home, -4) !== '/web') {
-            throw new \RuntimeException('Tenside is intended to be run from within the web directory.');
+            throw new \RuntimeException(
+                'Tenside is intended to be run from within the web directory but it appears you are running it from ' .
+                basename($home)
+            );
         }
 
         putenv('COMPOSER_HOME=' . dirname($home));
