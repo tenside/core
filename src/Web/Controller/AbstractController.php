@@ -96,6 +96,7 @@ abstract class AbstractController
     public static function createRoutes(RouteCollection $routes)
     {
         // No-op.
+        // FIXME: could be abstract?
     }
 
     /**
@@ -131,6 +132,44 @@ abstract class AbstractController
     }
 
     /**
+     * Determine the method to call.
+     *
+     * @param Request $request The request being processed.
+     *
+     * @return string|null
+     */
+    private function determineMethod(Request $request)
+    {
+        $route = $request->attributes->get('_route');
+        if (!empty($route)) {
+            $method = $request->attributes->get('_route') . 'Action';
+            if (method_exists($this, $method)) {
+                return $method;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Determine the argument list to use.
+     *
+     * @param Request $request The request being processed.
+     *
+     * @return string|null
+     */
+    private function getFunctionArguments(Request $request)
+    {
+        $args = [];
+        if ($request->attributes->has('_route_params')) {
+            $args = $request->attributes->get('_route_params');
+        }
+        $args[] = $request;
+
+        return $args;
+    }
+
+    /**
      * Handle the request.
      *
      * @param Request $request The request to process.
@@ -139,14 +178,9 @@ abstract class AbstractController
      */
     public function handle(Request $request)
     {
-        $method = $request->attributes->get('_route') . 'Action';
-        if (method_exists($this, $method)) {
-            $args = [];
-            if ($request->attributes->has('_route_params')) {
-                $args = $request->attributes->get('_route_params');
-            }
-            $args[] = $request;
-            return call_user_func_array([$this, $method], $args);
+        $method = $this->determineMethod($request);
+        if (!empty($method)) {
+            return call_user_func_array([$this, $method], $this->getFunctionArguments($request));
         }
 
         return new Response('Bad request: ' . $request->getUri(), Response::HTTP_BAD_REQUEST);
