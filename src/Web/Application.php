@@ -20,12 +20,11 @@
 
 namespace Tenside\Web;
 
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -37,11 +36,11 @@ use Symfony\Component\Routing\RouteCollection;
 use Tenside\Factory;
 use Tenside\Tenside;
 use Tenside\Ui\Web\Controller\UiController;
+use Tenside\Web\Auth\AuthRegistry;
 use Tenside\Web\Controller\AbstractController;
 use Tenside\Web\Controller\AuthController;
 use Tenside\Web\Controller\ComposerJsonController;
 use Tenside\Web\Controller\PackageController;
-use Tenside\Web\Exception\LoginRequiredException;
 
 /**
  * The web application.
@@ -51,6 +50,13 @@ use Tenside\Web\Exception\LoginRequiredException;
 class Application
 {
     /**
+     * The authentication registry.
+     *
+     * @var AuthRegistry
+     */
+    private $authenticator;
+
+    /**
      * The request.
      *
      * @var Request
@@ -58,33 +64,11 @@ class Application
     protected $request;
 
     /**
-     * The user session.
-     *
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * The tenside instance.
      *
      * @var Tenside
      */
     private $tenside;
-
-    /**
-     * Retrieve the user session.
-     *
-     * @return Session
-     */
-    public function getSession()
-    {
-        if (!isset($this->session)) {
-            $this->session = new Session();
-            $this->session->start();
-        }
-
-        return $this->session;
-    }
 
     /**
      * Set the Tenside instance to use.
@@ -115,39 +99,17 @@ class Application
     }
 
     /**
-     * Retrieve the user information.
+     * Retrieve the auth registry.
      *
-     * @return UserInformation|null
+     * @return AuthRegistry
      */
-    public function getAuthenticatedUser()
+    public function getAuthRegistry()
     {
-        if ($this->getSession()->has('user')) {
-            return $this->getSession()->get('user');
+        if (null === $this->authenticator) {
+            $this->authenticator = new AuthRegistry($this->getTenside()->getConfigSource());
         }
 
-        return null;
-    }
-
-    /**
-     * Set the user information.
-     *
-     * @param UserInformation|null $user The user.
-     *
-     * @return void
-     */
-    public function setAuthenticatedUser($user)
-    {
-        $this->getSession()->set('user', $user);
-    }
-
-    /**
-     * Check if the session is authenticated.
-     *
-     * @return bool
-     */
-    public function isAuthenticated()
-    {
-        return $this->getAuthenticatedUser() !== null;
+        return $this->authenticator;
     }
 
     /**
@@ -205,9 +167,6 @@ class Application
         $this->setupHome();
         $this->tenside = Factory::create();
 
-        // FIXME: expunge "old" sessions.
-        $this->getSession();
-
         $dispatcher = new EventDispatcher();
         $routes     = new RouteCollection();
         $resolver   = new ControllerResolver();
@@ -242,31 +201,15 @@ class Application
             // FIXME: These should be response exception listeners.
         } catch (NotFoundHttpException $exception) {
             $response = $this->createNotFoundResponse();
-        } catch (LoginRequiredException $exception) {
-            $response = $this->createUnauthorizedResponse();
+        } catch (HttpException $exception) {
+            $response = $this->createHttpExceptionResponse($exception);
         } catch (\Exception $exception) {
             $response = $this->createInternalServerError($exception);
         }
 
-        // FIXME: do a real CSRF token here.
-        $response->headers->setCookie(new Cookie('CSRF-TOKEN', 'abc'));
         $response->send();
 
         $kernel->terminate($request, $response);
-    }
-
-    /**
-     * Create a 401 exception when no user is logged in.
-     *
-     * @return void
-     *
-     * @throws LoginRequiredException When no user is logged in.
-     */
-    public function ensureAuthenticated()
-    {
-        if (!$this->isAuthenticated()) {
-            throw new LoginRequiredException();
-        }
     }
 
     /**
@@ -285,13 +228,16 @@ class Application
     /**
      * Create a 401 response.
      *
+     * @param HttpException $exception The exception to create a response for.
+     *
      * @return Response
      */
-    private function createUnauthorizedResponse()
+    private function createHttpExceptionResponse($exception)
     {
         return new Response(
-            Response::$statusTexts[Response::HTTP_UNAUTHORIZED],
-            Response::HTTP_UNAUTHORIZED
+            Response::$statusTexts[$exception->getStatusCode()],
+            $exception->getStatusCode(),
+            $exception->getHeaders()
         );
     }
 
@@ -303,6 +249,7 @@ class Application
     private function createInternalServerError($exception)
     {
         return new Response(
+            // FIXME: exception only here for debug purposes, get rid of it again.
             Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR] . $exception,
             Response::HTTP_INTERNAL_SERVER_ERROR
         );

@@ -29,7 +29,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Tenside\Composer\PackageConverter;
 use Tenside\Composer\SolverRunner;
 use Tenside\Util\JsonArray;
-use Tenside\Web\UserInformation;
+use Tenside\Web\Auth\UserInformationInterface;
 
 /**
  * List and manipulate the installed packages.
@@ -80,6 +80,8 @@ class PackageController extends AbstractRestrictedController
      */
     public function packageListAction(Request $request)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
+
         $composer  = $this->getTenside()->getComposer();
         $converter = new PackageConverter($composer->getPackage());
 
@@ -117,6 +119,8 @@ class PackageController extends AbstractRestrictedController
      */
     public function getPackageAction($vendor, $package)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
+
         $packageName = $vendor . '/' . $package;
 
         $composer  = $this->getTenside()->getComposer();
@@ -147,6 +151,8 @@ class PackageController extends AbstractRestrictedController
      */
     public function putPackageAction($vendor, $package, Request $request)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
+
         $packageName = $vendor . '/' . $package;
         $info        = new JsonArray($request->getContent());
 
@@ -182,6 +188,8 @@ class PackageController extends AbstractRestrictedController
      */
     public function deletePackageAction($vendor, $package)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
+
         $packageName = $vendor . '/' . $package;
 
         $composer  = $this->getTenside()->getComposer();
@@ -195,15 +203,5 @@ class PackageController extends AbstractRestrictedController
         }
 
         return new Response('Not found', 404);
-    }
-
-    /**
-     * Retrieve the needed role.
-     *
-     * @return string
-     */
-    protected function getRole()
-    {
-        return UserInformation::ROLE_ADMIN;
     }
 }

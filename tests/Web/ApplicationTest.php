@@ -62,7 +62,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertRoute(
             'checkAuth',
             'Tenside\Web\Controller\AuthController',
-            $matcher->match('/auth')
+            $matcher->match('/api/v1/auth')
         );
         $this->assertRoute(
             'getComposerJson',

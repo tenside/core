@@ -18,24 +18,21 @@
  * @filesource
  */
 
-namespace Tenside\Web\Exception;
-
-use Symfony\Component\HttpKernel\Exception\HttpException;
+namespace Tenside\Web\Auth;
 
 /**
- * Will get thrown when a request has been made that needs authentication.
+ * This interface describes token validation services.
  */
-class LoginRequiredException extends HttpException
+interface TokenValidatorInterface extends AuthInterface
 {
     /**
-     * Constructor.
+     * Create a token from the passed user information.
      *
-     * @param string     $message  The internal exception message.
-     * @param \Exception $previous The previous exception.
-     * @param int        $code     The internal exception code.
+     * @param UserInformationInterface $userData     The user data to issue a token for.
+     *
+     * @param null|int                 $invalidAfter Optional timestamp after when the token shall be invalid.
+     *
+     * @return string
      */
-    public function __construct($message = null, \Exception $previous = null, $code = 0)
-    {
-        parent::__construct(401, $message, $previous, array(), $code);
-    }
+    public function getTokenForData($userData, $invalidAfter = null);
 }

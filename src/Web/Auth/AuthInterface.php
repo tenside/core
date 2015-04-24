@@ -20,9 +20,45 @@
 
 namespace Tenside\Web\Auth;
 
+use Symfony\Component\HttpFoundation\Request;
+use Tenside\Config\SourceInterface;
+
 /**
- * This interface is an empty base for auth providers.
+ * This interface is an base for auth providers.
  */
 interface AuthInterface
 {
+    /**
+     * Create a new instance.
+     *
+     * @param SourceInterface $config The config source to read the user data from.
+     */
+    public function __construct(SourceInterface $config);
+
+    /**
+     * Checking method for determining if the implementing class supports the authentication data given in request.
+     *
+     * @param Request $request The request to check.
+     *
+     * @return bool
+     */
+    public function supports(Request $request);
+
+    /**
+     * Retrieve a challenge to use as "WWW-Authenticate" header challenge.
+     *
+     * @return string
+     *
+     * @see    supports()
+     */
+    public function getChallenge();
+
+    /**
+     * Validate the authentication data given in request.
+     *
+     * @param Request $request The request to check.
+     *
+     * @return UserInformationInterface|null
+     */
+    public function authenticate(Request $request);
 }

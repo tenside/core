@@ -21,6 +21,7 @@
     "ext-zip": "*",
     "ext-openssl": "*",
     "composer/composer": "~1.0@dev",
+    "firebase/php-jwt": "~2.0",
     "symfony/http-kernel": "~2.6",
     "symfony/http-foundation": "~2.6",
     "symfony/routing": "~2.6"

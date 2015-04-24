@@ -21,8 +21,9 @@
 namespace Tenside\Web\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tenside\Web\Exception\LoginRequiredException;
-use Tenside\Web\UserInformation;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Tenside\Web\Auth\UserInformationInterface;
 
 /**
  * Abstract controller class that needs authentication.
@@ -30,11 +31,18 @@ use Tenside\Web\UserInformation;
 abstract class AbstractRestrictedController extends AbstractController
 {
     /**
+     * The user information of the current request (if any).
+     *
+     * @var UserInformationInterface
+     */
+    private $userInformation;
+
+    /**
      * {@inheritDoc}
      */
     public function handle(Request $request)
     {
-        $this->checkAccess();
+        $this->loadUserData($request);
 
         return parent::handle($request);
     }
@@ -42,29 +50,41 @@ abstract class AbstractRestrictedController extends AbstractController
     /**
      * Check if the user has access to the controller.
      *
-     * @return void
+     * @param Request $request The request to process.
      *
-     * @throws LoginRequiredException When no user is logged in or the access level is too low.
+     * @return void
      */
-    protected function checkAccess()
+    private function loadUserData(Request $request)
     {
-        $user = $this->getApplication()->getAuthenticatedUser();
-        if (null === $user) {
-            throw new LoginRequiredException('Login required');
-        }
-
-        if (!$user->hasRole($this->getRole())) {
-            throw new LoginRequiredException('Insufficient rights.');
+        $registry        = $this->getApplication()->getAuthRegistry();
+        $userInformation = $registry->handleAuthentication($request);
+        if (null !== $userInformation) {
+            $this->userInformation = $userInformation;
         }
     }
 
     /**
-     * Retrieve the needed role.
+     * Ensure the needed access level is granted to the current user.
      *
-     * @return string
+     * @param int $accessLevel The access level that is needed.
+     *
+     * @return void
+     *
+     * @throws AccessDeniedHttpException When the access level has not been granted.
+     * @throws UnauthorizedHttpException When the request is not authenticated.
      */
-    protected function getRole()
+    protected function needAccessLevel($accessLevel)
     {
-        return UserInformation::ROLE_ALL;
+        if (null === $this->userInformation) {
+            $registry = $this->getApplication()->getAuthRegistry();
+            throw new UnauthorizedHttpException(
+                $registry->buildChallengeList(),
+                'Login required'
+            );
+        }
+
+        if (!$this->userInformation->hasAccessLevel($accessLevel)) {
+            throw new AccessDeniedHttpException('Insufficient rights.');
+        }
     }
 }

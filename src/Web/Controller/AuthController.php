@@ -23,10 +23,9 @@ namespace Tenside\Web\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
-use Tenside\Config\SourceSubSection;
-use Tenside\Web\Auth\AuthFromConfig;
-use Tenside\Web\Auth\AuthInterface;
-use Tenside\Web\Auth\AuthUserPasswordInterface;
+use Tenside\Web\Auth\JwtValidator;
+use Tenside\Web\Auth\UserInformation;
+use Tenside\Web\Auth\UserInformationInterface;
 
 /**
  * The main entry point.
@@ -38,91 +37,57 @@ class AuthController extends AbstractController
      */
     public static function createRoutes(RouteCollection $routes)
     {
-        static::createRoute($routes, 'checkAuth', '/auth', __CLASS__, ['GET']);
-        static::createRoute($routes, 'validateLogin', '/auth', __CLASS__, ['POST']);
-        static::createRoute($routes, 'logout', '/auth', __CLASS__, ['DELETE']);
+        static::createRoute($routes, 'checkAuth', '/api/v1/auth', __CLASS__, ['GET']);
     }
 
     /**
-     * Build the auth provider list.
-     *
-     * @return AuthInterface[]
-     */
-    protected function buildAuthProviderList()
-    {
-        return [
-            // FIXME: add functionality to add more auth providers.
-            new AuthFromConfig(new SourceSubSection($this->getTenside()->getConfigSource(), 'auth-password'))
-        ];
-    }
-
-    /**
-     * Build the auth response array for JsonResponses.
-     *
-     * @return JsonResponse
-     */
-    protected function buildAuthResponse()
-    {
-        $array = array('id' => $this->getApplication()->getSession()->getId());
-        $user  = $this->getApplication()->getAuthenticatedUser();
-        if ($user) {
-            $array['user'] = $user->asArray();
-        }
-
-        return new JsonResponse($array, $user ? 200 : 401);
-    }
-
-    /**
-     * Check if there is currently an authenticated session and if so, return true.
-     *
-     * @return JsonResponse
-     */
-    protected function checkAuthAction()
-    {
-        return $this->buildAuthResponse();
-    }
-
-    /**
-     * Check if there is currently an authenticated session and if so, return true.
+     * Try to validate the user from the request and return a jwt authentication result then.
      *
      * @param Request $request The request to process.
      *
      * @return JsonResponse
      */
-    protected function validateLoginAction(Request $request)
+    protected function checkAuthAction(Request $request)
     {
-        $this->getApplication()->setAuthenticatedUser(null);
+        $registry        = $this->getApplication()->getAuthRegistry();
+        $userInformation = $registry->handleAuthentication($request);
+        if (null !== $userInformation) {
+            $validator = new JwtValidator($this->getTenside()->getConfigSource());
+            $token     = $validator->getTokenForData($userInformation, (time() + 3600));
+            // FIXME: token only valid one hour, might want to increase this.
 
-        $credentials = json_decode($request->getContent(), true);
-
-        $userData = null;
-        foreach ($this->buildAuthProviderList() as $provider) {
-            if ($provider instanceof AuthUserPasswordInterface) {
-                if (isset($credentials['username']) && isset($credentials['password'])) {
-                    $userData = $provider->validate($credentials['username'], $credentials['password']);
-                }
-            }
-
-            if (null !== $userData) {
-                break;
-            }
+            return new JsonResponse([
+                'status' => 'ok',
+                'token' => $token,
+                'acl' => $this->getAccessLevelList($userInformation),
+            ]);
         }
 
-        if (null !== $userData) {
-            $this->getApplication()->setAuthenticatedUser($userData);
-        }
-
-        return $this->buildAuthResponse();
+        return new JsonResponse(
+            ['status' => 'unauthorized'],
+            JsonResponse::HTTP_UNAUTHORIZED,
+            ['WWW-Authenticate' => $registry->buildChallengeList()]
+        );
     }
 
     /**
-     * Check if there is currently an authenticated session and if so, return true.
+     * Create a string list of granted access levels.
      *
-     * @return JsonResponse
+     * @param UserInformationInterface $userInformation The user information object for which the list shall be created.
+     *
+     * @return string[]
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
-    protected function logoutAction()
+    private function getAccessLevelList(UserInformationInterface $userInformation)
     {
-        $this->getApplication()->getSession()->invalidate();
-        return new JsonResponse([], 200);
+        $levels = [];
+        foreach (UserInformation::$ACL_NAMES as $level => $name) {
+            if ($userInformation->hasAccessLevel($level)) {
+                $levels[] = $name;
+            }
+        }
+
+        return $levels;
     }
 }

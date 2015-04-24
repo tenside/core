@@ -20,9 +20,14 @@
 
 namespace Tenside\Test\Web\Controller;
 
+use Composer\IO\BufferIO;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tenside\Config\SourceJson;
+use Tenside\Tenside;
+use Tenside\Web\Application;
+use Tenside\Web\Auth\UserInformation;
 use Tenside\Web\Controller\AuthController;
 
 /**
@@ -30,6 +35,50 @@ use Tenside\Web\Controller\AuthController;
  */
 class AuthControllerTest extends TestCase
 {
+    /**
+     * Mock the application including tenside and the session.
+     *
+     * @param UserInformation $userInformation The user information to use.
+     *
+     * @return Application
+     */
+    protected function mockApplication(UserInformation $userInformation = null)
+    {
+        $tensideHome = __DIR__ . '/fixtures';
+        chdir($tensideHome);
+
+        $application = $this->getMock('Tenside\\Web\\Application', ['getAuthRegistry']);
+        $tenside     = new Tenside();
+        $tenside
+            ->setHome($tensideHome)
+            ->setConfigSource(new SourceJson($tensideHome . '/tenside.json'))
+            ->setInputOutputHandler(new BufferIO());
+
+        $registry = $this->getMockBuilder('Tenside\\Web\\Auth\\AuthRegistry')
+            ->setMethods(['handleAuthentication', 'buildChallengeList'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry
+            ->expects($this->any())
+            ->method('handleAuthentication')
+            ->will($this->returnValue($userInformation));
+        $registry
+            ->expects($this->any())
+            ->method('buildChallengeList')
+            ->will($this->returnValue(['Tenside realm="test"']));
+
+        $application
+            ->expects($this->any())
+            ->method('getAuthRegistry')
+            ->will($this->returnValue($registry));
+
+        /** @var Application $application */
+        $application->setTenside($tenside);
+
+        return $application;
+    }
+
     /**
      * Test retrieval of the composer json.
      *
@@ -41,7 +90,7 @@ class AuthControllerTest extends TestCase
     public function testGetUnauthenticated()
     {
         $controller = new AuthController();
-        $controller->setApplication($this->mockApplication(__DIR__ . '/fixtures'));
+        $controller->setApplication($this->mockApplication(null));
 
         $request = new Request(
             [],
@@ -73,33 +122,31 @@ class AuthControllerTest extends TestCase
             null
         );
 
-        unset($_SESSION);
         $response = $controller->handle($request);
         $this->assertEquals(
-            ['id' => $controller->getApplication()->getSession()->getId()],
+            ['status' => 'unauthorized'],
             json_decode($response->getContent(), true)
         );
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     /**
      * Test the posting of an auth request.
      *
-     * @param string $data      The composer.json content.
-     *
-     * @param string $sessionId The session id to use.
+     * @param UserInformation $data The user data to return from auth providers.
      *
      * @return JsonResponse|Response
      */
-    public function handlePostData($data, $sessionId)
+    public function handleAuth($data)
     {
         $controller = new AuthController();
-        $controller->setApplication($this->mockApplication(null, $sessionId));
+        $controller->setApplication($this->mockApplication($data));
 
         $request = new Request(
             [],
             [],
             [
-                '_route' => 'validateLogin'
+                '_route' => 'checkAuth'
             ],
             [],
             [],
@@ -108,7 +155,7 @@ class AuthControllerTest extends TestCase
                 'SCRIPT_NAME' => '/web/app.php',
                 'REQUEST_URI' => '/web/app.php/composer.json',
                 'QUERY_STRING' => '',
-                'REQUEST_METHOD' => 'POST',
+                'REQUEST_METHOD' => 'GET',
                 'SERVER_PROTOCOL' => 'HTTP/1.1',
                 'SCRIPT_FILENAME' => '/var/www/virtuals/docs/web/app.php',
                 'REQUEST_SCHEME' => 'http',
@@ -121,8 +168,7 @@ class AuthControllerTest extends TestCase
                 'HTTP_ACCEPT' => 'application/json, text/plain, */*',
                 'HTTP_CONNECTION' => 'close',
                 'HTTP_HOST' => 'tenside.tld',
-            ],
-            json_encode($data)
+            ]
         );
 
         return $controller->handle($request);
@@ -138,19 +184,13 @@ class AuthControllerTest extends TestCase
      */
     public function testPostInvalidCredentials()
     {
-        unset($_SESSION);
-        $response = $this->handlePostData(
-            [
-                'username' => 'foo',
-                'password' => 'bar',
-            ],
-            'ABC'
-        );
+        $response = $this->handleAuth(null);
 
         $this->assertEquals(
-            ['id' => 'ABC'],
+            ['status' => 'unauthorized'],
             json_decode($response->getContent(), true)
         );
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     /**
@@ -163,18 +203,13 @@ class AuthControllerTest extends TestCase
      */
     public function testPostValidCredentials()
     {
-        unset($_SESSION);
-        $response = $this->handlePostData(
-            [
-                'username' => '',
-                'password' => '',
-            ],
-            'ABCzzzz'
-        );
+        $response = $this->handleAuth(new UserInformation(['acl' => 7]));
 
-        $this->assertEquals(
-            ['id' => 'ABCzzzz'],
-            json_decode($response->getContent(), true)
-        );
+        $result = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertArrayHasKey('token', $result);
+        $this->assertArrayHasKey('acl', $result);
+        $this->assertEquals('ok', $result['status']);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }

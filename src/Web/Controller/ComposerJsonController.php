@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouteCollection;
-use Tenside\Composer\ComposerJson;
+use Tenside\Web\Auth\UserInformationInterface;
 
 /**
  * Controller for manipulating the composer.json file.
@@ -48,6 +48,8 @@ class ComposerJsonController extends AbstractRestrictedController
      */
     public function getComposerJsonAction()
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_EDIT_COMPOSER_JSON);
+
         return new Response($this->getTenside()->getComposerJson());
     }
 
@@ -60,6 +62,8 @@ class ComposerJsonController extends AbstractRestrictedController
      */
     protected function putComposerJsonAction(Request $request)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_EDIT_COMPOSER_JSON);
+
         $errors = $this->checkComposerJson($request->getContent());
 
         if (!empty($errors['error'])) {

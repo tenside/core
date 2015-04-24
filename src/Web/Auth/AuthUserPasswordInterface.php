@@ -20,43 +20,9 @@
 
 namespace Tenside\Web\Auth;
 
-use Tenside\Web\UserInformation;
-
 /**
  * This interface is an empty base for auth providers.
  */
 interface AuthUserPasswordInterface extends AuthInterface
 {
-    /**
-     * Add the passed credentials in the database.
-     *
-     * @param string $username The username to add.
-     *
-     * @param string $password The password to set for the user.
-     *
-     * @param string $role     Any of the roles.
-     *
-     * @return AuthUserPasswordInterface
-     */
-    public function addUser($username, $password, $role);
-
-    /**
-     * Add the passed credentials in the database.
-     *
-     * @param string $username The username to remove.
-     *
-     * @return AuthUserPasswordInterface
-     */
-    public function removeUser($username);
-
-    /**
-     * Validate the passed credentials.
-     *
-     * @param string $username The username to check.
-     *
-     * @param string $password The password to check.
-     *
-     * @return UserInformation|null
-     */
-    public function validate($username, $password);
 }

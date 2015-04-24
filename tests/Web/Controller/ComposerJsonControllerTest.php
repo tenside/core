@@ -20,9 +20,13 @@
 
 namespace Tenside\Test\Web\Controller;
 
+use Composer\IO\BufferIO;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tenside\Config\SourceJson;
+use Tenside\Tenside;
+use Tenside\Web\Application;
 use Tenside\Web\Controller\ComposerJsonController;
 
 /**
@@ -31,13 +35,40 @@ use Tenside\Web\Controller\ComposerJsonController;
 class ComposerJsonControllerTest extends TestCase
 {
     /**
+     * Mock the application including tenside and the session.
+     *
+     * @param null|string $tensideHome The home dir to use.
+     *
+     * @return Application
+     */
+    protected function mockApplication($tensideHome = null)
+    {
+        if (null === $tensideHome) {
+            $tensideHome = sys_get_temp_dir();
+        }
+        chdir($tensideHome);
+
+        $application = $this->getMock('Tenside\\Web\\Application', null);
+        $tenside     = new Tenside();
+        $tenside
+            ->setHome($tensideHome)
+            ->setConfigSource(new SourceJson($tensideHome . '/tenside.json'))
+            ->setInputOutputHandler(new BufferIO());
+
+        /** @var Application $application */
+        $application->setTenside($tenside);
+
+        return $application;
+    }
+
+    /**
      * Test retrieval of the composer json.
      *
      * @return void
      */
     public function testGet()
     {
-        $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['checkAccess']);
+        $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['needAccessLevel']);
         $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
         /** @var ComposerJsonController $controller */
         $controller->setApplication($this->mockApplication(__DIR__ . '/fixtures'));
@@ -91,7 +122,7 @@ class ComposerJsonControllerTest extends TestCase
     {
         chdir(sys_get_temp_dir());
 
-        $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['checkAccess']);
+        $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['needAccessLevel']);
         $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
         /** @var ComposerJsonController $controller */
         $controller->setApplication($this->mockApplication());
