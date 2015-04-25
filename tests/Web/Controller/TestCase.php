@@ -20,11 +20,6 @@
 
 namespace Tenside\Test\Web\Controller;
 
-use Composer\IO\BufferIO;
-use Tenside\Config\SourceJson;
-use Tenside\Tenside;
-use Tenside\Web\Application;
-
 /**
  * Test the composer.json manipulation controller.
  */
