@@ -265,7 +265,8 @@ class Application
     private function setupHome()
     {
         if ('' !== \Phar::running()) {
-            $home = \Phar::running();
+            // Strip scheme "phar://" prefix and "tenside.phar" suffix.
+            $home = dirname(substr(\Phar::running(), 7));
         } else {
             if (false === ($home = getenv('TENSIDE_HOME'))) {
                 // FIXME: really only one up?
