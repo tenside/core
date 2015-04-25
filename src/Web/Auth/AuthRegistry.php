@@ -95,7 +95,7 @@ class AuthRegistry
     {
         $challenges = [];
         foreach ($this->getProviders() as $provider) {
-            $challenges[] = sprintf('Tenside realm="%s"', $provider->getChallenge());
+            $challenges[] = $provider->getChallenge();
         }
 
         return $challenges;
