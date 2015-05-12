@@ -42,6 +42,7 @@ use Tenside\Web\Controller\AuthController;
 use Tenside\Web\Controller\ComposerJsonController;
 use Tenside\Web\Controller\InstallProjectController;
 use Tenside\Web\Controller\PackageController;
+use Tenside\Web\Controller\SearchPackageController;
 
 /**
  * The web application.
@@ -132,6 +133,7 @@ class Application
             UiController::createRoutes($routes);
         }
         PackageController::createRoutes($routes);
+        SearchPackageController::createRoutes($routes);
     }
 
     /**
