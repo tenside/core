@@ -108,8 +108,6 @@ abstract class AbstractController
      *
      * @param string          $path         The path pattern to match.
      *
-     * @param string          $controller   The controller class name (must be derived from AbstractController.
-     *
      * @param string|array    $methods      A required HTTP method or an array of restricted methods.
      *
      * @param array           $requirements An array of requirements for parameters (regexes).
@@ -120,11 +118,18 @@ abstract class AbstractController
         RouteCollection $routes,
         $name,
         $path,
-        $controller,
         $methods = ['GET'],
         $requirements = []
     ) {
-        $route = new Route($path, ['_controller' => $controller . '::handle'], $requirements, [], '', [], $methods, '');
+        $route = new Route(
+            $path, ['_controller' => get_called_class() . '::handle'],
+            $requirements,
+            [],
+            '',
+            [],
+            $methods,
+            ''
+        );
 
         $routes->add($name, $route);
 

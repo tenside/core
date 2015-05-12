@@ -37,7 +37,7 @@ class AuthController extends AbstractController
      */
     public static function createRoutes(RouteCollection $routes)
     {
-        static::createRoute($routes, 'checkAuth', '/api/v1/auth', __CLASS__, ['GET']);
+        static::createRoute($routes, 'checkAuth', '/api/v1/auth', ['GET']);
     }
 
     /**

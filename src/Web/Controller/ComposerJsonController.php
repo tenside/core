@@ -37,8 +37,8 @@ class ComposerJsonController extends AbstractRestrictedController
      */
     public static function createRoutes(RouteCollection $routes)
     {
-        static::createRoute($routes, 'getComposerJson', '/api/v1/composer.json', __CLASS__, ['GET']);
-        static::createRoute($routes, 'putComposerJson', '/api/v1/composer.json', __CLASS__, ['PUT']);
+        static::createRoute($routes, 'getComposerJson', '/api/v1/composer.json', ['GET']);
+        static::createRoute($routes, 'putComposerJson', '/api/v1/composer.json', ['PUT']);
     }
 
     /**

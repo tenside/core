@@ -42,12 +42,11 @@ class PackageController extends AbstractRestrictedController
     public static function createRoutes(RouteCollection $routes)
     {
         $endpoint = '/api/v1/packages';
-        static::createRoute($routes, 'packageList', $endpoint, __CLASS__, ['GET']);
+        static::createRoute($routes, 'packageList', $endpoint, ['GET']);
         static::createRoute(
             $routes,
             'getPackage',
             $endpoint . '/{vendor}/{package}',
-            __CLASS__,
             ['GET'],
             ['vendor' => '[\-\_a-zA-Z]*', 'package' => '[\-\_a-zA-Z]*']
         );
@@ -55,7 +54,6 @@ class PackageController extends AbstractRestrictedController
             $routes,
             'putPackage',
             $endpoint . '/{vendor}/{package}',
-            __CLASS__,
             ['PUT'],
             ['vendor' => '[\-\_a-zA-Z]*', 'package' => '[\-\_a-zA-Z]*']
         );
@@ -63,7 +61,6 @@ class PackageController extends AbstractRestrictedController
             $routes,
             'deletePackage',
             $endpoint . '/{vendor}/{package}',
-            __CLASS__,
             ['DELETE'],
             ['vendor' => '[\-\_a-zA-Z]*', 'package' => '[\-\_a-zA-Z]*']
         );
