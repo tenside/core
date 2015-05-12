@@ -147,6 +147,7 @@ class SolverRunner
         $links = array_merge($this->package->getRequires(), $provided);
         /** @var Link $link */
         foreach ($links as $link) {
+            // FIXME: can't we also fix these here? Could be faster.
             $request->install($link->getTarget(), $link->getConstraint());
         }
 
