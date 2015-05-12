@@ -227,4 +227,15 @@ class Tenside
 
         return $rfs->getContents($url, $url);
     }
+
+    /**
+     * Check if the installation is already done.
+     *
+     * @return bool
+     */
+    public function isInstalled()
+    {
+        return (file_exists($this->getHomeDir() . '/composer.json')
+            && file_exists($this->getHomeDir() . '/tenside.json'));
+    }
 }

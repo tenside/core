@@ -40,6 +40,7 @@ use Tenside\Web\Auth\AuthRegistry;
 use Tenside\Web\Controller\AbstractController;
 use Tenside\Web\Controller\AuthController;
 use Tenside\Web\Controller\ComposerJsonController;
+use Tenside\Web\Controller\InstallProjectController;
 use Tenside\Web\Controller\PackageController;
 
 /**
@@ -121,6 +122,7 @@ class Application
      */
     public function addRoutes(RouteCollection $routes)
     {
+        InstallProjectController::createRoutes($routes);
         // FIXME: in the compiler we must prebuild the routes and only load them here from within the phar.
         // This should be much like the container building in plain symfony apps.
         AuthController::createRoutes($routes);
@@ -269,7 +271,6 @@ class Application
             $home = dirname(substr(\Phar::running(), 7));
         } else {
             if (false === ($home = getenv('TENSIDE_HOME'))) {
-                // FIXME: really only one up?
                 $home = getcwd();
             };
         }
@@ -281,6 +282,7 @@ class Application
             );
         }
 
+        // FIXME: really only one up? What about aliased web root in apache?
         putenv('COMPOSER_HOME=' . dirname($home));
         chdir(dirname($home));
     }

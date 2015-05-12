@@ -46,6 +46,11 @@ interface UserInformationInterface
     const ACL_EDIT_COMPOSER_JSON = 4;
 
     /**
+     * All access (aka admin).
+     */
+    const ACL_ALL = 7;
+
+    /**
      * Check if the user has the given access level.
      *
      * @param string $accessLevel The access level to check.
