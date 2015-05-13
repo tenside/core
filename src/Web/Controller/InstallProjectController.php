@@ -196,6 +196,7 @@ class InstallProjectController extends AbstractController
         $input->setInteractive(false);
         $command->setIO(new ConsoleIO($input, $output, new HelperSet([])));
 
+        // FIXME: hacking the home should not be necessary anymore as we use COMPOSER variable now.
         $realHome     = getenv('COMPOSER_HOME');
         $realComposer = getenv('COMPOSER');
         putenv('COMPOSER_HOME=');

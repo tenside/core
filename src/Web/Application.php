@@ -284,8 +284,10 @@ class Application
             );
         }
 
-        // FIXME: really only one up? What about aliased web root in apache?
-        putenv('COMPOSER_HOME=' . dirname($home));
-        chdir(dirname($home));
+        if (false === getenv('COMPOSER')) {
+            // FIXME: really only one up? What about aliased web root in apache?
+            putenv('COMPOSER=' . dirname($home));
+            chdir(dirname($home));
+        }
     }
 }
