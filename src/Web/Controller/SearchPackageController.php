@@ -60,10 +60,9 @@ class SearchPackageController extends AbstractRestrictedController
     {
         $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
 
-        $data = new JsonArray($request->getContent());
-
-        $repositoryManager = $this->getTenside()->getComposer()->getRepositoryManager();
-
+        $data                = new JsonArray($request->getContent());
+        $composer            = $this->getTenside()->getComposer();
+        $repositoryManager   = $composer->getRepositoryManager();
         $platformRepo        = new PlatformRepository();
         $localRepository     = $repositoryManager->getLocalRepository();
         $installedRepository = new CompositeRepository(
@@ -84,14 +83,19 @@ class SearchPackageController extends AbstractRestrictedController
         $packages = array();
         foreach ($results as $result) {
             if (!isset($packages[$result['name']])) {
+                $packages[$result['name']] = $result;
+
+                $packages[$result['name']]['installed'] = null;
+                if ($installed = $localRepository->findPackages($result['name'])) {
+                    /** @var PackageInterface[] $installed */
+                    $packages[$result['name']]['installed'] = $installed[0]->getPrettyVersion();
+                }
+
                 /** @var PackageInterface[] $versions */
                 $versions = $repositories->findPackages($result['name']);
 
                 /** @var PackageInterface|CompletePackageInterface $latestVersion */
                 $latestVersion = false;
-
-                $packages[$result['name']] = $result;
-
                 if (count($versions)) {
                     $packages[$result['name']]['type']        = $versions[0]->getType();
                     $packages[$result['name']]['description'] = $versions[0] instanceof CompletePackageInterface
