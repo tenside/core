@@ -105,6 +105,23 @@ class PackageConverter
 
         if ($package instanceof CompletePackageInterface) {
             $data->set('description', $package->getDescription());
+            $data->set('license', $package->getLicense());
+            if ($keywords = $package->getKeywords()) {
+                $data->set('keywords', $keywords);
+            }
+            if ($homepage = $package->getHomepage()) {
+                $data->set('homepage', $homepage);
+            }
+            if ($authors = $package->getAuthors()) {
+                $data->set('authors', $authors);
+            }
+            if ($support = $package->getSupport()) {
+                $data->set('support', $support);
+            }
+            $data->set('abandoned', $package->isAbandoned());
+            if ($package->isAbandoned()) {
+                $data->set('replacement', $package->getReplacementPackage());
+            }
         }
 
         return $data;
