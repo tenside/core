@@ -29,6 +29,8 @@ use Tenside\Config\SourceInterface;
 
 /**
  * The main tenside instance.
+ *
+ * @author Christian Schiffler <https://github.com/discordier>
  */
 class Tenside
 {
@@ -106,7 +108,7 @@ class Tenside
      */
     public function getComposerJson()
     {
-        return new ComposerJson($this->getHomeDir() . '/composer.json');
+        return new ComposerJson($this->getHomeDir() . DIRECTORY_SEPARATOR . 'composer.json');
     }
 
     /**
@@ -118,32 +120,6 @@ class Tenside
     {
         // FIXME: make this configurable.
         return sys_get_temp_dir();
-    }
-
-    /**
-     * Retrieve the assets dir.
-     *
-     * @return string
-     *
-     * @throws \RuntimeException When the assets dir can not be located.
-     *
-     * @deprecated Move everything to ui controller.
-     */
-    public function getAssetsDir()
-    {
-        if ($phar = \Phar::running()) {
-            return $phar . '/assets';
-        }
-
-        // FIXME: hardcoded assets path for non phar mode - change this!
-        $dir = dirname(__DIR__);
-        while (($dir = dirname($dir)) !== '.') {
-            if (is_dir($dir . '/assets')) {
-                return $dir . '/assets';
-            }
-        }
-
-        throw new \RuntimeException('Could not find assets directory.');
     }
 
     /**
@@ -235,7 +211,7 @@ class Tenside
      */
     public function isInstalled()
     {
-        return (file_exists($this->getHomeDir() . '/composer.json')
-            && file_exists($this->getHomeDir() . '/tenside.json'));
+        return (file_exists($this->getHomeDir() . DIRECTORY_SEPARATOR . 'composer.json')
+            && file_exists($this->getHomeDir() . DIRECTORY_SEPARATOR . 'tenside.json'));
     }
 }

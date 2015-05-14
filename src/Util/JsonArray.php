@@ -321,6 +321,6 @@ class JsonArray implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return $this->data;
+        return (object) $this->data;
     }
 }
