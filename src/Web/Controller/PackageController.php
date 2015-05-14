@@ -22,6 +22,8 @@ namespace Tenside\Web\Controller;
 
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Package\PackageInterface;
+use Composer\Repository\CompositeRepository;
+use Composer\Repository\PlatformRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,17 +83,10 @@ class PackageController extends AbstractRestrictedController
 
         $composer  = $this->getTenside()->getComposer();
         $converter = new PackageConverter($composer->getPackage());
-
-        $solver   = new SolverRunner($this->getTenside()->getComposer());
-        $jobs     = $solver->solve();
-        $upgrades = new JsonArray();
-        foreach ($jobs as $job) {
-            if ($job instanceof UpdateOperation) {
-                $upgrades->set(
-                    $upgrades->escape($job->getInitialPackage()->getPrettyName()),
-                    $converter->convertPackageVersion($job->getTargetPackage())
-                );
-            }
+        if ($request->query->has('solve')) {
+            $upgrades = $this->fullSolvePass();
+        } else {
+            $upgrades = $this->quickSolvePass();
         }
 
         $packages = $converter->convertRepositoryToArray(
@@ -200,5 +195,70 @@ class PackageController extends AbstractRestrictedController
         }
 
         return new Response('Not found', 404);
+    }
+
+    /**
+     * Perform a complete package version solving and return the available upgrade versions.
+     *
+     * @return JsonArray
+     */
+    private function fullSolvePass()
+    {
+        $composer  = $this->getTenside()->getComposer();
+        $converter = new PackageConverter($composer->getPackage());
+        $upgrades  = new JsonArray();
+        $solver    = new SolverRunner($composer);
+        $jobs      = $solver->solve();
+        foreach ($jobs as $job) {
+            if ($job instanceof UpdateOperation) {
+                $upgrades->set(
+                    $upgrades->escape($job->getInitialPackage()->getPrettyName()),
+                    $converter->convertPackageVersion($job->getTargetPackage())
+                );
+            }
+        }
+
+        return $upgrades;
+    }
+
+    /**
+     * Perform a quick resolving on the packages.
+     *
+     * @return JsonArray
+     */
+    private function quickSolvePass()
+    {
+        // FIXME: implement quick solving here.
+        $composer     = $this->getTenside()->getComposer();
+        $upgrades     = new JsonArray();
+        $manager      = $composer->getRepositoryManager();
+        $local        = $manager->getLocalRepository();
+        $installed    = new CompositeRepository([$local, new PlatformRepository()]);
+        $repositories = new CompositeRepository(
+            array_merge([$installed], $manager->getRepositories())
+        );
+        // FIXME: build a list of all constraints here.
+
+        /** @var PackageInterface $package */
+        foreach ($local->getPackages() as $package) {
+            /** @var PackageInterface[] $versions */
+            $versions = $repositories->findPackages($package->getName());
+            /** @var PackageInterface $latest */
+            $latest = false;
+            if (count($versions)) {
+                foreach ($versions as $version) {
+                    // FIXME: check if the constraint matches against the constraint in the list.
+                    if (!$latest || ($version->getReleaseDate() > $latest->getReleaseDate())) {
+                        $latest = $version;
+                    }
+                }
+            }
+
+            if ($latest) {
+                $upgrades->set($upgrades->escape($latest->getName()), $latest->getPrettyVersion());
+            }
+        }
+
+        return $upgrades;
     }
 }
