@@ -24,9 +24,11 @@ use Composer\Package\CompletePackageInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
-use Composer\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Tenside\Composer\Repository\PackagistRepository;
+use Tenside\Composer\Search\CompositeSearch;
+use Tenside\Composer\Search\RepositorySearch;
 use Tenside\Util\JsonArray;
 
 /**
@@ -43,20 +45,25 @@ class SearchPackageController extends AbstractController
      */
     public function searchAction(Request $request)
     {
-        $data                = new JsonArray($request->getContent());
-        $composer            = $this->getTenside()->getComposer();
-        $repositoryManager   = $composer->getRepositoryManager();
-        $platformRepo        = new PlatformRepository();
-        $localRepository     = $repositoryManager->getLocalRepository();
-        $installedRepository = new CompositeRepository([$localRepository, $platformRepo]);
-        $repositories        = new CompositeRepository(
-            array_merge([$installedRepository], $repositoryManager->getRepositories())
+        $data              = new JsonArray($request->getContent());
+        $composer          = $this->getTenside()->getComposer();
+        $repositoryManager = $composer->getRepositoryManager();
+        $localRepository   = $repositoryManager->getLocalRepository();
+
+        $repositories = new CompositeRepository(
+            [
+                new PackagistRepository(),
+                $localRepository,
+                new PlatformRepository(),
+                new CompositeRepository($repositoryManager->getRepositories())
+            ]
         );
 
-        $results = $repositories->search(
-            $data->get('keywords'),
-            RepositoryInterface::SEARCH_FULLTEXT
-        );
+        $searcher = new CompositeSearch([
+            new RepositorySearch($repositories)
+        ]);
+
+        $results = $searcher->search($data->get('keywords'));
 
         $packages = array();
         foreach ($results as $result) {
