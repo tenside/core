@@ -65,14 +65,9 @@ class SearchPackageController extends AbstractRestrictedController
         $repositoryManager   = $composer->getRepositoryManager();
         $platformRepo        = new PlatformRepository();
         $localRepository     = $repositoryManager->getLocalRepository();
-        $installedRepository = new CompositeRepository(
-            array($localRepository, $platformRepo)
-        );
+        $installedRepository = new CompositeRepository([$localRepository, $platformRepo]);
         $repositories        = new CompositeRepository(
-            array_merge(
-                array($installedRepository),
-                $repositoryManager->getRepositories()
-            )
+            array_merge([$installedRepository], $repositoryManager->getRepositories())
         );
 
         $results = $repositories->search(
