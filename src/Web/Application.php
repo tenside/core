@@ -21,6 +21,7 @@
 namespace Tenside\Web;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
@@ -177,8 +178,9 @@ class Application
         $request    = $this->getRequest();
         $context    = new RequestContext();
         $matcher    = new UrlMatcher($routes, $context);
+        $stack = new RequestStack();
         $context->fromRequest($request);
-        $dispatcher->addSubscriber(new RouterListener($matcher));
+        $dispatcher->addSubscriber(new RouterListener($matcher, null, null, $stack));
         $dispatcher->addListener(KernelEvents::CONTROLLER, function (FilterControllerEvent $event) {
             if (!is_array($event->getController())) {
                 return;
