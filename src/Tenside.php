@@ -29,6 +29,8 @@ use Tenside\Config\SourceInterface;
 
 /**
  * The main tenside instance.
+ *
+ * @author Christian Schiffler <https://github.com/discordier>
  */
 class Tenside
 {
@@ -106,7 +108,7 @@ class Tenside
      */
     public function getComposerJson()
     {
-        return new ComposerJson($this->getHomeDir() . '/composer.json');
+        return new ComposerJson($this->getHomeDir() . DIRECTORY_SEPARATOR . 'composer.json');
     }
 
     /**
@@ -235,7 +237,7 @@ class Tenside
      */
     public function isInstalled()
     {
-        return (file_exists($this->getHomeDir() . '/composer.json')
-            && file_exists($this->getHomeDir() . '/tenside.json'));
+        return (file_exists($this->getHomeDir() . DIRECTORY_SEPARATOR . 'composer.json')
+            && file_exists($this->getHomeDir() . DIRECTORY_SEPARATOR . 'tenside.json'));
     }
 }
