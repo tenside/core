@@ -129,7 +129,7 @@ class PackageController extends AbstractRestrictedController
     }
 
     /**
-     * Retrieve a package.
+     * Update the information of a package in the composer.json.
      *
      * @param string  $vendor  The name of the vendor.
      *
