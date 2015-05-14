@@ -123,32 +123,6 @@ class Tenside
     }
 
     /**
-     * Retrieve the assets dir.
-     *
-     * @return string
-     *
-     * @throws \RuntimeException When the assets dir can not be located.
-     *
-     * @deprecated Move everything to ui controller.
-     */
-    public function getAssetsDir()
-    {
-        if ($phar = \Phar::running()) {
-            return $phar . '/assets';
-        }
-
-        // FIXME: hardcoded assets path for non phar mode - change this!
-        $dir = dirname(__DIR__);
-        while (($dir = dirname($dir)) !== '.') {
-            if (is_dir($dir . '/assets')) {
-                return $dir . '/assets';
-            }
-        }
-
-        throw new \RuntimeException('Could not find assets directory.');
-    }
-
-    /**
      * Retrieve the tenside home dir containing the composer.json and vendor dir.
      *
      * @return string
