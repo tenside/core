@@ -37,6 +37,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Tenside\Factory;
 use Tenside\Tenside;
 use Tenside\Ui\Web\Controller\UiController;
+use Tenside\Util\RuntimeHelper;
 use Tenside\Web\Auth\AuthRegistry;
 use Tenside\Web\Controller\AbstractController;
 use Tenside\Web\Controller\AuthController;
@@ -169,7 +170,7 @@ class Application
      */
     public function run()
     {
-        $this->setupHome();
+        RuntimeHelper::setupHome();
         $this->tenside = Factory::create();
 
         $dispatcher = new EventDispatcher();
@@ -259,37 +260,5 @@ class Application
             Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR] . $exception,
             Response::HTTP_INTERNAL_SERVER_ERROR
         );
-    }
-
-    /**
-     * Detect the correct tenside home dir and set the environment variable.
-     *
-     * @return void
-     *
-     * @throws \RuntimeException When the home directory is not /web.
-     */
-    private function setupHome()
-    {
-        if ('' !== \Phar::running()) {
-            // Strip scheme "phar://" prefix and "tenside.phar" suffix.
-            $home = dirname(substr(\Phar::running(), 7));
-        } else {
-            if (false === ($home = getenv('TENSIDE_HOME'))) {
-                $home = getcwd();
-            };
-        }
-
-        if (substr($home, -4) !== '/web') {
-            throw new \RuntimeException(
-                'Tenside is intended to be run from within the web directory but it appears you are running it from ' .
-                basename($home)
-            );
-        }
-
-        if (false === getenv('COMPOSER')) {
-            // FIXME: really only one up? What about aliased web root in apache?
-            putenv('COMPOSER=' . dirname($home));
-            chdir(dirname($home));
-        }
     }
 }

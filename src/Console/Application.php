@@ -30,8 +30,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Composer\Factory;
+use Composer\Factory as ComposerFactory;
+use Tenside\Factory;
 use Tenside\Tenside;
+use Tenside\Util\RuntimeHelper;
 
 /**
  * The console application that handles the commands.
@@ -54,6 +56,13 @@ class Application extends BaseApplication
 ';
 
     /**
+     * The tenside instance.
+     *
+     * @var Tenside
+     */
+    private $tenside;
+
+    /**
      * Create the instance.
      */
     public function __construct()
@@ -71,6 +80,8 @@ class Application extends BaseApplication
 
         // Hop over the composer constructor - do NOT call parent::__construct().
         SymfonyApplication::__construct('Tenside', Tenside::VERSION);
+
+        RuntimeHelper::setupHome();
     }
 
     /**
@@ -127,7 +138,7 @@ class Application extends BaseApplication
         // FIXME: Add a cycle here to check installed.json for tenside-plugins and boot them here.
 
         // Add non-standard scripts as own commands.
-        $file = Factory::getComposerFile();
+        $file = ComposerFactory::getComposerFile();
         if (is_file($file) && is_readable($file) && is_array($composer = json_decode(file_get_contents($file), true))) {
             if (isset($composer['scripts']) && is_array($composer['scripts'])) {
                 foreach (array_keys($composer['scripts']) as $script) {
@@ -199,7 +210,7 @@ class Application extends BaseApplication
     public function run(InputInterface $input = null, OutputInterface $output = null)
     {
         if (null === $output) {
-            $styles    = Factory::createAdditionalStyles();
+            $styles    = ComposerFactory::createAdditionalStyles();
             $formatter = new OutputFormatter(null, $styles);
             $output    = new ConsoleOutput(ConsoleOutput::VERBOSITY_NORMAL, null, $formatter);
         }
@@ -254,5 +265,19 @@ class Application extends BaseApplication
         }
 
         return parent::getLongVersion() . ' ' . Tenside::RELEASE_DATE;
+    }
+
+    /**
+     * Retrieve the tenside instance.
+     *
+     * @return Tenside
+     */
+    public function getTenside()
+    {
+        if (!$this->tenside) {
+            $this->tenside = Factory::create();
+        }
+
+        return $this->tenside;
     }
 }
