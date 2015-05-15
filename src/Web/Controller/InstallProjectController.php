@@ -46,12 +46,11 @@ class InstallProjectController extends AbstractController
      */
     public static function createRoutes(RouteCollection $routes)
     {
-        static::createRoute($routes, 'createProject', '/install/create-project', __CLASS__, ['PUT']);
+        static::createRoute($routes, 'createProject', '/install/create-project', ['PUT']);
         static::createRoute(
             $routes,
             'getProjectVersions',
             '/install/search-project/{vendor}/{package}',
-            __CLASS__,
             ['GET'],
             [
                 'vendor'  => '[\-\_a-zA-Z]*',
