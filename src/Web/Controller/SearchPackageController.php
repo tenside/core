@@ -24,11 +24,10 @@ use Composer\Package\CompletePackageInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
-use Composer\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
-use Tenside\Composer\Repository\PackagistRepository;
+use Tenside\Composer\Package\VersionedPackage;
 use Tenside\Composer\Search\CompositeSearch;
 use Tenside\Composer\Search\RepositorySearch;
 use Tenside\Util\JsonArray;
@@ -73,57 +72,50 @@ class SearchPackageController extends AbstractRestrictedController
 
         $repositories = new CompositeRepository(
             [
-                new PackagistRepository(),
-                $localRepository,
+                new CompositeRepository($repositoryManager->getRepositories()),
                 new PlatformRepository(),
-                new CompositeRepository($repositoryManager->getRepositories())
+                $localRepository,
             ]
         );
 
-        $searcher = new CompositeSearch([
-            new RepositorySearch($repositories)
-        ]);
+        $searcher = new CompositeSearch(
+            [
+                new RepositorySearch($repositories)
+            ]
+        );
 
-        $results = $searcher->search($data->get('keywords'));
+        $results = $searcher->searchAndDecorate($data->get('keywords'));
 
-        $packages = array();
-        foreach ($results as $result) {
-            if (!isset($packages[$result['name']])) {
-                $packages[$result['name']] = $result;
+        $responseData = [];
 
-                $packages[$result['name']]['installed'] = null;
-                if ($installed = $localRepository->findPackages($result['name'])) {
-                    /** @var PackageInterface[] $installed */
-                    $packages[$result['name']]['installed'] = $installed[0]->getPrettyVersion();
-                }
+        foreach ($results as $versionedResult) {
+            /** @var VersionedPackage $versionedResult */
 
-                /** @var PackageInterface[] $versions */
-                $versions = $repositories->findPackages($result['name']);
-
-                /** @var PackageInterface|CompletePackageInterface $latestVersion */
-                $latestVersion = false;
-                if (count($versions)) {
-                    $packages[$result['name']]['type']        = $versions[0]->getType();
-                    $packages[$result['name']]['description'] = $versions[0] instanceof CompletePackageInterface
-                        ? $versions[0]->getDescription()
-                        : '';
-                    foreach ($versions as $version) {
-                        if (!$latestVersion || $version->getReleaseDate() > $latestVersion->getReleaseDate()) {
-                            $latestVersion = $version;
-                        }
-                    }
-                }
-
-                if ($latestVersion) {
-                    $packages[$result['name']]['type'] = $latestVersion->getType();
-
-                    if ($latestVersion instanceof CompletePackageInterface) {
-                        $packages[$result['name']]['description'] = $latestVersion->getDescription();
-                    }
-                }
+            if (count($installed = $localRepository->findPackages($versionedResult->getName()))) {
+                /** @var PackageInterface[] $installed */
+                $installedVersionNumber = $installed[0]->getPrettyVersion();
             }
+
+            $latestVersion = $versionedResult->getLatestVersion();
+
+            $package = [
+                'name'        => $latestVersion->getName(),
+                'installed'   => isset($installedVersionNumber)
+                    ? $installedVersionNumber
+                    : null,
+                'type'        => $latestVersion->getType(),
+                'description' => method_exists($latestVersion, 'getDescription')
+                    ? $latestVersion->getDescription()
+                    : '',
+                'latestVersion' => $latestVersion->getVersion(),
+                'downloads' => $versionedResult->getMetaData('downloads'),
+                'favers' => $versionedResult->getMetaData('favers'),
+            ];
+
+            $responseData[$package['name']] = $package;
+
         }
 
-        return new JsonResponse($packages);
+        return new JsonResponse($responseData);
     }
 }

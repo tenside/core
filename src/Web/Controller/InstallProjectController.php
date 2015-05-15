@@ -22,6 +22,7 @@ namespace Tenside\Web\Controller;
 
 use Composer\Command\CreateProjectCommand;
 use Composer\IO\ConsoleIO;
+use Composer\Repository\CompositeRepository;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -32,6 +33,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\Routing\RouteCollection;
+use Tenside\Composer\Repository\PackagistRepository;
+use Tenside\Composer\Search\CompositeSearch;
+use Tenside\Composer\Search\RepositorySearch;
 use Tenside\Util\JsonArray;
 use Tenside\Web\Auth\AuthorizationFromConfig;
 use Tenside\Web\Auth\UserInformationInterface;
@@ -110,18 +114,13 @@ class InstallProjectController extends AbstractController
     {
         $this->checkUninstalled();
 
-        // FIXME: we only search the packagist API here.
-
-        $results = $this->getTenside()->download(
-            sprintf('https://packagist.org/packages/%s/%s.json', $vendor, $project)
-        );
-
-        $data = new JsonArray($results);
+        $packageName = sprintf('%s/%s', $vendor, $project);
+        $repo        = new PackagistRepository();
 
         return new JsonResponse(
             [
-                'status' => 'OK',
-                'versions' => $data->get('package/versions')
+                'status'   => 'OK',
+                'versions' => $repo->findPackageVersions($packageName)
             ]
         );
     }
@@ -154,7 +153,7 @@ class InstallProjectController extends AbstractController
         // If the temporary folder could not be created, error out.
         if (false === $tmpDir) {
             return [
-                'status' => 'ERROR',
+                'status'   => 'ERROR',
                 'messages' => ['Could not create the temporary directory']
             ];
         }
@@ -195,21 +194,22 @@ class InstallProjectController extends AbstractController
         $input->setInteractive(false);
         $command->setIO(new ConsoleIO($input, $output, new HelperSet([])));
 
-        // FIXME: hacking the home should not be necessary anymore as we use COMPOSER variable now.
-        $realHome     = getenv('COMPOSER_HOME');
+        $realHome     = getcwd();
         $realComposer = getenv('COMPOSER');
-        putenv('COMPOSER_HOME=');
+
         putenv('COMPOSER=' . $destination . '/composer.json');
         chdir($destination);
+
         try {
             $command->run($input, $output);
         } catch (\Exception $exception) {
-            putenv('COMPOSER_HOME=' . $realHome);
+
             putenv('COMPOSER=' . $realComposer);
             chdir($realHome);
+
             throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
         }
-        putenv('COMPOSER_HOME=' . $realHome);
+
         putenv('COMPOSER=' . $realComposer);
         chdir($realHome);
     }
@@ -230,7 +230,7 @@ class InstallProjectController extends AbstractController
         } catch (\RuntimeException $exception) {
             return [
                 'status'   => 'ERROR',
-                'messages' => [ $exception->getMessage()]
+                'messages' => [$exception->getMessage()]
             ];
         }
 
@@ -283,7 +283,7 @@ class InstallProjectController extends AbstractController
         }
 
         return [
-            'status' => 'OK',
+            'status'   => 'OK',
             'messages' => $messages
         ];
     }

@@ -8,6 +8,7 @@
 
 namespace Tenside\Composer\Search;
 
+use Composer\Package\PackageInterface;
 use Tenside\Composer\Search\SearchInterface;
 
 /**
@@ -15,15 +16,8 @@ use Tenside\Composer\Search\SearchInterface;
  *
  * @package Tenside\Composer
  */
-class CompositeSearch implements SearchInterface
+class CompositeSearch extends AbstractSearch
 {
-
-    /**
-     * The satisfaction threshold indicates the
-     * minimum number of search results needed
-     * to bail from searching early.
-     */
-    const SATISFACTION_THRESHOLD = 10;
 
     /**
      * @var SearchInterface[]
@@ -48,13 +42,52 @@ class CompositeSearch implements SearchInterface
                 $searcher->search($keywords)
             );
 
-            if (count($results) >= self::SATISFACTION_THRESHOLD) {
-                return array_slice($results, 0, self::SATISFACTION_THRESHOLD);
+            if (count($results) >= $this->getSatisfactionThreshold()) {
+                return array_slice($results, 0, $this->getSatisfactionThreshold());
             }
         }
 
         return $results;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function searchAndDecorate($keywords)
+    {
+        $results = [];
+
+        foreach($this->getSearchers() as $searcher) {
+            $results = array_merge(
+                $results,
+                $searcher->searchAndDecorate($keywords)
+            );
+
+            if (count($results) >= $this->getSatisfactionThreshold()) {
+                return array_slice($results, 0, $this->getSatisfactionThreshold());
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function searchFully($keywords)
+    {
+        $results = [];
+
+        foreach ($this->getSearchers() as $searcher) {
+            $results = array_merge(
+                $results,
+                $searcher->search($keywords)
+            );
+        }
+
+        return $results;
+    }
+
 
     public function getSearchers()
     {
@@ -68,6 +101,14 @@ class CompositeSearch implements SearchInterface
      */
     public function addSearcher(SearchInterface $searcher)
     {
+        if($searcher instanceof self && count($searcher->getSearchers())) {
+            foreach($searcher->getSearchers() as $compositeSearcher) {
+                $this->addSearcher($compositeSearcher);
+            }
+
+            return $this;
+        }
+
         $this->searchers[] = $searcher;
 
         return $this;
