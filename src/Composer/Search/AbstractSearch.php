@@ -8,6 +8,9 @@
 
 namespace Tenside\Composer\Search;
 
+use Composer\Package\PackageInterface;
+use Tenside\Composer\Package\VersionedPackage;
+
 /**
  * Class AbstractSearch
  *
@@ -48,5 +51,36 @@ abstract class AbstractSearch implements SearchInterface
     public function satisfiedBy($numResults)
     {
         return $this->setSatisfactionThreshold($numResults);
+    }
+
+    /**
+     * @param array $resultSet
+     *
+     * @return string[]
+     */
+    protected function normalizeResultSet(array $resultSet)
+    {
+        $normalized = [];
+
+        foreach ($resultSet as $result) {
+
+            if (($normalizedResult = $this->normalizeResult($result)) === null) {
+                continue;
+            }
+
+            $normalized[$normalizedResult] = $normalizedResult;
+        }
+
+        return array_keys($normalized);
+    }
+
+    /**
+     * @param mixed $result
+     *
+     * @return null|string
+     */
+    protected function normalizeResult($result)
+    {
+        return is_array($result) && isset($result['name']) ? $result['name'] : null;
     }
 }

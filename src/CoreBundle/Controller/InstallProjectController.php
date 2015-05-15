@@ -142,7 +142,7 @@ class InstallProjectController extends AbstractController
         // If the temporary folder could not be created, error out.
         if (false === $tmpDir) {
             return [
-                'status' => 'ERROR',
+                'status'   => 'ERROR',
                 'messages' => ['Could not create the temporary directory']
             ];
         }
@@ -187,6 +187,7 @@ class InstallProjectController extends AbstractController
         $prevCwd      = getcwd();
         $this->setEnvironmentVariable($destination . '/composer.json');
         chdir($destination);
+
         try {
             $command->run($input, $output);
         } catch (\Exception $exception) {
@@ -215,7 +216,7 @@ class InstallProjectController extends AbstractController
         } catch (\RuntimeException $exception) {
             return [
                 'status'   => 'ERROR',
-                'messages' => [ $exception->getMessage()]
+                'messages' => [$exception->getMessage()]
             ];
         }
 
@@ -270,7 +271,7 @@ class InstallProjectController extends AbstractController
         }
 
         return [
-            'status' => 'OK',
+            'status'   => 'OK',
             'messages' => $messages
         ];
     }
