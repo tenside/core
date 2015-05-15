@@ -98,7 +98,8 @@ class CoreTask extends AbstractTask
         foreach ($finder as $file) {
             $this->addFile($file, false);
         }
-        $this->addFile(new \SplFileInfo($composerDir . '/src/Composer/IO/hiddeninput.exe'), false);
+
+        $this->addFile(new \SplFileInfo($composerDir . '/vendor/seld/cli-prompt/res/hiddeninput.exe'), false);
 
         $finder = new Finder();
         $finder->files()
@@ -109,6 +110,7 @@ class CoreTask extends AbstractTask
             ->in($vendorDir . '/symfony/finder')
             ->in($vendorDir . '/symfony/process')
             ->in($vendorDir . '/seld/jsonlint/src/')
+            ->in($vendorDir . '/seld/cli-prompt')
             ->in($vendorDir . '/justinrainbow/json-schema/src/');
 
         foreach ($finder as $file) {
