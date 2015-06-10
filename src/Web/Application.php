@@ -12,6 +12,7 @@
  *
  * @package    tenside/core
  * @author     Christian Schiffler <https://github.com/discordier>
+ * @author     Nico Schneider <https://github.com/NicolasSchneider>
  * @copyright  Christian Schiffler <https://github.com/discordier>
  * @link       https://github.com/tenside/core
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
