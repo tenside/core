@@ -134,7 +134,7 @@ class PackageConverter
      *
      * @param bool                $requiredOnly If true, return only the packages added to the root package as require.
      *
-     * @param JsonArray           $upgradeList  The package version to show as upgradable to.
+     * @param null|JsonArray      $upgradeList  The package version to show as upgradable to.
      *
      * @return JsonArray
      */

@@ -84,7 +84,7 @@ class ComposerJsonController extends AbstractRestrictedController
      *
      * @param string $content The Json content.
      *
-     * @return array
+     * @return array<string,string[]>
      */
     private function checkComposerJson($content)
     {

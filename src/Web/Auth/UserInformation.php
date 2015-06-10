@@ -100,7 +100,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     /**
      * Returns the parameter keys.
      *
-     * @return array An array of parameter keys
+     * @return array<integer|string> An array of parameter keys
      *
      * @api
      */
@@ -116,7 +116,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      *
      * @param mixed  $default The default value.
      *
-     * @return string|null The value if found, null otherwise.
+     * @return mixed|null The value if found, null otherwise.
      *
      * @api
      */
@@ -225,7 +225,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      *
      * Examples may be: "user foo" or "token 0123456789".
      *
-     * @return mixed
+     * @return string
      */
     public function asString()
     {

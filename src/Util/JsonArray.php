@@ -233,7 +233,7 @@ class JsonArray implements \JsonSerializable
     }
 
     /**
-     * Retrieve a value.
+     * Check if a value exists.
      *
      * @param string $path The path of the value.
      *

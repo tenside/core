@@ -109,7 +109,7 @@ class AuthorizationFromConfig extends AbstractAuthorizationValidator implements 
      *
      * @param string $password The password to check.
      *
-     * @return UserInformationInterface|null
+     * @return UserInformation|null
      */
     private function validate($username, $password)
     {
