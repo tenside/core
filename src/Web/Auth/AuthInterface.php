@@ -21,20 +21,12 @@
 namespace Tenside\Web\Auth;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tenside\Config\SourceInterface;
 
 /**
  * This interface is an base for auth providers.
  */
 interface AuthInterface
 {
-    /**
-     * Create a new instance.
-     *
-     * @param SourceInterface $config The config source to read the user data from.
-     */
-    public function __construct(SourceInterface $config);
-
     /**
      * Checking method for determining if the implementing class supports the authentication data given in request.
      *
