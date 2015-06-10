@@ -109,6 +109,7 @@ class AuthRegistry
     private function getProviders()
     {
         if (!isset($this->instances)) {
+            $this->instances = [];
             foreach ($this->providerClasses as $class) {
                 $this->instances[$class] = new $class($this->configSource);
             }
