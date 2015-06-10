@@ -245,7 +245,7 @@ class JsonArray implements \JsonSerializable
         $scope  = $this->data;
 
         if (empty($chunks)) {
-            return null;
+            return false;
         }
 
         while (null !== ($sub = array_shift($chunks))) {
