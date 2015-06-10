@@ -180,7 +180,7 @@ class Application
         $request    = $this->getRequest();
         $context    = new RequestContext();
         $matcher    = new UrlMatcher($routes, $context);
-        $stack = new RequestStack();
+        $stack      = new RequestStack();
         $context->fromRequest($request);
         $dispatcher->addSubscriber(new RouterListener($matcher, null, null, $stack));
         $dispatcher->addListener(KernelEvents::CONTROLLER, function (FilterControllerEvent $event) {

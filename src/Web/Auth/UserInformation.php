@@ -29,12 +29,14 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      * String representation map for access levels.
      *
      * @var array
+     * @codingStandardsIgnoreStart
      */
     public static $ACL_NAMES = [
         UserInformationInterface::ACL_UPGRADE => 'upgrade',
         UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
         UserInformationInterface::ACL_EDIT_COMPOSER_JSON => 'edit-composer-json'
     ];
+    // @codingStandardsIgnoreEnd
 
     /**
      * The contained data.
