@@ -83,6 +83,7 @@ class CoreTask extends AbstractTask
         $application->addRoutes($routes);
 
         $dumper = new PhpMatcherDumper($routes);
+
         $this->addFileContent('src/TensideUrlMatcher.php', $dumper->dump(['class' => '\Tenside\TensideUrlMatcher']));
     }
 

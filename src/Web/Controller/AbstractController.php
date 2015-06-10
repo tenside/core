@@ -122,7 +122,8 @@ abstract class AbstractController
         $requirements = []
     ) {
         $route = new Route(
-            $path, ['_controller' => get_called_class() . '::handle'],
+            $path,
+            ['_controller' => get_called_class() . '::handle'],
             $requirements,
             [],
             '',
