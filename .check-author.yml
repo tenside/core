@@ -1,0 +1,7 @@
+ignore:
+exclude:
+mapping:
+  "Christian Schiffler <https://github.com/discordier>":
+    - "Christian Schiffler <c.schiffler@cyberspectrum.de>"
+  "Nico Schneider <https://github.com/NicolasSchneider>":
+    - "Nico Schneider <nico.tcap@gmail.com>"
