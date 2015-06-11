@@ -256,13 +256,15 @@ class InstallProjectController extends AbstractController
             $permissions     = substr(decoct(fileperms($file->getPathName())), 1);
 
             if ($file->isDir()) {
-                mkdir($destinationFile, octdec($permissions));
-                $folders[]  = $file->getPathname();
-                $messages[] = sprintf(
-                    'mkdir %s %s',
-                    $file->getPathname(),
-                    octdec($permissions)
-                );
+                $folders[] = $file->getPathname();
+                if (!is_dir($destinationFile)) {
+                    mkdir($destinationFile, octdec($permissions), true);
+                    $messages[] = sprintf(
+                        'mkdir %s %s',
+                        $file->getPathname(),
+                        octdec($permissions)
+                    );
+                }
             } else {
                 copy($file->getPathname(), $destinationFile);
                 chmod($destinationFile, octdec($permissions));
