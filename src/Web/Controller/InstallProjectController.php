@@ -196,23 +196,20 @@ class InstallProjectController extends AbstractController
         $input->setInteractive(false);
         $command->setIO(new ConsoleIO($input, $output, new HelperSet([])));
 
-        // FIXME: hacking the home should not be necessary anymore as we use COMPOSER variable now.
-        $realHome     = getenv('COMPOSER_HOME');
         $realComposer = getenv('COMPOSER');
-        putenv('COMPOSER_HOME=');
-        putenv('COMPOSER=' . $destination . '/composer.json');
+        $prevCwd      = getcwd();
+        $this->setEnvironmentVariable($destination . '/composer.json');
         chdir($destination);
         try {
             $command->run($input, $output);
         } catch (\Exception $exception) {
-            putenv('COMPOSER_HOME=' . $realHome);
-            putenv('COMPOSER=' . $realComposer);
-            chdir($realHome);
+            $this->setEnvironmentVariable($realComposer);
+            chdir($prevCwd);
             throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
         }
-        putenv('COMPOSER_HOME=' . $realHome);
-        putenv('COMPOSER=' . $realComposer);
-        chdir($realHome);
+
+        $this->setEnvironmentVariable($realComposer);
+        chdir($prevCwd);
     }
 
     /**
@@ -287,5 +284,17 @@ class InstallProjectController extends AbstractController
             'status' => 'OK',
             'messages' => $messages
         ];
+    }
+
+    /**
+     * Set or clear the composer related environment variables.
+     *
+     * @param false|string $realComposer The value for the COMPOSER environment variable.
+     *
+     * @return void
+     */
+    private function setEnvironmentVariable($realComposer)
+    {
+        putenv('COMPOSER=' . $realComposer ?: '');
     }
 }
