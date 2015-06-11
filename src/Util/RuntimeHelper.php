@@ -49,12 +49,18 @@ class RuntimeHelper
                 basename($home)
             );
         }
+        // FIXME: really only one up? What about aliased web root in apache?
+        $home = dirname($home);
 
         // FIXME: check that this really works correctly in CLI mode.
         if (false === getenv('COMPOSER')) {
-            // FIXME: really only one up? What about aliased web root in apache?
-            putenv('COMPOSER=' . dirname($home));
-            chdir(dirname($home));
+            putenv('COMPOSER=' . $home . '/composer.json');
+            chdir($home);
+        }
+
+        // Ensure at least one of the environment variables is available.
+        if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {
+            putenv('COMPOSER_HOME=' . $home);
         }
     }
 }
