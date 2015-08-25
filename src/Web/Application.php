@@ -3,7 +3,7 @@
 /**
  * This file is part of tenside/core.
  *
- * (c) Christian Schiffler <https://github.com/discordier>
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,11 @@
  * This project is provided in good faith and hope to be usable by anyone.
  *
  * @package    tenside/core
- * @author     Christian Schiffler <https://github.com/discordier>
- * @author     Nico Schneider <https://github.com/NicolasSchneider>
- * @copyright  Christian Schiffler <https://github.com/discordier>
- * @link       https://github.com/tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
  * @filesource
  */
 
@@ -49,8 +49,6 @@ use Tenside\Web\Controller\SearchPackageController;
 
 /**
  * The web application.
- *
- * @author Christian Schiffler <https://github.com/discordier>
  */
 class Application
 {
@@ -60,6 +58,13 @@ class Application
      * @var AuthRegistry
      */
     private $authenticator;
+
+    /**
+     * The command to run for cli context.
+     *
+     * @var string
+     */
+    private $cliCommand;
 
     /**
      * The request.
@@ -74,6 +79,16 @@ class Application
      * @var Tenside
      */
     private $tenside;
+
+    /**
+     * Create a new instance.
+     *
+     * @param string $cliCommand The command path to call for CLI processes.
+     */
+    public function __construct($cliCommand)
+    {
+        $this->cliCommand = $cliCommand;
+    }
 
     /**
      * Set the Tenside instance to use.
@@ -98,6 +113,7 @@ class Application
     {
         if (!$this->tenside) {
             $this->tenside = Factory::create();
+            $this->tenside->setCliExecutable($this->cliCommand);
         }
 
         return $this->tenside;
@@ -172,7 +188,7 @@ class Application
     public function run()
     {
         RuntimeHelper::setupHome();
-        $this->tenside = Factory::create();
+        $this->getTenside();
 
         $dispatcher = new EventDispatcher();
         $routes     = new RouteCollection();
