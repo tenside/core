@@ -24,8 +24,6 @@ use Tenside\Util\JsonArray;
 
 /**
  * Test the JsonArray handler.
- *
- * @author Christian Schiffler <https://github.com/discordier>
  */
 class JsonArrayTest extends \PHPUnit_Framework_TestCase
 {
@@ -79,5 +77,18 @@ class JsonArrayTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['top2.sub2.2.content'], $json->get('top2/sub2.2'));
         $json->set('top2', 'top2.content');
         $this->assertEquals('top2.content', $json->get('top2'));
+    }
+
+    /**
+     * Test the get entries method.
+     *
+     * @return void
+     */
+    public function testGetEntries()
+    {
+        $json = new JsonArray(['test' => ['key1' => 'value1', 'key2' => 'value2', ]]);
+
+        $this->assertEquals(['test'], $json->getEntries('/'));
+        $this->assertEquals(['test/key1', 'test/key2'], $json->getEntries('/test'));
     }
 }

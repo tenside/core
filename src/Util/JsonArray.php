@@ -22,8 +22,6 @@ namespace Tenside\Util;
 
 /**
  * Generic path following json file handler.
- *
- * @author Christian Schiffler <https://github.com/discordier>
  */
 class JsonArray implements \JsonSerializable
 {
@@ -115,7 +113,7 @@ class JsonArray implements \JsonSerializable
      */
     protected function splitPath($path)
     {
-        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', $path));
+        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', ltrim($path, '/'))); // TODO: what about escaped \/?
     }
 
     /**
@@ -281,6 +279,30 @@ class JsonArray implements \JsonSerializable
     public function isEmpty($path)
     {
         return (null === ($value = $this->get($path))) || empty($value);
+    }
+
+    /**
+     * Retrieve the contained keys at the given path.
+     *
+     * @param string $path The sub path to be examined.
+     *
+     * @return string[]
+     */
+    public function getEntries($path)
+    {
+        $entries = $this->get($path);
+        $result  = [];
+        $prefix  = trim($path, '/'); // TODO: what about escaped \/?
+        if (strlen($prefix)) {
+            $prefix .= '/';
+        }
+        if (is_array($entries)) {
+            foreach (array_keys($entries) as $key) {
+                $result[] = $prefix . $key;
+            }
+        }
+
+        return $result;
     }
 
     /**
