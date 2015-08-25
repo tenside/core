@@ -35,33 +35,6 @@ use Tenside\Web\Controller\ComposerJsonController;
 class ComposerJsonControllerTest extends TestCase
 {
     /**
-     * Mock the application including tenside and the session.
-     *
-     * @param null|string $tensideHome The home dir to use.
-     *
-     * @return Application
-     */
-    protected function mockApplication($tensideHome = null)
-    {
-        if (null === $tensideHome) {
-            $tensideHome = sys_get_temp_dir();
-        }
-        chdir($tensideHome);
-
-        $application = $this->getMock('Tenside\\Web\\Application', null);
-        $tenside     = new Tenside();
-        $tenside
-            ->setHome($tensideHome)
-            ->setConfigSource(new SourceJson($tensideHome . '/tenside.json'))
-            ->setInputOutputHandler(new BufferIO());
-
-        /** @var Application $application */
-        $application->setTenside($tenside);
-
-        return $application;
-    }
-
-    /**
      * Test retrieval of the composer json.
      *
      * @return void
@@ -71,7 +44,7 @@ class ComposerJsonControllerTest extends TestCase
         $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['needAccessLevel']);
         $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
         /** @var ComposerJsonController $controller */
-        $controller->setApplication($this->mockApplication(__DIR__ . '/fixtures'));
+        $controller->setApplication($this->mockDefaultApplication($this->createDefaultTensideInstance(__DIR__ . '/fixtures')));
 
         $request = new Request(
             [],
@@ -125,7 +98,7 @@ class ComposerJsonControllerTest extends TestCase
         $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['needAccessLevel']);
         $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
         /** @var ComposerJsonController $controller */
-        $controller->setApplication($this->mockApplication());
+        $controller->setApplication($this->mockDefaultApplication($this->createDefaultTensideInstance()));
 
         $request = new Request(
             [],
