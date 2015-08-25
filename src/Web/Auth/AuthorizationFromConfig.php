@@ -84,7 +84,7 @@ class AuthorizationFromConfig extends AbstractAuthorizationValidator implements 
         }
 
         $decoded = base64_decode($data);
-        return ((false === $decoded) || false === strpos($decoded, ':'));
+        return ((false !== $decoded) && (false !== strpos($decoded, ':')));
     }
 
     /**
