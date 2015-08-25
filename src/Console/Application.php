@@ -31,6 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Composer\Factory as ComposerFactory;
+use Tenside\Console\Command\RunTaskCommand;
 use Tenside\Factory;
 use Tenside\Tenside;
 use Tenside\Util\RuntimeHelper;
@@ -237,6 +238,7 @@ class Application extends BaseApplication
     {
         $commands = parent::getDefaultCommands();
 
+        // FIXME: we MUST check which commands we can provide and which not.
         $newCommands = array();
         foreach ($commands as $command) {
             // Self update would download composer instead of tenside, kill it.
@@ -245,6 +247,7 @@ class Application extends BaseApplication
             }
             $newCommands[] = $command;
         }
+        $newCommands[] = new RunTaskCommand();
 
         return $newCommands;
     }

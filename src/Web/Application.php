@@ -46,6 +46,7 @@ use Tenside\Web\Controller\ComposerJsonController;
 use Tenside\Web\Controller\InstallProjectController;
 use Tenside\Web\Controller\PackageController;
 use Tenside\Web\Controller\SearchPackageController;
+use Tenside\Web\Controller\TaskRunnerController;
 
 /**
  * The web application.
@@ -153,6 +154,7 @@ class Application
         }
         PackageController::createRoutes($routes);
         SearchPackageController::createRoutes($routes);
+        TaskRunnerController::createRoutes($routes);
     }
 
     /**
