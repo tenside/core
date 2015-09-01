@@ -92,7 +92,7 @@ class ComposerJsonControllerTest extends TestCase
      */
     public function handlePostData($data)
     {
-        chdir(sys_get_temp_dir());
+        chdir($this->getTempDir());
 
         $controller = $this->getMock('Tenside\\Web\\Controller\\ComposerJsonController', ['needAccessLevel']);
         $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
@@ -116,7 +116,7 @@ class ComposerJsonControllerTest extends TestCase
                 'SERVER_PROTOCOL' => 'HTTP/1.1',
                 'SCRIPT_FILENAME' => '/var/www/virtuals/docs/web/app.php',
                 'REQUEST_SCHEME' => 'http',
-                'DOCUMENT_ROOT' => sys_get_temp_dir(),
+                'DOCUMENT_ROOT' => $this->getTempDir(),
                 'REMOTE_ADDR' => '1.2.3.4',
                 'HTTP_ACCEPT_LANGUAGE' => 'de,en-US;q=0.8,en;q=0.6',
                 'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',

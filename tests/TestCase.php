@@ -20,11 +20,31 @@
 
 namespace Tenside\Test;
 
+use Symfony\Component\Filesystem\Filesystem;
+
 /**
  * This class tests the task list.
  */
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Temporary working dir.
+     *
+     * @var string
+     */
+    protected $workDir;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tearDown()
+    {
+        if (isset($this->workDir)) {
+            $filesystem = new Filesystem();
+            $filesystem->remove($this->workDir);
+        }
+    }
+
     /**
      * Retrieve the path to the fixtures directory.
      *
@@ -42,10 +62,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getTempDir()
     {
-        $temp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('tenside-core-test');
+        if (!isset($this->workDir)) {
+            $temp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('tenside-core-test');
+            mkdir($temp, 0777, true);
+            $this->workDir = $temp;
+        }
 
-        mkdir($temp, 0777, true);
-
-        return $temp;
+        return $this->workDir;
     }
 }

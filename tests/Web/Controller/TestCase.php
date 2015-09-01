@@ -24,12 +24,13 @@ namespace Tenside\Test\Web\Controller;
 use Composer\IO\BufferIO;
 use Tenside\Config\SourceJson;
 use Tenside\Tenside;
+use Tenside\Test\TestCase as BaseTestCase;
 use Tenside\Web\Application;
 
 /**
- * Test the composer.json manipulation controller.
+ * Base test case for testing controllers.
  */
-class TestCase extends \PHPUnit_Framework_TestCase
+class TestCase extends BaseTestCase
 {
     /**
      * Mock the application including tenside and the session.
@@ -60,7 +61,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function createDefaultTensideInstance($tensideHome = null)
     {
         if (null === $tensideHome) {
-            $tensideHome = sys_get_temp_dir();
+            $tensideHome = $this->getTempDir();
         }
 
         $tenside = new Tenside();

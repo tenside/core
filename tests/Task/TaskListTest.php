@@ -20,7 +20,6 @@
 
 namespace Tenside\Test\Task;
 
-use Symfony\Component\Filesystem\Filesystem;
 use Tenside\Task\TaskList;
 use Tenside\Test\TestCase;
 use Tenside\Util\JsonArray;
@@ -31,27 +30,11 @@ use Tenside\Util\JsonArray;
 class TaskListTest extends TestCase
 {
     /**
-     * Temporary working dir.
-     *
-     * @var string
-     */
-    protected $workDir;
-
-    /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         $this->workDir = $this->getTempDir();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown()
-    {
-        $filesystem = new Filesystem();
-        $filesystem->remove($this->workDir);
     }
 
     /**
