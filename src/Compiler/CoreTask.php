@@ -28,8 +28,6 @@ use Tenside\Web\Application;
 
 /**
  * This Compiler task adds all content from tenside/core into the phar.
- *
- * @author Christian Schiffler <https://github.com/discordier>
  */
 class CoreTask extends AbstractTask
 {

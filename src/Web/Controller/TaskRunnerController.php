@@ -25,14 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\RouteCollection;
-use Tenside\Task\Runner;
 use Tenside\Task\Task;
 use Tenside\Util\JsonArray;
-use Tenside\Util\RuntimeHelper;
 
 /**
  * Lists and executes queued tasks.
-*/
+ */
 class TaskRunnerController extends AbstractRestrictedController
 {
     /**
