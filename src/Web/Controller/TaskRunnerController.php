@@ -167,7 +167,7 @@ class TaskRunnerController extends AbstractRestrictedController
     }
 
     /**
-     * Spwan a detached process for a task.
+     * Spawn a detached process for a task.
      *
      * @param Task $task The task to spawn a process for.
      *
