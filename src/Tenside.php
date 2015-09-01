@@ -26,6 +26,7 @@ use Composer\IO\IOInterface;
 use Composer\Util\RemoteFilesystem;
 use Tenside\Composer\ComposerJson;
 use Tenside\Config\SourceInterface;
+use Tenside\Task\TaskList;
 
 /**
  * The main tenside instance.
@@ -83,6 +84,13 @@ class Tenside
      * @var string
      */
     private $cliExecutable;
+
+    /**
+     * The task list.
+     *
+     * @var TaskList
+     */
+    private $taskList;
 
     /**
      * Set the configuration source.
@@ -219,6 +227,20 @@ class Tenside
         }
 
         return $this->composer;
+    }
+
+    /**
+     * Retrieve the task list.
+     *
+     * @return TaskList
+     */
+    public function getTaskList()
+    {
+        if (!isset($this->taskList)) {
+            $this->taskList = new TaskList($this->getHomeDir());
+        }
+
+        return $this->taskList;
     }
 
     /**
