@@ -61,6 +61,6 @@ class Runner
      */
     public function run()
     {
-        $this->task->perform();
+        $this->task->perform($this->tenside);
     }
 }

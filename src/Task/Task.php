@@ -25,6 +25,7 @@ use Composer\IO\IOInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
+use Tenside\Tenside;
 use Tenside\Util\JsonArray;
 
 /**
@@ -96,9 +97,11 @@ abstract class Task
     /**
      * Perform the task.
      *
+     * @param Tenside $tenside The tenside instance.
+     *
      * @return void
      */
-    abstract public function perform();
+    abstract public function perform($tenside);
 
     /**
      * Add some output.

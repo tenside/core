@@ -24,6 +24,7 @@ use Composer\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tenside\Task\Runner;
 use Tenside\Tenside;
 
 /**
@@ -59,6 +60,8 @@ class RunTaskCommand extends Command
             throw new \InvalidArgumentException('Task not found: ' . $input->getArgument('taskId'));
         }
 
-        $task->perform();
+        $runner = new Runner($task, $tenside);
+
+        $runner->run();
     }
 }
