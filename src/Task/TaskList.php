@@ -82,7 +82,7 @@ class TaskList
      *
      * @param null|string $taskId The id of the task to dequeue, if null the first queued task will be returned.
      *
-     * @return Task
+     * @return Task|null
      */
     public function dequeue($taskId = null)
     {
