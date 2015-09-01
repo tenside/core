@@ -61,7 +61,7 @@ class TaskOutput extends Output
     }
 
     /**
-     * Empties buffer and returns its content.
+     * Fetch buffer content.
      *
      * @return string
      */
