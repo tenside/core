@@ -56,7 +56,7 @@ class AuthRegistry
     public function handleAuthentication(Request $request)
     {
         foreach ($this->getProviders() as $provider) {
-            if ($provider->supports($request) && null !== ($userData = $provider->authenticate($request))) {
+            if (null !== ($userData = $provider->authenticate($request))) {
                 return $userData;
             }
         }

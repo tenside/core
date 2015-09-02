@@ -57,7 +57,13 @@ abstract class AbstractAuthorizationValidator implements AuthInterface
             return false;
         }
 
-        list($scheme, $data) = explode(' ', $request->headers->get('authorization'));
+        $header = $request->headers->get('authorization');
+
+        if (false === strpos($header, ' ')) {
+            return false;
+        }
+
+        list($scheme, $data) = explode(' ', $header);
 
         return $this->supportsScheme($scheme, $data);
     }
@@ -71,8 +77,7 @@ abstract class AbstractAuthorizationValidator implements AuthInterface
      */
     public function authenticate(Request $request)
     {
-        // No auth header? get out!
-        if (!$request->headers->has('authorization')) {
+        if (false === $this->supports($request)) {
             return null;
         }
 
