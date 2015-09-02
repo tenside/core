@@ -180,7 +180,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->data);
+        return new \ArrayIterator($this->values());
     }
 
     /**
