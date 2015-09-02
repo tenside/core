@@ -20,12 +20,33 @@
 
 namespace Tenside\Test\Web\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Tenside\Web\Controller\AbstractController;
+
 /**
  * Test the composer.json manipulation controller.
  */
 class AbstractControllerTest extends TestCase
 {
-    public function testRequest()
+    /**
+     * Test that an unknown method action causes a "bad request" response.
+     *
+     * @return void
+     */
+    public function testRequestWithUnknownMethod()
     {
+        $controller = $this
+            ->getMockBuilder('Tenside\\Web\\Controller\\AbstractController')
+            ->setMethods(null)
+            ->getMockForAbstractClass();
+        $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
+        /** @var AbstractController $controller */
+        $controller->setApplication(
+            $this->mockDefaultApplication($this->createDefaultTensideInstance(__DIR__ . '/fixtures'))
+        );
+
+        $response = $controller->handle(new Request([], [], ['_route' => 'nonExistantMethod'], [], [], []));
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
     }
 }
