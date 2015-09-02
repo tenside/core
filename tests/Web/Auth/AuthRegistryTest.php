@@ -44,11 +44,11 @@ class AuthRegistryTest extends TestCase
     {
         $provider = $this->getMockForAbstractClass('Tenside\Web\Auth\AuthInterface');
         $provider->method('supports')->willReturnCallback(function (Request $request) use ($challenge) {
-            return $challenge === $request->headers->get('Authentication');
+            return $challenge === $request->headers->get('Authorization');
         });
         $provider->method('getChallenge')->willReturn($challenge);
         $provider->method('authenticate')->willReturnCallback(function (Request $request) use ($challenge, $user) {
-            if ($challenge === $request->headers->get('Authentication')) {
+            if ($challenge === $request->headers->get('Authorization')) {
                 return $user;
             }
 
@@ -72,7 +72,7 @@ class AuthRegistryTest extends TestCase
         $registry  = new AuthRegistry([$provider1, $provider2]);
 
         $request = new Request();
-        $request->headers->set('Authentication', 'Challenge 2');
+        $request->headers->set('Authorization', 'Challenge 2');
 
         $this->assertEquals(['Challenge 1', 'Challenge 2'], $registry->buildChallengeList());
         $this->assertEquals($user, $registry->handleAuthentication($request));
