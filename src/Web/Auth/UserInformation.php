@@ -57,6 +57,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      */
     public function __construct(array $data = [])
     {
+        $this->setAccessLevel(0);
         foreach ($data as $key => $value) {
             $this->set($key, $value);
         }
@@ -91,10 +92,6 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
      */
     public function hasAccessLevel($accessLevel)
     {
-        if (!$this->has('acl')) {
-            return false;
-        }
-
         return $accessLevel === ($this->getAccessLevel() & $accessLevel);
     }
 
