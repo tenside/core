@@ -70,4 +70,20 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         return $this->workDir;
     }
+
+    /**
+     * Retrieve the path of a temp file within the temp dir of the test.
+     *
+     * @param string $name Optional name of the file.
+     *
+     * @return string
+     */
+    public function getTempFile($name = '')
+    {
+        if ('' === $name) {
+            $name = uniqid();
+        }
+
+        return $this->getTempDir() . DIRECTORY_SEPARATOR . $name;
+    }
 }
