@@ -41,7 +41,7 @@ interface AuthInterface
      *
      * @return string
      *
-     * @see    supports()
+     * @see supports()
      */
     public function getChallenge();
 

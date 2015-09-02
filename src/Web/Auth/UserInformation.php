@@ -87,11 +87,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Check if the user has the given access level.
-     *
-     * @param int $accessLevel The access level to check.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasAccessLevel($accessLevel)
     {
@@ -103,9 +99,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Returns the parameter keys.
-     *
-     * @return array<integer|string> An array of parameter keys
+     * {@inheritdoc}
      *
      * @api
      */
@@ -115,13 +109,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Returns a value by name.
-     *
-     * @param string $key     The value name.
-     *
-     * @param mixed  $default The default value.
-     *
-     * @return mixed|null The value if found, null otherwise.
+     * {@inheritdoc}
      *
      * @api
      */
@@ -161,11 +149,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Returns true if the HTTP header is defined.
-     *
-     * @param string $key The key.
-     *
-     * @return bool true if the value exists, false otherwise.
+     * {@inheritdoc}
      *
      * @api
      */
@@ -193,7 +177,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Returns an iterator for headers.
+     * Returns an iterator for the keys.
      *
      * @return \ArrayIterator An \ArrayIterator instance
      */
@@ -203,9 +187,7 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     }
 
     /**
-     * Returns the number of headers.
-     *
-     * @return int The number of headers
+     * {@inheritdoc}
      */
     public function count()
     {
