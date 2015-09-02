@@ -129,7 +129,16 @@ class Application
     public function getAuthRegistry()
     {
         if (null === $this->authenticator) {
-            $this->authenticator = new AuthRegistry($this->getTenside()->getConfigSource());
+            $providers = [];
+            $config    = $this->getTenside()->getConfigSource();
+            foreach ([
+                '\Tenside\Web\Auth\JwtValidator',
+                '\Tenside\Web\Auth\AuthorizationFromConfig'
+            ] as $class) {
+                $providers[] = new $class($config);
+            }
+
+            $this->authenticator = new AuthRegistry($providers);
         }
 
         return $this->authenticator;

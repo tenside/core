@@ -21,7 +21,6 @@
 namespace Tenside\Web\Auth;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tenside\Config\SourceInterface;
 
 /**
  * This class provides central authentication validation.
@@ -30,39 +29,21 @@ use Tenside\Config\SourceInterface;
  */
 class AuthRegistry
 {
-    // FIXME: this registry is hard coded currently.
-    /**
-     * All registered handler classes.
-     *
-     * @var string[]
-     */
-    private $providerClasses = [
-        '\Tenside\Web\Auth\JwtValidator',
-        '\Tenside\Web\Auth\AuthorizationFromConfig',
-    ];
-
     /**
      * The provider instances.
      *
      * @var AuthInterface[]
      */
-    private $instances;
-
-    /**
-     * The config source to use.
-     *
-     * @var SourceInterface
-     */
-    private $configSource;
+    private $providers;
 
     /**
      * Create a new instance.
      *
-     * @param SourceInterface $config The config source to read the user data from.
+     * @param AuthInterface[] $providers The authorization providers to use.
      */
-    public function __construct(SourceInterface $config)
+    public function __construct($providers)
     {
-        $this->configSource = $config;
+        $this->providers = $providers;
     }
 
     /**
@@ -75,11 +56,8 @@ class AuthRegistry
     public function handleAuthentication(Request $request)
     {
         foreach ($this->getProviders() as $provider) {
-            if ($provider->supports($request)) {
-                $userData = $provider->authenticate($request);
-                if (null !== $userData) {
-                    return $userData;
-                }
+            if ($provider->supports($request) && null !== ($userData = $provider->authenticate($request))) {
+                return $userData;
             }
         }
 
@@ -108,13 +86,6 @@ class AuthRegistry
      */
     private function getProviders()
     {
-        if (!isset($this->instances)) {
-            $this->instances = [];
-            foreach ($this->providerClasses as $class) {
-                $this->instances[$class] = new $class($this->configSource);
-            }
-        }
-
-        return $this->instances;
+        return $this->providers;
     }
 }
