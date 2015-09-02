@@ -36,7 +36,8 @@ class UserInformation implements UserInformationInterface, \IteratorAggregate, \
     public static $ACL_NAMES = [
         UserInformationInterface::ACL_UPGRADE => 'upgrade',
         UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
-        UserInformationInterface::ACL_EDIT_COMPOSER_JSON => 'edit-composer-json'
+        UserInformationInterface::ACL_EDIT_COMPOSER_JSON => 'edit-composer-json',
+        UserInformationInterface::ACL_EDIT_APPKERNEL => 'edit-app-kernel',
     ];
     // @codingStandardsIgnoreEnd
 

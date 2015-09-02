@@ -33,22 +33,27 @@ interface UserInformationInterface
     /**
      * Perform package upgrades.
      */
-    const ACL_UPGRADE = 1;
+    const ACL_UPGRADE = 0b1;
 
     /**
      * Manipulate the package requirements.
      */
-    const ACL_MANIPULATE_REQUIREMENTS = 2;
+    const ACL_MANIPULATE_REQUIREMENTS = 0b10;
 
     /**
      * Edit the composer.json.
      */
-    const ACL_EDIT_COMPOSER_JSON = 4;
+    const ACL_EDIT_COMPOSER_JSON = 0b100;
+
+    /**
+     * Edit the AppKernel.
+     */
+    const ACL_EDIT_APPKERNEL = 0b1000;
 
     /**
      * All access (aka admin).
      */
-    const ACL_ALL = 7;
+    const ACL_ALL = 0b1111;
 
     /**
      * Check if the user has the given access level.
@@ -89,7 +94,7 @@ interface UserInformationInterface
     public function get($key, $default = null);
 
     /**
-     * Returns true if the HTTP header is defined.
+     * Returns true if the value is defined.
      *
      * @param string $key The key.
      *

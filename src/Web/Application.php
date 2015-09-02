@@ -41,6 +41,7 @@ use Tenside\Ui\Web\Controller\UiController;
 use Tenside\Util\RuntimeHelper;
 use Tenside\Web\Auth\AuthRegistry;
 use Tenside\Web\Controller\AbstractController;
+use Tenside\Web\Controller\AppKernelController;
 use Tenside\Web\Controller\AuthController;
 use Tenside\Web\Controller\ComposerJsonController;
 use Tenside\Web\Controller\InstallProjectController;
@@ -147,6 +148,7 @@ class Application
         // FIXME: in the compiler we must prebuild the routes and only load them here from within the phar.
         // This should be much like the container building in plain symfony apps.
         AuthController::createRoutes($routes);
+        AppKernelController::createRoutes($routes);
         ComposerJsonController::createRoutes($routes);
         // FIXME: hard dependency on the ui package - must be resolved.
         if (class_exists('Tenside\\Ui\\Web\\Controller\\UiController')) {
