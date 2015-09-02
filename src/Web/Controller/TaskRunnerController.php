@@ -175,9 +175,16 @@ class TaskRunnerController extends AbstractRestrictedController
      */
     private function spawn(Task $task)
     {
+        $phpCli = 'php';
+        $config = $this->getTenside()->getConfigSource();
+        if ($config->has('php-cli')) {
+            $phpCli = $config->get('php-cli');
+        }
+
         $cmd = sprintf(
-            '%s %s',
-            escapeshellcmd($this->getTenside()->getCliExecutable()),
+            '%s %s %s',
+            escapeshellcmd($phpCli),
+            escapeshellarg($this->getTenside()->getCliExecutable()),
             escapeshellarg($task->getId())
         );
 
