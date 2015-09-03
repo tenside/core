@@ -48,8 +48,12 @@ class TestCase extends BaseTestCase
      *
      * @return Application
      */
-    protected function mockDefaultApplication(Tenside $tenside, $cliCommand = '/bin/false')
+    protected function mockDefaultApplication(Tenside $tenside = null, $cliCommand = '/bin/false')
     {
+        if (null === $tenside) {
+            $tenside = $this->createDefaultTensideInstance();
+        }
+
         $application = $this->getMock('Tenside\\Web\\Application', ['getAuthRegistry'], [$cliCommand]);
 
         $registry = $this->getMockBuilder('Tenside\\Web\\Auth\\AuthRegistry')
