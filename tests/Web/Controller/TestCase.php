@@ -31,6 +31,7 @@ use Tenside\Config\SourceJson;
 use Tenside\Tenside;
 use Tenside\Test\TestCase as BaseTestCase;
 use Tenside\Web\Application;
+use Tenside\Web\Auth\UserInformation;
 use Tenside\Web\Controller\AbstractController;
 
 /**
@@ -39,7 +40,7 @@ use Tenside\Web\Controller\AbstractController;
 class TestCase extends BaseTestCase
 {
     /**
-     * Mock the application including tenside and the session.
+     * Mock the application including tenside and "always true" authentication.
      *
      * @param Tenside $tenside    The tenside instance.
      *
@@ -49,7 +50,25 @@ class TestCase extends BaseTestCase
      */
     protected function mockDefaultApplication(Tenside $tenside, $cliCommand = '/bin/false')
     {
-        $application = $this->getMock('Tenside\\Web\\Application', null, [$cliCommand]);
+        $application = $this->getMock('Tenside\\Web\\Application', ['getAuthRegistry'], [$cliCommand]);
+
+        $registry = $this->getMockBuilder('Tenside\\Web\\Auth\\AuthRegistry')
+            ->setMethods(['handleAuthentication', 'buildChallengeList'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $registry
+            ->expects($this->any())
+            ->method('handleAuthentication')
+            ->will($this->returnValue(new UserInformation(['acl' => UserInformation::ACL_ALL])));
+        $registry
+            ->expects($this->any())
+            ->method('buildChallengeList')
+            ->will($this->returnValue(['Tenside realm="test"']));
+
+        $application
+            ->expects($this->any())
+            ->method('getAuthRegistry')
+            ->will($this->returnValue($registry));
 
         /** @var Application $application */
         $application->setTenside($tenside);
