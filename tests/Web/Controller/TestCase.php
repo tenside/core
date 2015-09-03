@@ -107,19 +107,25 @@ class TestCase extends BaseTestCase
     /**
      * Create a request for the given action.
      *
-     * @param string $methodName The method to create the request for.
+     * @param string            $methodName The method to create the request for.
      *
-     * @param array  $parameters The parameters for the request.
+     * @param array             $parameters The parameters for the request.
+     *
+     * @param null|string|array $content    The request payload.
      *
      * @return Request
      */
-    protected function createRequestFor($methodName, $parameters = [])
+    protected function createRequestFor($methodName, $parameters = [], $content = null)
     {
         if ('Action' !== substr($methodName, -6)) {
             $this->fail('Invalid method name ' . $methodName . ' probably should be named ' . $methodName . 'Action?');
         }
 
-        $request = new Request();
+        if (null !== $content && !is_string($content)) {
+            $content = json_encode($content);
+        }
+
+        $request = new Request([], [], [], [], [], [], $content);
         $request->attributes->set('_route', substr($methodName, 0, -6));
         $request->attributes->set('_route_params', $parameters);
 
