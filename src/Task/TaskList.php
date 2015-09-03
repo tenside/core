@@ -137,7 +137,7 @@ class TaskList
      */
     private function taskIdToFileName($taskId)
     {
-        return $this->dataDir . DIRECTORY_SEPARATOR . 'tenside-task-' . $taskId . 'json';
+        return $this->dataDir . DIRECTORY_SEPARATOR . 'tenside-task-' . $taskId . '.json';
     }
 
     /**
