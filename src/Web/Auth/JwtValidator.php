@@ -78,7 +78,8 @@ class JwtValidator extends AbstractAuthorizationValidator implements TokenValida
     {
         $token = $userData->values();
         if (null !== $invalidAfter) {
-            $token['iad'] = $invalidAfter;
+            $token['exp'] = $invalidAfter;
+            $token['iad'] = time();
         }
 
         return JWT::encode($token, $this->getPrivateKey());

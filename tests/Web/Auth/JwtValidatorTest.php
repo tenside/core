@@ -143,6 +143,23 @@ class JwtValidatorTest extends TestCase
     }
 
     /**
+     * Test that authenticate() returns null when the jwt is expired.
+     *
+     * @return void
+     */
+    public function testReturnsNullForExpiredToken()
+    {
+        $config = new SourceJson($this->getTempFile('tenside.json'));
+        $config->set('secret', 'confidential');
+        $provider = new JwtValidator($config);
+        $user     = new UserInformation(['user' => 'testuser', 'acl' => UserInformation::ACL_ALL]);
+
+        $token = $provider->getTokenForData($user, (time() - 3600));
+
+        $this->assertNull($provider->authenticate($this->authRequestByToken($token)));
+    }
+
+    /**
      * Test the whole functionality.
      *
      * @return void
