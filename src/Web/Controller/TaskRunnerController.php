@@ -40,10 +40,10 @@ class TaskRunnerController extends AbstractRestrictedController
     {
         static::createRoute($routes, 'getTasks', '/api/v1/tasks');
         static::createRoute($routes, 'run', '/api/v1/tasks/run'); // FIXME: unsure about this one not really an API call like the others.
-        static::createRoute($routes, 'getTask', '/api/v1/tasks/{id}', ['GET'], ['id' => '[a-z0-9]+']);
+        static::createRoute($routes, 'getTask', '/api/v1/tasks/{taskId}', ['GET'], ['taskId' => '[a-z0-9]+']);
         static::createRoute($routes, 'addTask', '/api/v1/tasks', ['POST']);
 
-        static::createRoute($routes, 'runInline', '/api/v1/run-task/{id}', ['GET'], ['id' => '[a-z0-9]+']);
+        static::createRoute($routes, 'runInline', '/api/v1/run-task/{taskId}', ['GET'], ['taskId' => '[a-z0-9]+']);
     }
 
     /**
@@ -53,7 +53,7 @@ class TaskRunnerController extends AbstractRestrictedController
      *
      * @return JsonResponse
      */
-    public function getTasksAction(Request $request)
+    protected function getTasksAction(Request $request)
     {
         $result = [];
         $list   = $this->getTaskList();
@@ -76,7 +76,7 @@ class TaskRunnerController extends AbstractRestrictedController
      *
      * @return JsonResponse
      */
-    public function getTaskAction($taskId)
+    protected function getTaskAction($taskId)
     {
         // Retrieve the status file of the task.
         $task = $this->getTenside()->getTaskList()->getTask($taskId);
@@ -98,7 +98,7 @@ class TaskRunnerController extends AbstractRestrictedController
      *
      * @throws NotAcceptableHttpException When the payload is invalid.
      */
-    public function addTaskAction(Request $request)
+    protected function addTaskAction(Request $request)
     {
         $metaData = null;
         $content  = $request->getContent();
@@ -126,7 +126,7 @@ class TaskRunnerController extends AbstractRestrictedController
      *
      * @return JsonResponse
      */
-    public function runAction()
+    protected function runAction()
     {
         // FIXME: we need a way to ensure that no other task is running for the moment to prevent race conditions.
 

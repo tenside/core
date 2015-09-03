@@ -46,7 +46,7 @@ class AppKernelController extends AbstractRestrictedController
      *
      * @return Response
      */
-    public function getAppKernelAction()
+    protected function getAppKernelAction()
     {
         $this->needAccessLevel(UserInformationInterface::ACL_EDIT_APPKERNEL);
 

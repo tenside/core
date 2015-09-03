@@ -47,9 +47,7 @@ class InstallProjectControllerTest extends TestCase
         $controller = new InstallProjectController();
         $controller->setApplication($this->mockDefaultApplication($tenside));
 
-        $request = new Request();
-
-        $controller->createProjectAction($request);
+        $controller->handle($this->createRequestFor('createProjectAction'));
     }
 
     /**
@@ -75,7 +73,7 @@ class InstallProjectControllerTest extends TestCase
         ]));
 
         // FIXME: Test this as soon as one can mock the installer
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Test this as soon as one can mock the installer');
         // $controller->createProjectAction($request);
     }
 }

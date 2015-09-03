@@ -46,7 +46,7 @@ class ComposerJsonController extends AbstractRestrictedController
      *
      * @return Response
      */
-    public function getComposerJsonAction()
+    protected function getComposerJsonAction()
     {
         $this->needAccessLevel(UserInformationInterface::ACL_EDIT_COMPOSER_JSON);
 

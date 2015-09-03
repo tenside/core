@@ -77,7 +77,7 @@ class PackageController extends AbstractRestrictedController
      *
      * @api
      */
-    public function packageListAction(Request $request)
+    protected function packageListAction(Request $request)
     {
         $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
 
@@ -109,7 +109,7 @@ class PackageController extends AbstractRestrictedController
      *
      * @api
      */
-    public function getPackageAction($vendor, $package)
+    protected function getPackageAction($vendor, $package)
     {
         $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
 
@@ -141,7 +141,7 @@ class PackageController extends AbstractRestrictedController
      *
      * @api
      */
-    public function putPackageAction($vendor, $package, Request $request)
+    protected function putPackageAction($vendor, $package, Request $request)
     {
         $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
 
@@ -178,7 +178,7 @@ class PackageController extends AbstractRestrictedController
      *
      * @api
      */
-    public function deletePackageAction($vendor, $package)
+    protected function deletePackageAction($vendor, $package)
     {
         $this->needAccessLevel(UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS);
 

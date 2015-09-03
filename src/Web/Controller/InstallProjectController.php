@@ -55,7 +55,7 @@ class InstallProjectController extends AbstractController
             ['GET'],
             [
                 'vendor'  => '[\-\_a-zA-Z]*',
-                'package' => '[\-\_a-zA-Z]*'
+                'project' => '[\-\_a-zA-Z]*'
             ]
         );
         // FIXME: add an endpoint to check the system. See Selftest namespace.
@@ -68,7 +68,7 @@ class InstallProjectController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function createProjectAction(Request $request)
+    protected function createProjectAction(Request $request)
     {
         $this->checkUninstalled();
 
@@ -107,7 +107,7 @@ class InstallProjectController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function getProjectVersionsAction($vendor, $project)
+    protected function getProjectVersionsAction($vendor, $project)
     {
         $this->checkUninstalled();
 
