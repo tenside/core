@@ -50,14 +50,10 @@ class JwtValidator extends AbstractAuthorizationValidator implements TokenValida
      */
     protected function authenticateScheme($scheme, $data)
     {
-        // extract token.
-        if (!preg_match('#token="?([^" ]+)"?#', $data, $match)) {
-             return null;
-        }
-        $token = $match[1];
+        preg_match('#token="?([^" ]+)"?#', $data, $match);
 
         try {
-            $decrypted = (array) JWT::decode($token, $this->getPrivateKey(), ['HS256']);
+            $decrypted = (array) JWT::decode($match[1], $this->getPrivateKey(), ['HS256']);
         } catch (\Exception $exception) {
             return null;
         }
