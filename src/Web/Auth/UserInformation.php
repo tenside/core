@@ -22,25 +22,9 @@ namespace Tenside\Web\Auth;
 
 /**
  * A user information..
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
 class UserInformation implements UserInformationInterface, \IteratorAggregate, \Countable
 {
-    // @codingStandardsIgnoreStart
-    /**
-     * String representation map for access levels.
-     *
-     * @var array
-     */
-    public static $ACL_NAMES = [
-        UserInformationInterface::ACL_UPGRADE => 'upgrade',
-        UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
-        UserInformationInterface::ACL_EDIT_COMPOSER_JSON => 'edit-composer-json',
-        UserInformationInterface::ACL_EDIT_APPKERNEL => 'edit-app-kernel',
-    ];
-    // @codingStandardsIgnoreEnd
-
     /**
      * The contained data.
      *

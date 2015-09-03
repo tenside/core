@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Tenside\Web\Auth\JwtValidator;
-use Tenside\Web\Auth\UserInformation;
 use Tenside\Web\Auth\UserInformationInterface;
 
 /**
@@ -81,13 +80,19 @@ class AuthController extends AbstractController
      */
     private function getAccessLevelList(UserInformationInterface $userInformation)
     {
-        $levels = [];
-        foreach (UserInformation::$ACL_NAMES as $level => $name) {
-            if ($userInformation->hasAccessLevel($level)) {
-                $levels[] = $name;
-            }
-        }
-
-        return $levels;
+        return array_values(
+            array_filter(
+                [
+                    UserInformationInterface::ACL_UPGRADE                 => 'upgrade',
+                    UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
+                    UserInformationInterface::ACL_EDIT_COMPOSER_JSON      => 'edit-composer-json',
+                    UserInformationInterface::ACL_EDIT_APPKERNEL          => 'edit-app-kernel',
+                ],
+                function ($level) use ($userInformation) {
+                    return $userInformation->hasAccessLevel($level);
+                },
+                ARRAY_FILTER_USE_KEY
+            )
+        );
     }
 }
