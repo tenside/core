@@ -27,6 +27,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\RouteCollection;
 use Tenside\Task\Task;
 use Tenside\Util\JsonArray;
+use Tenside\Web\Auth\UserInformationInterface;
 
 /**
  * Lists and executes queued tasks.
@@ -55,6 +56,8 @@ class TaskRunnerController extends AbstractRestrictedController
      */
     protected function getTasksAction(Request $request)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_UPGRADE);
+
         $result = [];
         $list   = $this->getTaskList();
         foreach ($list->getIds() as $taskId) {
@@ -78,6 +81,8 @@ class TaskRunnerController extends AbstractRestrictedController
      */
     protected function getTaskAction($taskId)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_UPGRADE);
+
         // Retrieve the status file of the task.
         $task = $this->getTenside()->getTaskList()->getTask($taskId);
 
@@ -100,6 +105,8 @@ class TaskRunnerController extends AbstractRestrictedController
      */
     protected function addTaskAction(Request $request)
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_UPGRADE);
+
         $metaData = null;
         $content  = $request->getContent();
         if (empty($content)) {
@@ -128,6 +135,8 @@ class TaskRunnerController extends AbstractRestrictedController
      */
     protected function runAction()
     {
+        $this->needAccessLevel(UserInformationInterface::ACL_UPGRADE);
+
         // FIXME: we need a way to ensure that no other task is running for the moment to prevent race conditions.
 
         // Fetch the next queued task.
