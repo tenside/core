@@ -40,7 +40,6 @@ class AbstractControllerTest extends TestCase
             ->getMockBuilder('Tenside\\Web\\Controller\\AbstractController')
             ->setMethods(null)
             ->getMockForAbstractClass();
-        $controller->expects($this->any())->method('checkAccess')->will($this->returnValue(null));
         /** @var AbstractController $controller */
         $controller->setApplication(
             $this->mockDefaultApplication($this->createDefaultTensideInstance(__DIR__ . '/fixtures'))
