@@ -78,7 +78,7 @@ class JwtValidator extends AbstractAuthorizationValidator implements TokenValida
      *
      * @return string
      */
-    public function getTokenForData($userData, $invalidAfter = null)
+    public function getTokenForData(UserInformationInterface $userData, $invalidAfter = null)
     {
         $token = $userData->values();
         if (null !== $invalidAfter) {

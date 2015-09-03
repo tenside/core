@@ -34,5 +34,5 @@ interface TokenValidatorInterface extends AuthInterface
      *
      * @return string
      */
-    public function getTokenForData($userData, $invalidAfter = null);
+    public function getTokenForData(UserInformationInterface $userData, $invalidAfter = null);
 }
