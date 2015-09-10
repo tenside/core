@@ -72,7 +72,6 @@ class JsonFile extends JsonArray
         }
 
         parent::__construct();
-        $this->save();
     }
 
     /**

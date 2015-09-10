@@ -22,25 +22,43 @@ namespace Tenside\Console;
 
 use Composer\Command\ScriptAliasCommand;
 use Composer\Util\ErrorHandler;
+use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
-use Composer\Console\Application as BaseApplication;
 use Composer\IO\ConsoleIO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Composer\Factory as ComposerFactory;
-use Tenside\Console\Command\RunTaskCommand;
-use Tenside\Factory;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Tenside\Composer\ComposerJson;
 use Tenside\Tenside;
 use Tenside\Util\RuntimeHelper;
 
 /**
  * The console application that handles the commands.
  */
-class Application extends BaseApplication
+class Application extends SymfonyApplication
 {
+    /**
+     * The kernel in use.
+     *
+     * @var KernelInterface
+     */
+    private $kernel;
+
+    /**
+     * Flag if commands have been registered.
+     *
+     * @var bool
+     */
+    private $commandsRegistered = false;
+
     /**
      * Out logo, will get concatenated with the composer logo.
      *
@@ -55,16 +73,11 @@ class Application extends BaseApplication
 ';
 
     /**
-     * The tenside instance.
+     * Constructor.
      *
-     * @var Tenside
+     * @param KernelInterface $kernel A KernelInterface instance.
      */
-    private $tenside;
-
-    /**
-     * Create the instance.
-     */
-    public function __construct()
+    public function __construct(KernelInterface $kernel)
     {
         if (function_exists('ini_set') && extension_loaded('xdebug')) {
             ini_set('xdebug.show_exception_trace', false);
@@ -75,12 +88,54 @@ class Application extends BaseApplication
             date_default_timezone_set(date_default_timezone_get());
         }
 
-        ErrorHandler::register();
+        $this->kernel = $kernel;
 
-        // Hop over the composer constructor - do NOT call parent::__construct().
-        SymfonyApplication::__construct('Tenside', Tenside::VERSION);
+        parent::__construct(
+            'Tenside',
+            Tenside::VERSION . ' (symfony ' . Kernel::VERSION . ') ' .
+            ' - ' . $kernel->getName() . '/' . $kernel->getEnvironment() . ($kernel->isDebug() ? '/debug' : '')
+        );
 
-        RuntimeHelper::setupHome();
+        $definition = $this->getDefinition();
+        $definition->addOption(new InputOption('--shell', '-s', InputOption::VALUE_NONE, 'Launch the shell.'));
+        $definition->addOption(
+            new InputOption(
+                '--process-isolation',
+                null,
+                InputOption::VALUE_NONE,
+                'Launch commands from shell as a separate process.'
+            )
+        );
+        if ('phar' !== $kernel->getEnvironment()) {
+            $definition->addOption(
+                new InputOption(
+                    '--env',
+                    '-e',
+                    InputOption::VALUE_REQUIRED,
+                    'The Environment name.',
+                    $kernel->getEnvironment()
+                )
+            );
+
+            $definition->addOption(
+                new InputOption(
+                    '--no-debug',
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Switches off debug mode.'
+                )
+            );
+        }
+    }
+
+    /**
+     * Gets the Kernel associated with this Console.
+     *
+     * @return KernelInterface A KernelInterface instance
+     */
+    public function getKernel()
+    {
+        return $this->kernel;
     }
 
     /**
@@ -88,6 +143,35 @@ class Application extends BaseApplication
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
+        $this->kernel->boot();
+
+        if (!$this->commandsRegistered) {
+            $this->registerCommands($output);
+
+            $this->commandsRegistered = true;
+        }
+
+        $container = $this->kernel->getContainer();
+
+        foreach ($this->all() as $command) {
+            if ($command instanceof ContainerAwareInterface) {
+                $command->setContainer($container);
+            }
+        }
+
+        $this->setDispatcher($container->get('event_dispatcher'));
+
+        if (true === $input->hasParameterOption(array('--shell', '-s'))) {
+            $shell = new Shell($this);
+            $shell->setProcessIsolation($input->hasParameterOption(array('--process-isolation')));
+            $shell->run();
+
+            return 0;
+        }
+
+        // FIXME: this is broken now.
+        RuntimeHelper::setupHome($container->get('tenside.home'));
+
         $this->io = new ConsoleIO($input, $output, $this->getHelperSet());
 
         if (version_compare(PHP_VERSION, '5.4', '<')) {
@@ -125,40 +209,6 @@ class Application extends BaseApplication
             $input->setInteractive(false);
         }
 
-        // Switch working dir.
-        if ($newWorkDir = $this->getNewWorkingDir($input)) {
-            $oldWorkingDir = getcwd();
-            chdir($newWorkDir);
-            if ($output->getVerbosity() >= 4) {
-                $output->writeln('Changed CWD to ' . getcwd());
-            }
-        }
-
-        // FIXME: Add a cycle here to check installed.json for tenside-plugins and boot them here.
-
-        // Add non-standard scripts as own commands.
-        $file = ComposerFactory::getComposerFile();
-        if (is_file($file) && is_readable($file) && is_array($composer = json_decode(file_get_contents($file), true))) {
-            if (isset($composer['scripts']) && is_array($composer['scripts'])) {
-                foreach (array_keys($composer['scripts']) as $script) {
-                    if (!defined('Composer\Script\ScriptEvents::'.str_replace('-', '_', strtoupper($script)))) {
-                        if ($this->has($script)) {
-                            $output->writeln(
-                                sprintf(
-                                    '<warning>' .
-                                    'A script named %s would override a native function and has been skipped' .
-                                    '</warning>',
-                                    $script
-                                )
-                            );
-                        } else {
-                            $this->add(new ScriptAliasCommand($script));
-                        }
-                    }
-                }
-            }
-        }
-
         if ($input->hasParameterOption('--profile')) {
             $startTime = microtime(true);
             $this->io->enableDebugging($startTime);
@@ -185,22 +235,86 @@ class Application extends BaseApplication
     }
 
     /**
-     * Determine the working directory passed via command line, check and return it.
-     *
-     * @param InputInterface $input The input output interface.
-     *
-     * @return string
-     *
-     * @throws \RuntimeException When the passed working directory is invalid.
+     * {@inheritDoc}
      */
-    private function getNewWorkingDir(InputInterface $input)
+    protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output)
     {
-        $workingDir = $input->getParameterOption(array('--working-dir', '-d'));
-        if (false !== $workingDir && !is_dir($workingDir)) {
-            throw new \RuntimeException('Invalid working directory specified.');
+        // FIXME: we should check if the command needs the composer instance.
+        if ($command instanceof \Composer\Command\Command) {
+            $command->setComposer($this->kernel->getContainer()->get('tenside')->getComposer());
         }
 
-        return $workingDir;
+        return parent::doRunCommand($command, $input, $output);
+    }
+
+    /**
+     * Register all commands from the container and bundles in the application.
+     *
+     * @param OutputInterface $output The output handler to use.
+     *
+     * @return void
+     */
+    protected function registerCommands(OutputInterface $output)
+    {
+        $container = $this->kernel->getContainer();
+
+        foreach ($this->kernel->getBundles() as $bundle) {
+            if ($bundle instanceof Bundle) {
+                $bundle->registerCommands($this);
+            }
+        }
+
+        if ($container->hasParameter('console.command.ids')) {
+            foreach ($container->getParameter('console.command.ids') as $id) {
+                $this->add($container->get($id));
+            }
+        }
+
+        /** @var ComposerJson $file */
+        $file = $container->get('tenside.composer_json');
+
+        // Add non-standard scripts as own commands - keep this last to ensure we do not override internal commands.
+        if ($file->has('scripts')) {
+            foreach (array_keys($file->get('scripts')) as $script) {
+                if (!defined('Composer\Script\ScriptEvents::'.str_replace('-', '_', strtoupper($script)))) {
+                    if ($this->has($script)) {
+                        $output->writeln(
+                            sprintf(
+                                '<warning>' .
+                                'A script named %s would override a native function and has been skipped' .
+                                '</warning>',
+                                $script
+                            )
+                        );
+                        continue;
+                    }
+                    $this->add(new ScriptAliasCommand($script));
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a command object.
+     *
+     * If a command with the same name already exists, it will be overridden.
+     *
+     * @param Command $command A Command object
+     *
+     * @return Command The registered command
+     *
+     * @api
+     */
+    public function add(Command $command)
+    {
+        // We have to skip any command requiring the ability to manipulate the container and/or filesystem within the
+        // phar file.
+        if ('phar' === $this->kernel->getEnvironment()
+            && in_array($command->getName(), ['debug:container', 'assets:install', 'cache:clear', 'cache:warmup'])) {
+            return $command;
+        }
+
+        return parent::add($command);
     }
 
     /**
@@ -228,29 +342,6 @@ class Application extends BaseApplication
     }
 
     /**
-     * Initializes all the composer commands.
-     *
-     * @return Command[]
-     */
-    protected function getDefaultCommands()
-    {
-        $commands = parent::getDefaultCommands();
-
-        // FIXME: we MUST check which commands we can provide and which not.
-        $newCommands = array();
-        foreach ($commands as $command) {
-            // Self update would download composer instead of tenside, kill it.
-            if ($command instanceof \Composer\Command\SelfUpdateCommand) {
-                continue;
-            }
-            $newCommands[] = $command;
-        }
-        $newCommands[] = new RunTaskCommand();
-
-        return $newCommands;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getLongVersion()
@@ -266,19 +357,5 @@ class Application extends BaseApplication
         }
 
         return parent::getLongVersion() . ' ' . Tenside::RELEASE_DATE;
-    }
-
-    /**
-     * Retrieve the tenside instance.
-     *
-     * @return Tenside
-     */
-    public function getTenside()
-    {
-        if (!$this->tenside) {
-            $this->tenside = Factory::create();
-        }
-
-        return $this->tenside;
     }
 }

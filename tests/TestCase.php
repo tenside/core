@@ -74,16 +74,49 @@ class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * Retrieve the path of a temp file within the temp dir of the test.
      *
-     * @param string $name Optional name of the file.
+     * @param string $name             Optional name of the file.
+     *
+     * @param bool   $forceDirectories Optional flag if the parenting dirs should be created.
      *
      * @return string
      */
-    public function getTempFile($name = '')
+    public function getTempFile($name = '', $forceDirectories = true)
     {
         if ('' === $name) {
             $name = uniqid();
         }
 
-        return $this->getTempDir() . DIRECTORY_SEPARATOR . $name;
+        $path = $this->getTempDir() . DIRECTORY_SEPARATOR . $name;
+
+        if ($forceDirectories && !is_dir($dir = dirname($path))) {
+            mkdir($dir, 0777, true);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Provide a fixture in the temp directory and return the complete path to the new file.
+     *
+     * @param string $path    The file name of the fixture.
+     *
+     * @param string $newPath The new path for the fixture.
+     *
+     * @return string
+     */
+    public function provideFixture($path, $newPath = '')
+    {
+        if ('' === $newPath) {
+            $newPath = $path;
+        }
+
+        $tempDir  = $this->getTempDir();
+        $fullPath = $tempDir . '/' . $newPath;
+        if (!is_dir(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0777, true);
+        }
+        copy($this->getFixturesDirectory() . '/' . $path, $fullPath);
+
+        return $fullPath;
     }
 }

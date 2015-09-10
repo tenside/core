@@ -28,30 +28,12 @@ class RuntimeHelper
     /**
      * Detect the correct tenside home dir and set the environment variable.
      *
-     * @return void
+     * @param string $home The home directory.
      *
-     * @throws \RuntimeException When the home directory is not /web.
+     * @return void
      */
-    public static function setupHome()
+    public static function setupHome($home)
     {
-        if ('' !== \Phar::running()) {
-            // Strip scheme "phar://" prefix and "tenside.phar" suffix.
-            $home = dirname(substr(\Phar::running(), 7));
-        } else {
-            if (false === ($home = getenv('TENSIDE_HOME'))) {
-                $home = getcwd();
-            };
-        }
-
-        if ((PHP_SAPI !== 'cli') && (substr($home, -4) !== '/web')) {
-            throw new \RuntimeException(
-                'Tenside is intended to be run from within the web directory but it appears you are running it from ' .
-                basename($home)
-            );
-        }
-        // FIXME: really only one up? What about aliased web root in apache?
-        $home = dirname($home);
-
         // FIXME: check that this really works correctly in CLI mode.
         if (false === getenv('COMPOSER')) {
             putenv('COMPOSER=' . $home . '/composer.json');

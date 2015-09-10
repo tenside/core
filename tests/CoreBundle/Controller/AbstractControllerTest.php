@@ -18,28 +18,30 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\Test\CoreBundle\Controller;
 
-use Composer\Package\RootPackage;
-use Tenside\Composer\PackageConverter;
+use Tenside\CoreBundle\Controller\AbstractController;
 
 /**
- * Test the PackageConverter.
+ * Test the abstract controller.
  */
-class PackageConverterTest extends \PHPUnit_Framework_TestCase
+class AbstractControllerTest extends TestCase
 {
     /**
-     * Test that an empty array does not return values.
+     * Test the getTenside() method.
      *
      * @return void
      */
-    public function testEmpty()
+    public function testGetTenside()
     {
-        $package   = new RootPackage('test/package', '0.1.1.1', '0.1.1.1');
-        $converter = new PackageConverter($package);
+        $controller = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\Controller\\AbstractController')
+            ->setMethods(null)
+            ->getMockForAbstractClass();
+        $container  = $this->createDefaultContainer();
+        /** @var AbstractController $controller */
+        $controller->setContainer($container);
 
-        $converted = $converter->convertPackageToArray($package);
-
-        $this->assertEquals($package->getName(), $converted->get('name'));
+        $this->assertEquals($container->get('tenside'), $controller->getTenside());
     }
 }

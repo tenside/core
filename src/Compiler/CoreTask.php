@@ -3,7 +3,7 @@
 /**
  * This file is part of tenside/core.
  *
- * (c) Christian Schiffler <https://github.com/discordier>
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,20 +11,17 @@
  * This project is provided in good faith and hope to be usable by anyone.
  *
  * @package    tenside/core
- * @author     Christian Schiffler <https://github.com/discordier>
- * @copyright  Christian Schiffler <https://github.com/discordier>
- * @link       https://github.com/tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
  * @filesource
  */
 
 namespace Tenside\Compiler;
 
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
-use Symfony\Component\Routing\RouteCollection;
 use Tenside\Compiler;
-use Tenside\Web\Application;
 
 /**
  * This Compiler task adds all content from tenside/core into the phar.
@@ -70,22 +67,6 @@ class CoreTask extends AbstractTask
     }
 
     /**
-     * Calculate the routes as static lookup map.
-     *
-     * @return void
-     */
-    private function buildRouteMatcher()
-    {
-        $application = new Application();
-        $routes      = new RouteCollection();
-        $application->addRoutes($routes);
-
-        $dumper = new PhpMatcherDumper($routes);
-
-        $this->addFileContent('src/TensideUrlMatcher.php', $dumper->dump(['class' => '\Tenside\TensideUrlMatcher']));
-    }
-
-    /**
      * Embedd all stuff needed by composer into the phar.
      *
      * @return void
@@ -99,6 +80,7 @@ class CoreTask extends AbstractTask
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
+            ->name('*.yml')
             ->notName('Compiler.php')
             ->notName('ClassLoader.php')
             ->in($composerDir . '/src');
@@ -150,23 +132,35 @@ class CoreTask extends AbstractTask
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
+            ->name('*.yml')
             ->notName('Compiler.php')
             ->notName('stub.php')
-            ->notName('app.php')
             ->in($tensideDir . '/src');
         foreach ($finder as $file) {
             $this->addFile($file);
         }
 
+        // TODO: strip the contents down some more.
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
             ->exclude('Tests')
+            ->in($vendorDir . '/symfony/config')
+            ->in($vendorDir . '/symfony/dependency-injection')
+            ->in($vendorDir . '/symfony/debug')
             ->in($vendorDir . '/symfony/event-dispatcher')
+            ->in($vendorDir . '/symfony/framework-bundle')
             ->in($vendorDir . '/symfony/http-foundation')
             ->in($vendorDir . '/symfony/http-kernel')
-            ->in($vendorDir . '/symfony/routing');
+            ->in($vendorDir . '/symfony/translation')
+            ->in($vendorDir . '/symfony/routing')
+            ->in($vendorDir . '/symfony/security')
+            ->in($vendorDir . '/symfony/security-acl')
+            ->in($vendorDir . '/symfony/security-bundle')
+            ->in($vendorDir . '/symfony/yaml')
+            ->in($vendorDir . '/psr/log');
+
         foreach ($finder as $file) {
             $this->addFile($file);
         }

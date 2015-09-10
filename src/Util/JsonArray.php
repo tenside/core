@@ -113,7 +113,8 @@ class JsonArray implements \JsonSerializable
      */
     protected function splitPath($path)
     {
-        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', ltrim($path, '/'))); // TODO: what about escaped \/?
+        // TODO: what about escaped \/?
+        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', ltrim($path, '/')));
     }
 
     /**
@@ -333,7 +334,7 @@ class JsonArray implements \JsonSerializable
      */
     public function __toString()
     {
-        return json_encode($this, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        return json_encode($this, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . PHP_EOL;
     }
 
     /**

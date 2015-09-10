@@ -1,0 +1,9 @@
+{
+  "secret": "42",
+  "auth-password": {
+    "tester": {
+      "password": "",
+      "acl": "7"
+    }
+  }
+}

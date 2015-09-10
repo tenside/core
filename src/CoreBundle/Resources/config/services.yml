@@ -1,0 +1,45 @@
+services:
+    tenside:
+        class:         Tenside\Tenside
+        arguments:     ["@tenside.home"]
+
+    tenside.home:
+        class:  Tenside\CoreBundle\HomePathDeterminator
+        public: true
+
+    tenside.cli_script:
+        class:     Tenside\CoreBundle\CliScriptDeterminator
+        arguments: ["%tenside.script_name%"]
+        public:    true
+
+    tenside.config:
+        class:     Tenside\CoreBundle\TensideJsonConfig
+        arguments: ["@tenside.home"]
+        public:    true
+
+    tenside.tasks:
+        class:     Tenside\Task\Tasklist
+        arguments: ["@tenside.home"]
+        public:    true
+
+    tenside.composer_json:
+        class:          Tenside\Composer\ComposerJson
+        factory_class:  Tenside\Composer\ComposerJsonFactory
+        factory_method: create
+        arguments:      ["@tenside.home"]
+        shared:         false
+
+    tenside.user_provider:
+        class:     Tenside\CoreBundle\Security\UserProviderFromConfig
+        arguments: ["@tenside.config"]
+        public:    false
+
+    tenside.exception_renderer:
+        class: Tenside\CoreBundle\EventListener\ExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    tenside.jwt_authenticator:
+        class:     Tenside\CoreBundle\Security\JWTAuthenticator
+        arguments: ["@tenside.config"]
+        public:    false

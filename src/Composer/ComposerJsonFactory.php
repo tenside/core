@@ -18,28 +18,24 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\Composer;
 
-use Composer\Package\RootPackage;
-use Tenside\Composer\PackageConverter;
+use Tenside\CoreBundle\HomePathDeterminator;
 
 /**
- * Test the PackageConverter.
+ * This class creates a composerJson instance.
  */
-class PackageConverterTest extends \PHPUnit_Framework_TestCase
+class ComposerJsonFactory
 {
     /**
-     * Test that an empty array does not return values.
+     * Create an instance.
      *
-     * @return void
+     * @param HomePathDeterminator $home The home determinator.
+     *
+     * @return ComposerJson
      */
-    public function testEmpty()
+    public static function create(HomePathDeterminator $home)
     {
-        $package   = new RootPackage('test/package', '0.1.1.1', '0.1.1.1');
-        $converter = new PackageConverter($package);
-
-        $converted = $converter->convertPackageToArray($package);
-
-        $this->assertEquals($package->getName(), $converted->get('name'));
+        return new ComposerJson($home->homeDir() . DIRECTORY_SEPARATOR . 'composer.json');
     }
 }

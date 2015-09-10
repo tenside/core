@@ -18,28 +18,21 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\CoreBundle;
 
-use Composer\Package\RootPackage;
-use Tenside\Composer\PackageConverter;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Tenside\CoreBundle\DependencyInjection\TensideCoreExtension;
 
 /**
- * Test the PackageConverter.
+ * This class is the tenside core bundle.
  */
-class PackageConverterTest extends \PHPUnit_Framework_TestCase
+class TensideCoreBundle extends Bundle
 {
     /**
-     * Test that an empty array does not return values.
-     *
-     * @return void
+     * {@inheritDoc}
      */
-    public function testEmpty()
+    public function getContainerExtension()
     {
-        $package   = new RootPackage('test/package', '0.1.1.1', '0.1.1.1');
-        $converter = new PackageConverter($package);
-
-        $converted = $converter->convertPackageToArray($package);
-
-        $this->assertEquals($package->getName(), $converted->get('name'));
+        return new TensideCoreExtension();
     }
 }

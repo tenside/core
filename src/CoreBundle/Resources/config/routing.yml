@@ -1,0 +1,94 @@
+auth:
+    path:     /v1/auth
+    defaults: { _controller: TensideCoreBundle:Auth:checkAuth }
+    methods:  [GET]
+
+composer_json_get:
+    path:     /v1/composer.json
+    defaults: { _controller: TensideCoreBundle:ComposerJson:getComposerJson }
+    methods:  [GET]
+
+composer_json_put:
+    path:     /v1/composer.json
+    defaults: { _controller: TensideCoreBundle:ComposerJson:putComposerJson }
+    methods:  [PUT]
+
+app_kernel_get:
+    path:     /v1/AppKernel.php
+    defaults: { _controller: TensideCoreBundle:AppKernel:getAppKernel }
+    methods:  [GET]
+
+app_kernel_put:
+    path:     /v1/AppKernel.php
+    defaults: { _controller: TensideCoreBundle:AppKernel:putAppKernel }
+    methods:  [PUT]
+
+packages_get:
+    path:     /v1/packages
+    defaults: { _controller: TensideCoreBundle:Package:packageList }
+    methods:  [GET]
+
+package_get:
+    path:     /v1/packages/{vendor}/{package}
+    defaults: { _controller: TensideCoreBundle:Package:getPackage }
+    methods:  [GET]
+    requirements:
+        vendor: "[\-\_a-zA-Z0-9]+"
+        package: "[\-\_a-zA-Z0-9]+"
+
+package_put:
+    path:     /v1/packages/{vendor}/{package}
+    defaults: { _controller: TensideCoreBundle:Package:putPackage }
+    methods:  [PUT]
+    requirements:
+        vendor: "[\-\_a-zA-Z0-9]+"
+        package: "[\-\_a-zA-Z0-9]+"
+
+package_delete:
+    path:     /v1/packages/{vendor}/{package}
+    defaults: { _controller: TensideCoreBundle:Package:deletePackage }
+    methods:  [DELETE]
+    requirements:
+        vendor: "[\-\_a-zA-Z0-9]+"
+        package: "[\-\_a-zA-Z0-9]+"
+
+search_package_put:
+    path:     /v1/search
+    defaults: { _controller: TensideCoreBundle:SearchPackage:search }
+    methods:  [PUT]
+
+tasks_get:
+    path:     /v1/tasks
+    defaults: { _controller: TensideCoreBundle:TaskRunner:getTasks }
+    methods:  [GET]
+
+task_get:
+    path:     /v1/tasks/{taskId}
+    defaults: { _controller: TensideCoreBundle:TaskRunner:getTask }
+    methods:  [GET]
+    requirements:
+        taskId: "[a-z0-9]+"
+
+task_add:
+    path:     /v1/tasks
+    defaults: { _controller: TensideCoreBundle:TaskRunner:addTask }
+    methods:  [POST]
+
+# FIXME: unsure about this one not really an API call like the others.
+tasks_run:
+    path:     /v1/tasks/run
+    defaults: { _controller: TensideCoreBundle:TaskRunner:run }
+    methods:  [GET]
+
+install_create_project:
+    path:     /v1/install/create-project.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:createProject }
+    methods:  [PUT]
+
+install_search_project:
+    path:     /v1/install/search-project/{vendor}/{project}.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:getProjectVersions }
+    methods:  [GET]
+    requirements:
+        vendor: "[\-\_a-zA-Z0-9]+"
+        project: "[\-\_a-zA-Z0-9]+"

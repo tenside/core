@@ -64,7 +64,7 @@ Phar::mapPhar('tenside.phar');
 // @@TENSIDE_DEV_WARNING_TIME@@
 
 if (PHP_SAPI == 'cli') {
-    require 'phar://tenside.phar/bin/tenside';
+    require 'phar://tenside.phar/app/console';
 } else {
     // clean the shebang which might have been written by php-fcgi.
     ob_clean();
