@@ -1,9 +1,22 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: nicoschneider
- * Date: 14/05/15
- * Time: 19:03
+ * This file is part of tenside/core.
+ *
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
+ *
+ * @package    tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
+ * @filesource
  */
 
 namespace Tenside\Composer\Search;
@@ -23,8 +36,9 @@ use Tenside\Util\JsonArray;
  */
 class RepositorySearch extends AbstractSearch
 {
-
     /**
+     * The list of enabled search types.
+     *
      * @var array
      */
     protected $enabledSearchTypes = [
@@ -33,14 +47,18 @@ class RepositorySearch extends AbstractSearch
     ];
 
     /**
+     * The repository to search on.
+     *
      * @var CompositeRepository|null
      */
     protected $repositories;
 
     /**
+     * Create a new instance.
+     *
      * @param CompositeRepository $repositories
      */
-    function __construct(CompositeRepository $repositories = null)
+    public function __construct(CompositeRepository $repositories = null)
     {
         $this->repositories = $repositories;
     }
@@ -101,9 +119,13 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param string $packageName
+     * Decorate a package.
+     *
+     * @param string $packageName The name of the package to decorate.
      *
      * @return PackageInterface
+     *
+     * @throws \InvalidArgumentException When the package could not be found.
      */
     protected function decorate($packageName)
     {
@@ -111,7 +133,7 @@ class RepositorySearch extends AbstractSearch
         $results = $this->repositories->findPackages($packageName);
 
         if (!count($results)) {
-            throw new \InvalidArgumentException("Could not find package with specified name " . $packageName);
+            throw new \InvalidArgumentException('Could not find package with specified name ' . $packageName);
         }
 
         $latest   = array_slice($results, 0, 1)[0];
@@ -123,7 +145,9 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param VersionedPackage $package
+     * Decorate the package with stats from packagist.
+     *
+     * @param VersionedPackage $package The package version.
      *
      * @return VersionedPackage
      */
@@ -148,6 +172,8 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
+     * Retrieve the composite repository.
+     *
      * @return CompositeRepository|null
      */
     public function getRepositories()
@@ -156,7 +182,9 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param $repositories
+     * Set the composite repository.
+     *
+     * @param CompositeRepository $repositories The composite repository.
      *
      * @return $this
      */
@@ -168,13 +196,15 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param int[] $searchTypes
+     * Set the enabled search types.
+     *
+     * @param int[] $searchTypes The list of search types to enable.
      *
      * @return $this
      */
-    public function enableSearchTypes(array $searchTypes)
+    public function enableSearchTypes($searchTypes)
     {
-        foreach ($searchTypes as $searchType) {
+        foreach ((array) $searchTypes as $searchType) {
             $this->enableSearchType($searchType);
         }
 
@@ -182,7 +212,9 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param int $searchType
+     * Enable a search type.
+     *
+     * @param int $searchType The search type to enable.
      *
      * @return $this
      */
@@ -193,13 +225,15 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param int[] $searchTypes
+     * Disable the passed search types.
+     *
+     * @param int[] $searchTypes The search types to disable.
      *
      * @return $this
      */
-    public function disableSearchTypes(array $searchTypes)
+    public function disableSearchTypes($searchTypes)
     {
-        foreach ($searchTypes as $searchType) {
+        foreach ((array) $searchTypes as $searchType) {
             $this->disableSearchType($searchType);
         }
 
@@ -207,7 +241,9 @@ class RepositorySearch extends AbstractSearch
     }
 
     /**
-     * @param int $searchType
+     * Disable a search type.
+     *
+     * @param int $searchType The search type to disable.
      *
      * @return $this
      */
@@ -219,5 +255,4 @@ class RepositorySearch extends AbstractSearch
 
         return $this;
     }
-
 }

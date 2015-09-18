@@ -1,9 +1,22 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: nicoschneider
- * Date: 15/05/15
- * Time: 14:09
+ * This file is part of tenside/core.
+ *
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
+ *
+ * @package    tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
+ * @filesource
  */
 
 namespace Tenside\Composer\Package;
@@ -15,38 +28,50 @@ use Composer\Repository\RepositoryInterface;
 /**
  * Class VersionedPackage
  *
- * @package Tenside\Composer\Package
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class VersionedPackage implements PackageInterface
 {
-
     /**
+     * The package to hold versions for.
+     *
      * @var PackageInterface
      */
     protected $package;
 
     /**
+     * The version list.
+     *
      * @var PackageInterface[]
      */
     protected $versions;
 
     /**
+     * The meta data.
+     *
      * @var array
      */
     protected $meta = [];
 
     /**
-     * @param PackageInterface $package
-     * @param array            $versions
+     * Create a new instance.
+     *
+     * @param PackageInterface $package  The package to hold versions for.
+     *
+     * @param array            $versions The initial versions.
      */
-    function __construct(PackageInterface $package, array $versions = [])
+    public function __construct(PackageInterface $package, array $versions = [])
     {
         $this->package  = $package;
         $this->versions = $versions;
     }
 
     /**
-     * @return array
+     * Retrieve the meta data.
+     *
+     * @param string $key The key of the meta data to retrieve.
+     *
+     * @return mixed|null
      */
     public function getMetaData($key)
     {
@@ -54,9 +79,13 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param      $key
-     * @param      $value
-     * @param bool $overwrite
+     * Add meta data.
+     *
+     * @param string $key       The key to use.
+     *
+     * @param mixed  $value     The value to use.
+     *
+     * @param bool   $overwrite Flag if the previous value shall be overridden.
      *
      * @return $this
      */
@@ -70,7 +99,11 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param array $meta
+     * Replace the meta data of the package.
+     *
+     * @param array $meta The new meta data.
+     *
+     * @return $this
      */
     public function replaceMetaData(array $meta)
     {
@@ -80,6 +113,8 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
+     * Retrieve the versions.
+     *
      * @return PackageInterface[]
      */
     public function getVersions()
@@ -88,7 +123,11 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param PackageInterface[] $versions
+     * Set the versions and override all previously registered versions.
+     *
+     * @param PackageInterface[] $versions The versions to use.
+     *
+     * @return $this
      */
     public function setVersions(array $versions)
     {
@@ -98,7 +137,9 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param PackageInterface $version
+     * Add a version to the package.
+     *
+     * @param PackageInterface $version The version to add.
      *
      * @return $this
      */
@@ -110,7 +151,9 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param PackageInterface[] $versions
+     * Add multiple versions.
+     *
+     * @param PackageInterface[] $versions The versions to add.
      *
      * @return $this
      */
@@ -124,9 +167,13 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
-     * @param PackageInterface|string $version
+     * Remove a version from the package.
+     *
+     * @param PackageInterface|string $version The version to remove.
      *
      * @return $this
+     *
+     * @throws \InvalidArgumentException For any invalid version.
      */
     public function removeVersion($version)
     {
@@ -139,7 +186,8 @@ class VersionedPackage implements PackageInterface
             $normalizedVersion = $versionParser->normalize($version);
         } else {
             throw new \InvalidArgumentException(
-                "You have to pass either an instance of PackageInterface or a version string to remove a version from this package object!"
+                'You have to pass either an instance of PackageInterface or a version string to remove a version ' .
+                'from this package object!'
             );
         }
 
@@ -153,6 +201,8 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
+     * Retrieve the latest version of the package (if any available).
+     *
      * @return PackageInterface|null
      */
     public function getLatestVersion()
@@ -198,6 +248,8 @@ class VersionedPackage implements PackageInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ShortVariableName)
      */
     public function setId($id)
     {
@@ -523,6 +575,4 @@ class VersionedPackage implements PackageInterface
     {
         return $this->package->__toString();
     }
-
-
 }

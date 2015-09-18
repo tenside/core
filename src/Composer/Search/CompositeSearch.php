@@ -1,15 +1,25 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: nicoschneider
- * Date: 14/05/15
- * Time: 19:29
+ * This file is part of tenside/core.
+ *
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
+ *
+ * @package    tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
+ * @filesource
  */
 
 namespace Tenside\Composer\Search;
-
-use Composer\Package\PackageInterface;
-use Tenside\Composer\Search\SearchInterface;
 
 /**
  * Class CompositeSearch
@@ -18,13 +28,19 @@ use Tenside\Composer\Search\SearchInterface;
  */
 class CompositeSearch extends AbstractSearch
 {
-
     /**
+     * The list of search providers.
+     *
      * @var SearchInterface[]
      */
     protected $searchers;
 
-    function __construct(array $searchers)
+    /**
+     * Create a new instance.
+     *
+     * @param array $searchers The list of search providers.
+     */
+    public function __construct(array $searchers)
     {
         $this->addSearchers($searchers);
     }
@@ -57,7 +73,7 @@ class CompositeSearch extends AbstractSearch
     {
         $results = [];
 
-        foreach($this->getSearchers() as $searcher) {
+        foreach ($this->getSearchers() as $searcher) {
             $results = array_merge(
                 $results,
                 $searcher->searchAndDecorate($keywords)
@@ -88,21 +104,27 @@ class CompositeSearch extends AbstractSearch
         return $results;
     }
 
-
+    /**
+     * Retrieve the list of search providers.
+     *
+     * @return SearchInterface[]
+     */
     public function getSearchers()
     {
         return $this->searchers;
     }
 
     /**
-     * @param SearchInterface $searcher
+     * Add a search providers,
+     *
+     * @param SearchInterface $searcher The provider to add.
      *
      * @return $this
      */
     public function addSearcher(SearchInterface $searcher)
     {
-        if($searcher instanceof self && count($searcher->getSearchers())) {
-            foreach($searcher->getSearchers() as $compositeSearcher) {
+        if ($searcher instanceof self && count($searcher->getSearchers())) {
+            foreach ($searcher->getSearchers() as $compositeSearcher) {
                 $this->addSearcher($compositeSearcher);
             }
 
@@ -115,7 +137,9 @@ class CompositeSearch extends AbstractSearch
     }
 
     /**
-     * @param array $searchers
+     * Add the passed search providers to the own list.
+     *
+     * @param array $searchers The providers to add.
      *
      * @return $this
      */
@@ -127,5 +151,4 @@ class CompositeSearch extends AbstractSearch
 
         return $this;
     }
-
 }

@@ -1,15 +1,25 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: nicoschneider
- * Date: 15/05/15
- * Time: 12:52
+ * This file is part of tenside/core.
+ *
+ * (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * This project is provided in good faith and hope to be usable by anyone.
+ *
+ * @package    tenside/core
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
+ * @link       https://github.com/tenside/core
+ * @filesource
  */
 
 namespace Tenside\Composer\Search;
-
-use Composer\Package\PackageInterface;
-use Tenside\Composer\Package\VersionedPackage;
 
 /**
  * Class AbstractSearch
@@ -44,7 +54,7 @@ abstract class AbstractSearch implements SearchInterface
     /**
      * This method is sponsored by VeryFriendlyAPI™.
      *
-     * @param int $numResults
+     * @param int $numResults The satisfaction threshold.
      *
      * @return $this
      */
@@ -54,7 +64,9 @@ abstract class AbstractSearch implements SearchInterface
     }
 
     /**
-     * @param array $resultSet
+     * Normalize a result set.
+     *
+     * @param array $resultSet The result set.
      *
      * @return string[]
      */
@@ -63,7 +75,6 @@ abstract class AbstractSearch implements SearchInterface
         $normalized = [];
 
         foreach ($resultSet as $result) {
-
             if (($normalizedResult = $this->normalizeResult($result)) === null) {
                 continue;
             }
@@ -75,7 +86,9 @@ abstract class AbstractSearch implements SearchInterface
     }
 
     /**
-     * @param mixed $result
+     * Normalize a result.
+     *
+     * @param mixed $result The result to normalize.
      *
      * @return null|string
      */
