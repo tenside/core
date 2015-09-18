@@ -553,6 +553,14 @@ class VersionedPackage implements PackageInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getFullPrettyVersion($truncate = true)
+    {
+        return $this->package->getFullPrettyVersion($truncate);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getArchiveExcludes()
