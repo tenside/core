@@ -28,43 +28,43 @@ use Symfony\Component\Security\Core\User\UserInterface;
 interface UserInformationInterface extends UserInterface
 {
     /**
-     * The key used for storing the access level,
+     * The key used for storing the roles,
      */
-    const KEY_ACL = 'acl';
+    const KEY_ROLES = 'acl';
 
     /**
      * Perform package upgrades.
      */
-    const ACL_UPGRADE = 0b1;
+    const ROLE_UPGRADE = 0b1;
 
     /**
      * Manipulate the package requirements.
      */
-    const ACL_MANIPULATE_REQUIREMENTS = 0b10;
+    const ROLE_MANIPULATE_REQUIREMENTS = 0b10;
 
     /**
      * Edit the composer.json.
      */
-    const ACL_EDIT_COMPOSER_JSON = 0b100;
+    const ROLE_EDIT_COMPOSER_JSON = 0b100;
 
     /**
      * Edit the AppKernel.
      */
-    const ACL_EDIT_APPKERNEL = 0b1000;
+    const ROLE_EDIT_APPKERNEL = 0b1000;
 
     /**
      * All access (aka admin).
      */
-    const ACL_ALL = 0b1111;
+    const ROLE_ALL = 0b1111;
 
     /**
      * Check if the user has the given access level.
      *
-     * @param string $accessLevel The access level to check.
+     * @param int $role The role to check.
      *
      * @return bool
      */
-    public function hasAccessLevel($accessLevel);
+    public function hasAccessLevel($role);
 
     /**
      * Returns the parameter keys.

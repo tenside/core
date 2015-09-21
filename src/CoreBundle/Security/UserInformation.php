@@ -40,6 +40,18 @@ class UserInformation implements UserInformationInterface
     private $salt;
 
     /**
+     * Map for translating roles to array of strings and vice versa.
+     *
+     * @var string[]
+     */
+    public static $roleMap = [
+        UserInformationInterface::ROLE_UPGRADE                 => 'ROLE_UPGRADE',
+        UserInformationInterface::ROLE_MANIPULATE_REQUIREMENTS => 'ROLE_MANIPULATE_REQUIREMENTS',
+        UserInformationInterface::ROLE_EDIT_COMPOSER_JSON      => 'ROLE_EDIT_COMPOSER_JSON',
+        UserInformationInterface::ROLE_EDIT_APPKERNEL          => 'ROLE_EDIT_APP_KERNEL',
+    ];
+
+    /**
      * Constructor.
      *
      * @param array $data An array of values.

@@ -74,7 +74,7 @@ class InstallProjectController extends AbstractController
         // Add the user now.
         $user = new UserInformation([
             'username' => $data->get('credentials/username'),
-            'acl'      => UserInformationInterface::ACL_ALL
+            'acl'      => UserInformationInterface::ROLE_ALL
         ]);
 
         $user->set(

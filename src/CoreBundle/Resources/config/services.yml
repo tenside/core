@@ -43,3 +43,11 @@ services:
         class:     Tenside\CoreBundle\Security\JWTAuthenticator
         arguments: ["@tenside.config"]
         public:    false
+
+    tenside.permission_voter:
+        class:     Tenside\CoreBundle\Security\PermissionVoter
+        arguments: ["@router", "@request_stack"]
+        tags:
+            - { name: security.voter }
+        public:    false
+

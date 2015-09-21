@@ -7,26 +7,36 @@ composer_json_get:
     path:     /v1/composer.json
     defaults: { _controller: TensideCoreBundle:ComposerJson:getComposerJson }
     methods:  [GET]
+    options:
+        required_role: ROLE_EDIT_COMPOSER_JSON
 
 composer_json_put:
     path:     /v1/composer.json
     defaults: { _controller: TensideCoreBundle:ComposerJson:putComposerJson }
     methods:  [PUT]
+    options:
+        required_role: ROLE_EDIT_COMPOSER_JSON
 
 app_kernel_get:
     path:     /v1/AppKernel.php
     defaults: { _controller: TensideCoreBundle:AppKernel:getAppKernel }
     methods:  [GET]
+    options:
+        required_role: ROLE_EDIT_APP_KERNEL
 
 app_kernel_put:
     path:     /v1/AppKernel.php
     defaults: { _controller: TensideCoreBundle:AppKernel:putAppKernel }
     methods:  [PUT]
+    options:
+        required_role: ROLE_EDIT_APP_KERNEL
 
 packages_get:
     path:     /v1/packages
     defaults: { _controller: TensideCoreBundle:Package:packageList }
     methods:  [GET]
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 package_get:
     path:     /v1/packages/{vendor}/{package}
@@ -35,6 +45,8 @@ package_get:
     requirements:
         vendor: "[\-\_a-zA-Z0-9]+"
         package: "[\-\_a-zA-Z0-9]+"
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 package_put:
     path:     /v1/packages/{vendor}/{package}
@@ -43,6 +55,8 @@ package_put:
     requirements:
         vendor: "[\-\_a-zA-Z0-9]+"
         package: "[\-\_a-zA-Z0-9]+"
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 package_delete:
     path:     /v1/packages/{vendor}/{package}
@@ -51,6 +65,8 @@ package_delete:
     requirements:
         vendor: "[\-\_a-zA-Z0-9]+"
         package: "[\-\_a-zA-Z0-9]+"
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 search_package_put:
     path:     /v1/search

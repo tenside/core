@@ -115,31 +115,4 @@ class UserProviderFromConfig implements UserProviderInterface
 
         return $this;
     }
-
-    /**
-     * Create a string list of granted access levels.
-     *
-     * @param UserInformationInterface $userInformation The user information object for which the list shall be created.
-     *
-     * @return string[]
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
-     */
-    private function getAccessLevelList(UserInformationInterface $userInformation)
-    {
-        return array_values(
-            array_filter(
-                [
-                    UserInformationInterface::ACL_UPGRADE                 => 'upgrade',
-                    UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
-                    UserInformationInterface::ACL_EDIT_COMPOSER_JSON      => 'edit-composer-json',
-                    UserInformationInterface::ACL_EDIT_APPKERNEL          => 'edit-app-kernel',
-                ],
-                function ($level) use ($userInformation) {
-                    return $userInformation->hasAccessLevel($level);
-                },
-                ARRAY_FILTER_USE_KEY
-            )
-        );
-    }
 }

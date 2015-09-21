@@ -34,13 +34,22 @@ class UserInformationTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasAccessLevel()
     {
-        $user = new UserInformation(['acl' => UserInformation::ACL_ALL]);
+        $user = new UserInformation(['acl' => UserInformation::ROLE_ALL]);
 
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_ALL));
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_UPGRADE));
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_MANIPULATE_REQUIREMENTS));
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_EDIT_COMPOSER_JSON));
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_EDIT_APPKERNEL));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_ALL));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_UPGRADE));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_MANIPULATE_REQUIREMENTS));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_EDIT_COMPOSER_JSON));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_EDIT_APPKERNEL));
+
+        $this->assertEquals(
+            ['ROLE_UPGRADE',
+             'ROLE_MANIPULATE_REQUIREMENTS',
+             'ROLE_EDIT_COMPOSER_JSON',
+             'ROLE_EDIT_APP_KERNEL',
+            ],
+            $user->getRoles()
+        );
     }
 
     /**
@@ -52,11 +61,12 @@ class UserInformationTest extends \PHPUnit_Framework_TestCase
     {
         $user = new UserInformation();
 
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_ALL));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_UPGRADE));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_MANIPULATE_REQUIREMENTS));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_EDIT_COMPOSER_JSON));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_EDIT_APPKERNEL));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_ALL));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_UPGRADE));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_MANIPULATE_REQUIREMENTS));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_EDIT_COMPOSER_JSON));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_EDIT_APPKERNEL));
+        $this->assertEquals([], $user->getRoles());
     }
 
     /**
@@ -67,12 +77,13 @@ class UserInformationTest extends \PHPUnit_Framework_TestCase
     public function testSetAccessLevel()
     {
         $user = new UserInformation();
-        $user->setAccessLevel(UserInformation::ACL_MANIPULATE_REQUIREMENTS);
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_ALL));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_UPGRADE));
-        $this->assertTrue($user->hasAccessLevel(UserInformation::ACL_MANIPULATE_REQUIREMENTS));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_EDIT_COMPOSER_JSON));
-        $this->assertFalse($user->hasAccessLevel(UserInformation::ACL_EDIT_APPKERNEL));
+        $user->setAccessLevel(UserInformation::ROLE_MANIPULATE_REQUIREMENTS);
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_ALL));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_UPGRADE));
+        $this->assertTrue($user->hasAccessLevel(UserInformation::ROLE_MANIPULATE_REQUIREMENTS));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_EDIT_COMPOSER_JSON));
+        $this->assertFalse($user->hasAccessLevel(UserInformation::ROLE_EDIT_APPKERNEL));
+        $this->assertEquals(['ROLE_MANIPULATE_REQUIREMENTS'], $user->getRoles());
     }
 
     /**
