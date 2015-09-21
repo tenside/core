@@ -99,7 +99,7 @@ class CoreTask extends AbstractTask
             $this->addFile($file, false);
         }
 
-        $this->addFile(new \SplFileInfo($composerDir . '/vendor/seld/cli-prompt/res/hiddeninput.exe'), false);
+        $this->addFile(new \SplFileInfo($vendorDir . '/seld/cli-prompt/res/hiddeninput.exe'), false);
 
         $finder = new Finder();
         $finder->files()
