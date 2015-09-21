@@ -60,7 +60,7 @@ class UpgradeTask extends Task
      *
      * @return void
      */
-    public function perform($tenside)
+    public function perform()
     {
         $this->setStatus($this::STATE_RUNNING);
 
