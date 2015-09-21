@@ -74,21 +74,18 @@ class UserInformation implements UserInformationInterface
      */
     public function getRoles()
     {
-        $user = $this;
-        return array_values(
-            array_filter(
-                [
-                    UserInformationInterface::ACL_UPGRADE                 => 'upgrade',
-                    UserInformationInterface::ACL_MANIPULATE_REQUIREMENTS => 'manipulate-requirements',
-                    UserInformationInterface::ACL_EDIT_COMPOSER_JSON      => 'edit-composer-json',
-                    UserInformationInterface::ACL_EDIT_APPKERNEL          => 'edit-app-kernel',
-                ],
-                function ($level) use ($user) {
-                    return $user->hasAccessLevel($level);
-                },
-                ARRAY_FILTER_USE_KEY
-            )
-        );
+        $user       = $this;
+        $comparator = function ($level) use ($user) {
+            return $user->hasAccessLevel($level);
+        };
+
+        // Fallback for PHP < 5.6 which do not support ARRAY_FILTER_USE_KEY.
+        if (version_compare(PHP_VERSION, '5.6', '<')) {
+            $filtered = array_flip(array_filter(array_keys(self::$roleMap), $comparator));
+            return array_values(array_intersect_key(self::$roleMap, $filtered));
+        }
+
+        return array_values(array_filter(self::$roleMap, $comparator, ARRAY_FILTER_USE_KEY));
     }
 
     /**
