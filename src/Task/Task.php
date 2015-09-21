@@ -34,6 +34,16 @@ use Tenside\Util\JsonArray;
 abstract class Task
 {
     /**
+     * The type of the task.
+     */
+    const SETTING_TYPE = 'type';
+
+    /**
+     * The id of the task.
+     */
+    const SETTING_ID = 'id';
+
+    /**
      * This state determines that the task is still running.
      */
     const STATE_RUNNING = 'RUNNING';

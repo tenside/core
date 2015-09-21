@@ -18,8 +18,8 @@ services:
         public:    true
 
     tenside.tasks:
-        class:     Tenside\Task\Tasklist
-        arguments: ["@tenside.home"]
+        class:     Tenside\Task\TaskList
+        arguments: ["@tenside.home", "@event_dispatcher"]
         public:    true
 
     tenside.composer_json:
@@ -38,6 +38,11 @@ services:
         class: Tenside\CoreBundle\EventListener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    tenside.task_listener:
+        class: Tenside\CoreBundle\EventListener\TaskListener
+        tags:
+            - { name: kernel.event_listener, event: tenside.create_task, method: onCreateTask }
 
     tenside.jwt_authenticator:
         class:     Tenside\CoreBundle\Security\JWTAuthenticator

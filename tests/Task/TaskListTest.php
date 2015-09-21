@@ -20,6 +20,9 @@
 
 namespace Tenside\Test\Task;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Tenside\CoreBundle\Events\CreateTaskEvent;
+use Tenside\Task\Task;
 use Tenside\Task\TaskList;
 use Tenside\Test\TestCase;
 use Tenside\Util\JsonArray;
@@ -29,6 +32,36 @@ use Tenside\Util\JsonArray;
  */
 class TaskListTest extends TestCase
 {
+    /**
+     * Create the event dispatcher with a mocked listener.
+     *
+     * @return EventDispatcher
+     */
+    private function getEventDispatcher()
+    {
+        $unitTest   = $this;
+        $dispatcher = new EventDispatcher();
+        $listener   = function (CreateTaskEvent $event) use ($unitTest) {
+            if ('unknown-type' === $event->getMetaData()->get(Task::SETTING_TYPE)) {
+                return;
+            }
+
+            $task = $this
+                ->getMockBuilder('Tenside\Task\Task')
+                ->setConstructorArgs([$event->getMetaData()])
+                ->setMethods(['getType', 'perform'])
+                ->getMockForAbstractClass();
+
+            $task->method('getType')->willReturn($event->getMetaData()->get(Task::SETTING_TYPE));
+
+            $event->setTask($task);
+        };
+
+        $dispatcher->addListener('tenside.create_task', $listener);
+
+        return $dispatcher;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,7 +77,7 @@ class TaskListTest extends TestCase
      */
     public function testEmptyListDoesNotReturnTask()
     {
-        $list = new TaskList($this->workDir);
+        $list = new TaskList($this->workDir, $this->getEventDispatcher());
 
         $this->assertNull($list->dequeue());
     }
@@ -56,12 +89,12 @@ class TaskListTest extends TestCase
      */
     public function testAddTask()
     {
-        $list = new TaskList($this->workDir);
+        $list = new TaskList($this->workDir, $this->getEventDispatcher());
 
         $taskId = $list->queue('upgrade');
 
         $this->assertContains($taskId, $list->getIds());
-        $this->assertInstanceOf('Tenside\Task\UpgradeTask', $list->getTask($taskId));
+        $this->assertInstanceOf('Tenside\Task\Task', $list->getTask($taskId));
     }
 
     /**
@@ -71,7 +104,7 @@ class TaskListTest extends TestCase
      */
     public function testUnknownIdReturnsNull()
     {
-        $list = new TaskList($this->workDir);
+        $list = new TaskList($this->workDir, $this->getEventDispatcher());
 
         $taskId = $list->queue('upgrade');
         $this->assertNull($list->getTask($taskId . 'some-suffix-to-break-it'));
@@ -79,7 +112,7 @@ class TaskListTest extends TestCase
 
         // Now ensure the list is unchanged.
         $this->assertContains($taskId, $list->getIds());
-        $this->assertInstanceOf('Tenside\Task\UpgradeTask', $list->getTask($taskId));
+        $this->assertInstanceOf('Tenside\Task\Task', $list->getTask($taskId));
     }
 
     /**
@@ -89,7 +122,7 @@ class TaskListTest extends TestCase
      */
     public function testUnknownTypeReturnsNull()
     {
-        $list = new TaskList($this->workDir);
+        $list = new TaskList($this->workDir, $this->getEventDispatcher());
 
         $taskId = $list->queue('unknown-type');
 
@@ -105,15 +138,15 @@ class TaskListTest extends TestCase
      */
     public function testListReturnsAsFifo()
     {
-        $list   = new TaskList($this->workDir);
+        $list   = new TaskList($this->workDir, $this->getEventDispatcher());
         $first  = $list->queue('upgrade', new JsonArray(['test' => 'value1']));
         $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
 
         $task = $list->dequeue();
-        $this->assertInstanceOf('Tenside\Task\UpgradeTask', $task);
+        $this->assertInstanceOf('Tenside\Task\Task', $task);
         $this->assertEquals($first, $task->getId());
         $task = $list->dequeue();
-        $this->assertInstanceOf('Tenside\Task\UpgradeTask', $task);
+        $this->assertInstanceOf('Tenside\Task\Task', $task);
         $this->assertEquals($second, $task->getId());
 
         $this->assertEmpty($list->getIds());

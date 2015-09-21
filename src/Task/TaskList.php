@@ -20,6 +20,8 @@
 
 namespace Tenside\Task;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Tenside\CoreBundle\Events\CreateTaskEvent;
 use Tenside\Util\JsonArray;
 use Tenside\Util\JsonFile;
 
@@ -36,13 +38,23 @@ class TaskList
     private $dataDir;
 
     /**
+     * The event dispatcher.
+     *
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * Create a new instance.
      *
-     * @param string $dataDir The directory to keep the database in.
+     * @param string                   $dataDir         The directory to keep the database in.
+     *
+     * @param EventDispatcherInterface $eventDispatcher The event dispatcher.
      */
-    public function __construct($dataDir)
+    public function __construct($dataDir, EventDispatcherInterface $eventDispatcher)
     {
-        $this->dataDir = $dataDir;
+        $this->dataDir    = $dataDir;
+        $this->dispatcher = $eventDispatcher;
     }
 
     /**
@@ -63,8 +75,8 @@ class TaskList
         }
 
         $metaData
-            ->set('id', $taskId)
-            ->set('type', $type);
+            ->set(Task::SETTING_ID, $taskId)
+            ->set(Task::SETTING_TYPE, $type);
 
         $this->getConfig()->set($taskId, $metaData->getData());
 
@@ -149,14 +161,10 @@ class TaskList
      */
     private function createTaskFromMetaData(JsonArray $config)
     {
+        $event = new CreateTaskEvent($config);
+        $this->dispatcher->dispatch('tenside.create_task', $event);
 
-        switch ($config->get('type')) {
-            case 'upgrade':
-                return new UpgradeTask($config);
-            default:
-        }
-
-        return null;
+        return $event->getTask();
     }
 
     /**
