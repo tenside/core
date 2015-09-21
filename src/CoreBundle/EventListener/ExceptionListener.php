@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
- * This class provides loading of the tenside core configuration.
+ * This class converts exceptions into proper responses.
  */
 class ExceptionListener
 {
