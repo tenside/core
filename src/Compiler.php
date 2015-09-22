@@ -66,6 +66,20 @@ class Compiler
     private $versions;
 
     /**
+     * Path to the vendor dir.
+     *
+     * @var string
+     */
+    private $vendorDir;
+
+    /**
+     * Path to the package root dirs.
+     *
+     * @var string[]
+     */
+    private $packageRoot;
+
+    /**
      * Create a new instance.
      *
      * @param LoggerInterface $logger The logger instance to use.
@@ -103,11 +117,15 @@ class Compiler
      */
     public function getVendorDir()
     {
+        if ($this->vendorDir) {
+            return $this->vendorDir;
+        }
+
         if (is_dir(__DIR__ . '/../../../../vendor')) {
-            return realpath(__DIR__ . '/../../../../vendor');
+            return $this->vendorDir = realpath(__DIR__ . '/../../../../vendor');
         }
         if (is_dir(__DIR__ . '/../vendor')) {
-            return realpath(__DIR__ . '/../vendor');
+            return $this->vendorDir = realpath(__DIR__ . '/../vendor');
         }
 
         throw new \RuntimeException('Can not locate the vendor root.');
@@ -265,16 +283,20 @@ class Compiler
      */
     public function getPackageRoot($packageName)
     {
+        if (isset($this->packageRoot[$packageName])) {
+            return $this->packageRoot[$packageName];
+        }
+
         $vendorDir = $this->getVendorDir();
         // Detect the root directory of the package.
         if (is_dir($vendorDir . '/' . $packageName)) {
-            return $vendorDir . '/' . $packageName;
+            return $this->packageRoot[$packageName] = $vendorDir . '/' . $packageName;
         }
 
         // Second, check if it is the root package.
         $content = json_decode(file_get_contents(dirname($vendorDir) . '/composer.json'), true);
         if ($content['name'] === $packageName) {
-            return dirname($this->getVendorDir());
+            return $this->packageRoot[$packageName] = dirname($this->getVendorDir());
         }
 
         throw new \RuntimeException('Unable to determine package root of: ' . $packageName . ' is it installed?');
