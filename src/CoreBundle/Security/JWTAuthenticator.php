@@ -59,10 +59,6 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
     {
         $this->secret  = $config->getSecret();
         $this->localId = $config->getLocalDomain();
-
-        if (!$this->secret) {
-            throw new \LogicException('Config does not contain a secret.');
-        }
     }
 
     /**
@@ -93,6 +89,10 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
      */
     public function createToken(Request $request, $providerKey)
     {
+        if (!$this->secret) {
+            return null;
+        }
+
         // look for an authorization header
         $authorizationHeader = $request->headers->get('Authorization');
 
@@ -128,10 +128,16 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
      *
      * @return JavascriptWebToken
      *
+     * @throws \LogicException When no secret is in the config and therefore the token can not be authenticated.
+     *
      * @throws AuthenticationException When the token is invalid.
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
+        if (!$this->secret) {
+            throw new \LogicException('Config does not contain a secret.');
+        }
+
         if ($token->getCredentials() === null) {
             throw new AuthenticationException(sprintf('Invalid token.'));
         }
