@@ -170,7 +170,7 @@ class Application extends SymfonyApplication
         }
 
         // FIXME: this is broken now.
-        RuntimeHelper::setupHome($container->get('tenside.home'));
+        RuntimeHelper::setupHome($container->get('tenside.home')->homeDir());
 
         $this->io = new ConsoleIO($input, $output, $this->getHelperSet());
 
