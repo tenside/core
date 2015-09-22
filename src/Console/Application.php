@@ -83,6 +83,8 @@ class Application extends SymfonyApplication
             ini_set('xdebug.scream', false);
         }
 
+        $this->ensurePath();
+
         if (function_exists('date_default_timezone_set') && function_exists('date_default_timezone_get')) {
             date_default_timezone_set(date_default_timezone_get());
         }
@@ -330,5 +332,23 @@ class Application extends SymfonyApplication
         }
 
         return parent::getLongVersion() . ' ' . Tenside::RELEASE_DATE;
+    }
+
+    /**
+     * Ensure we have a PATH environment variable.
+     *
+     * @return void
+     */
+    protected function ensurePath()
+    {
+        // "git" binary not found when no PATH environment is present.
+        // https://github.com/contao-community-alliance/composer-client/issues/54
+        if (!getenv('PATH')) {
+            if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+                putenv('PATH=%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem');
+            } else {
+                putenv('PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin');
+            }
+        }
     }
 }
