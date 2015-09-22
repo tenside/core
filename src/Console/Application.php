@@ -21,7 +21,6 @@
 namespace Tenside\Console;
 
 use Composer\Command\ScriptAliasCommand;
-use Composer\Util\ErrorHandler;
 use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Composer\IO\ConsoleIO;
@@ -210,15 +209,6 @@ class Application extends SymfonyApplication
             }
         }
 
-        if (getenv('COMPOSER_NO_INTERACTION')) {
-            $input->setInteractive(false);
-        }
-
-        if ($input->hasParameterOption('--profile')) {
-            $startTime = microtime(true);
-            $this->io->enableDebugging($startTime);
-        }
-
         $result = parent::doRun($input, $output);
 
         if (isset($oldWorkingDir)) {
@@ -297,29 +287,6 @@ class Application extends SymfonyApplication
                 }
             }
         }
-    }
-
-    /**
-     * Adds a command object.
-     *
-     * If a command with the same name already exists, it will be overridden.
-     *
-     * @param Command $command A Command object
-     *
-     * @return Command The registered command
-     *
-     * @api
-     */
-    public function add(Command $command)
-    {
-        // We have to skip any command requiring the ability to manipulate the container and/or filesystem within the
-        // phar file.
-        if ('phar' === $this->kernel->getEnvironment()
-            && in_array($command->getName(), ['debug:container', 'assets:install', 'cache:clear', 'cache:warmup'])) {
-            return $command;
-        }
-
-        return parent::add($command);
     }
 
     /**
