@@ -26,9 +26,9 @@ use Composer\Util\RemoteFilesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Tenside\CoreBundle\Security\UserInformation;
 use Tenside\CoreBundle\Security\UserInformationInterface;
-use Tenside\CoreBundle\TensideJsonConfig;
 use Tenside\Task\InstallTask;
 use Tenside\Util\JsonArray;
 
@@ -62,7 +62,7 @@ class InstallProjectController extends AbstractController
         $taskData->set(InstallTask::SETTING_PASSWORD, $inputData->get('credentials/password'));
 
         // Add tenside configuration.
-        $tensideConfig = new TensideJsonConfig($this->get('tenside.home')->homeDir());
+        $tensideConfig = $this->get('tenside.config');
         $tensideConfig->set('secret', $inputData->get('credentials/secret'));
 
         // Add the user now.
@@ -80,10 +80,16 @@ class InstallProjectController extends AbstractController
 
         $taskId = $this->getTensideTasks()->queue('install', $taskData);
 
-        return new JsonResponse([
-            'status' => 'OK',
-            'task'   => $taskId
-        ]);
+        return new JsonResponse(
+            [
+                'status' => 'OK',
+                'task'   => $taskId
+            ],
+            JsonResponse::HTTP_CREATED,
+            [
+                'Location' => $this->generateUrl('task_get', ['taskId' => $taskId], UrlGeneratorInterface::ABSOLUTE_URL)
+            ]
+        );
     }
 
     /**
