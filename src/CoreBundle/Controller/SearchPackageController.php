@@ -12,6 +12,7 @@
  *
  * @package    tenside/core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Nico Schneider <nico.tcap@gmail.com>
  * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
  * @link       https://github.com/tenside/core
@@ -20,7 +21,6 @@
 
 namespace Tenside\CoreBundle\Controller;
 
-use Composer\Package\CompletePackageInterface;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
