@@ -191,24 +191,7 @@ class Application extends SymfonyApplication
 
         $this->isUpdateNeeded($input, $output);
 
-        $result = parent::doRun($input, $output);
-
-        if (isset($oldWorkingDir)) {
-            chdir($oldWorkingDir);
-        }
-
-        if (isset($startTime)) {
-            $output->writeln(
-                '<info>Memory usage: ' .
-                round((memory_get_usage() / 1024 / 1024), 2) .
-                'MB (peak: ' .
-                round((memory_get_peak_usage() / 1024 / 1024), 2) .
-                'MB), time: ' .
-                round((microtime(true) - $startTime), 2) . 's</info>'
-            );
-        }
-
-        return $result;
+        return parent::doRun($input, $output);
     }
 
     /**
