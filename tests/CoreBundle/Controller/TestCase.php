@@ -22,9 +22,9 @@ namespace Tenside\Test\CoreBundle\Controller;
 
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tenside\Composer\ComposerJsonFactory;
-use Tenside\CoreBundle\TensideJsonConfig;
-use Tenside\Task\TaskList;
+use Tenside\CoreBundle\DependencyInjection\Factory\ComposerJsonFactory;
+use Tenside\CoreBundle\DependencyInjection\Factory\TaskListFactory;
+use Tenside\CoreBundle\DependencyInjection\Factory\TensideJsonConfigFactory;
 use Tenside\Tenside;
 use Tenside\Test\TestCase as BaseTestCase;
 
@@ -59,13 +59,13 @@ class TestCase extends BaseTestCase
         }
 
         if (!$container->has('tenside.config')) {
-            $container->set('tenside.config', new TensideJsonConfig($container->get('tenside.home')));
+            $container->set('tenside.config', TensideJsonConfigFactory::create($container->get('tenside.home')));
         }
 
         if (!$container->has('tenside.tasks')) {
             $container->set(
                 'tenside.tasks',
-                new TaskList($container->get('tenside.home'), $container->get('event_dispatcher'))
+                TaskListFactory::create($container->get('tenside.home'), $container->get('event_dispatcher'))
             );
         }
 
