@@ -9,7 +9,8 @@ services:
 
     tenside.cli_script:
         class:     Tenside\CoreBundle\CliScriptDeterminator
-        arguments: ["%tenside.script_name%"]
+        # I really hope this works out as intended, if not inject the kernel.
+        arguments: ["%kernel.root_dir%/%tenside.script_name%"]
         public:    true
 
     tenside.config:

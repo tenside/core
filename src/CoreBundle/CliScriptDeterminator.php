@@ -46,7 +46,6 @@ class CliScriptDeterminator
      */
     public function __construct($scriptName)
     {
-        // FIXME: we might want to use the full path here rather than the relative path.
         $this->scriptName = $scriptName;
     }
 
