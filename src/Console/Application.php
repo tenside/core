@@ -97,7 +97,8 @@ class Application extends SymfonyApplication
                 Kernel::VERSION,
                 $kernel->getName(),
                 $kernel->getEnvironment(),
-                ($kernel->isDebug() ? '/debug' : ''))
+                ($kernel->isDebug() ? '/debug' : '')
+            )
         );
 
         $definition = $this->getDefinition();
