@@ -149,6 +149,17 @@ class CoreTask extends AbstractTask
             ->ignoreVCS(true)
             ->name('*.php')
             ->exclude('Tests')
+            ->notName('/(.*' .implode('.*|.*', [
+                'Config',
+                'Assets',
+                'Cache',
+                'Debug',
+                'Router',
+                'Server',
+                'Translation',
+                'YamlLint',
+                'Acl'
+                    ]) . '.*)Command\.php$/')
             ->in($vendorDir . '/symfony/config')
             ->in($vendorDir . '/symfony/dependency-injection')
             ->in($vendorDir . '/symfony/debug')
