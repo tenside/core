@@ -1,0 +1,26 @@
+{
+  "packages": {
+    "vendor\/package-name": {
+      "1.0.0": {
+        "name": "vendor\/package-name",
+        "version": "1.0.0",
+        "dist": {
+          "url": "file://##URL##/test-repository/vendor-package-name.zip",
+          "type": "zip",
+          "reference": "master"
+        }
+      }
+    },
+    "vendor\/dependency-name": {
+      "1.0.0": {
+        "name": "vendor\/dependency-name",
+        "version": "1.0.0",
+        "dist": {
+          "url": "file://##URL##/test-repository/vendor-dependency-name.zip",
+          "type": "zip",
+          "reference": "master"
+        }
+      }
+    }
+  }
+}

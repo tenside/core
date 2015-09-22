@@ -1,0 +1,12 @@
+{
+    "config": {
+        "minimum-stability": "dev"
+    },
+    "repositories": {
+        "packagist": false,
+        "test": {
+            "type": "composer",
+            "url": "file://##URL##/test-repository/packages.json"
+        }
+    }
+}
