@@ -111,12 +111,46 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         $tempDir  = $this->getTempDir();
-        $fullPath = $tempDir . '/' . $newPath;
+        $fullPath = $tempDir . DIRECTORY_SEPARATOR . $newPath;
         if (!is_dir(dirname($fullPath))) {
             mkdir(dirname($fullPath), 0777, true);
         }
-        copy($this->getFixturesDirectory() . '/' . $path, $fullPath);
+        copy($this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $path, $fullPath);
 
         return $fullPath;
+    }
+
+    /**
+     * Provide a fixture in the temp directory with the passed data and return the complete path to the new file.
+     *
+     * @param string $path    The file name of the fixture.
+     *
+     * @param string $content The fixture content.
+     *
+     * @return string
+     */
+    public function createFixture($path, $content)
+    {
+        $tempDir  = $this->getTempDir();
+        $fullPath = $tempDir . DIRECTORY_SEPARATOR . $path;
+        if (!is_dir(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0777, true);
+        }
+
+        file_put_contents($fullPath, $content);
+
+        return $fullPath;
+    }
+
+    /**
+     * Read the content of a fixture to memory and return it.
+     *
+     * @param string $path The fixture to read.
+     *
+     * @return string
+     */
+    public function readFixture($path)
+    {
+        return file_get_contents($this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $path);
     }
 }
