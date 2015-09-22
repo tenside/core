@@ -20,8 +20,6 @@
 
 namespace Tenside\Task;
 
-use Tenside\Tenside;
-
 /**
  * This class runs a task.
  */
@@ -35,32 +33,22 @@ class Runner
     private $task;
 
     /**
-     * The tenside instance.
-     *
-     * @var Tenside
-     */
-    private $tenside;
-
-    /**
      * Create a new instance.
      *
-     * @param Task    $task    The task to be run.
-     *
-     * @param Tenside $tenside The tenside instance to use.
+     * @param Task $task The task to be run.
      */
-    public function __construct(Task $task, Tenside $tenside)
+    public function __construct(Task $task)
     {
-        $this->task    = $task;
-        $this->tenside = $tenside;
+        $this->task = $task;
     }
 
     /**
      * Run the task.
      *
-     * @return void
+     * @return bool
      */
     public function run()
     {
-        $this->task->perform($this->tenside);
+        return Task::STATE_FINISHED === $this->task->perform();
     }
 }

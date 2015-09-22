@@ -51,16 +51,18 @@ class RunTaskCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $tenside   = $container->get('tenside');
-        $taskList  = $container->get('tenside.tasks');
-        $task      = $taskList->getTask($input->getArgument('taskId'));
+        $task      = $container->get('tenside.tasks')->getTask($input->getArgument('taskId'));
 
         if (!$task) {
             throw new \InvalidArgumentException('Task not found: ' . $input->getArgument('taskId'));
         }
 
-        $runner = new Runner($task, $tenside);
+        $runner = new Runner($task);
 
-        $runner->run();
+        if (!$runner->run()) {
+            return 1;
+        }
+
+        return 0;
     }
 }
