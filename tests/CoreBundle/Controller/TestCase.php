@@ -22,8 +22,10 @@
 namespace Tenside\Test\CoreBundle\Controller;
 
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tenside\Composer\ComposerJsonFactory;
 use Tenside\CoreBundle\TensideJsonConfig;
+use Tenside\Task\TaskList;
 use Tenside\Tenside;
 use Tenside\Test\TestCase as BaseTestCase;
 
@@ -47,6 +49,10 @@ class TestCase extends BaseTestCase
             $container->set($name, $service);
         }
 
+        if (!$container->has('event_dispatcher')) {
+            $container->set('event_dispatcher', new EventDispatcher());
+        }
+
         if (!$container->has('tenside.home')) {
             $home = $this->getMock('Tenside\\CoreBundle\\HomePathDeterminator', ['homeDir']);
             $home->method('homeDir')->willReturn($this->getTempDir());
@@ -55,6 +61,13 @@ class TestCase extends BaseTestCase
 
         if (!$container->has('tenside.config')) {
             $container->set('tenside.config', new TensideJsonConfig($container->get('tenside.home')));
+        }
+
+        if (!$container->has('tenside.tasks')) {
+            $container->set(
+                'tenside.tasks',
+                new TaskList($container->get('tenside.home'), $container->get('event_dispatcher'))
+            );
         }
 
         if (!$container->has('tenside.composer_json')) {
