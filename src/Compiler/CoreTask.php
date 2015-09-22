@@ -165,6 +165,7 @@ class CoreTask extends AbstractTask
             ->in($vendorDir . '/symfony/debug')
             ->in($vendorDir . '/symfony/event-dispatcher')
             ->in($vendorDir . '/symfony/framework-bundle')
+            ->in($vendorDir . '/symfony/filesystem')
             ->in($vendorDir . '/symfony/http-foundation')
             ->in($vendorDir . '/symfony/http-kernel')
             ->in($vendorDir . '/symfony/translation')
