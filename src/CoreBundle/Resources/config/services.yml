@@ -14,18 +14,22 @@ services:
         public:    true
 
     tenside.config:
-        class:     Tenside\CoreBundle\TensideJsonConfig
-        arguments: ["@tenside.home"]
-        public:    true
+        class:          Tenside\CoreBundle\TensideJsonConfig
+        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\TensideJsonConfigFactory
+        factory_method: create
+        arguments:      ["@tenside.home"]
+        public:         true
 
     tenside.tasks:
-        class:     Tenside\Task\TaskList
-        arguments: ["@tenside.home", "@event_dispatcher"]
-        public:    true
+        class:          Tenside\Task\TaskList
+        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\TaskListFactory
+        factory_method: create
+        arguments:      ["@tenside.home", "@event_dispatcher"]
+        public:         true
 
     tenside.composer_json:
         class:          Tenside\Composer\ComposerJson
-        factory_class:  Tenside\Composer\ComposerJsonFactory
+        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\ComposerJsonFactory
         factory_method: create
         arguments:      ["@tenside.home"]
         shared:         false

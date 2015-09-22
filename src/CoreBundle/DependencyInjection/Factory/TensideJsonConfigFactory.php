@@ -18,24 +18,25 @@
  * @filesource
  */
 
-namespace Tenside\Composer;
+namespace Tenside\CoreBundle\DependencyInjection\Factory;
 
 use Tenside\CoreBundle\HomePathDeterminator;
+use Tenside\CoreBundle\TensideJsonConfig;
 
 /**
- * This class creates a composerJson instance.
+ * This class creates a config instance.
  */
-class ComposerJsonFactory
+class TensideJsonConfigFactory
 {
     /**
      * Create an instance.
      *
      * @param HomePathDeterminator $home The home determinator.
      *
-     * @return ComposerJson
+     * @return TensideJsonConfig
      */
     public static function create(HomePathDeterminator $home)
     {
-        return new ComposerJson($home->homeDir() . DIRECTORY_SEPARATOR . 'composer.json');
+        return new TensideJsonConfig($home->homeDir());
     }
 }

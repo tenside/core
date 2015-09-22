@@ -47,14 +47,6 @@ class HomePathDeterminator
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function __toString()
-    {
-        return $this->homeDir();
-    }
-
-    /**
      * Determine the correct working directory.
      *
      * @return string
