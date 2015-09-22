@@ -58,9 +58,27 @@ class InstallProjectControllerTest extends TestCase
         $passwordEncoder->method('encodePassword')->willReturn('s3cret');
         $passwordEncoder->method('isPasswordValid')->willReturn(true);
 
-        $controller = new InstallProjectController();
+        $userProvider = $this
+            ->getMock(
+                'Tenside\\CoreBundle\\Security\\UserProviderFromConfig',
+                [],
+                [$this->getMockForAbstractClass('Tenside\\Config\\SourceInterface')]
+            );
+        $userProvider->expects($this->once())->method('addUser')->willReturn($userProvider);
+
+        $controller = $this->getMock(
+            'Tenside\\CoreBundle\\Controller\\InstallProjectController',
+            ['generateUrl']
+        );
+        $controller->method('generateUrl')->willReturn('http://url/to/task');
+
+        /** @var $controller InstallProjectController */
+
         $controller->setContainer(
-            $this->createDefaultContainer(['security.password_encoder' => $passwordEncoder])
+            $container = $this->createDefaultContainer([
+                'security.password_encoder' => $passwordEncoder,
+                'tenside.user_provider'     => $userProvider
+            ])
         );
 
         $request = new Request([], [], [], [], [], [], json_encode(['project' =>
@@ -70,11 +88,12 @@ class InstallProjectControllerTest extends TestCase
             ]
         ]));
 
-        $this->markTestIncomplete();
-
         $response = $controller->createProjectAction($request);
         $data     = json_decode($response->getContent(), true);
 
         $this->assertEquals('OK', $data['status']);
+        $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
+        $this->assertCount(1, $container->get('tenside.tasks')->getIds());
+        $this->assertEquals($container->get('tenside.tasks')->getIds()[0], $data['task']);
     }
 }
