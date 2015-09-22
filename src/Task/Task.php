@@ -53,6 +53,11 @@ abstract class Task
     const STATE_FINISHED = 'FINISHED';
 
     /**
+     * This state determines that the task has been finished with errors.
+     */
+    const STATE_ERROR = 'ERROR';
+
+    /**
      * The task file to write to.
      *
      * @var JsonArray
