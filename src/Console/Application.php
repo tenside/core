@@ -92,8 +92,13 @@ class Application extends SymfonyApplication
 
         parent::__construct(
             'Tenside',
-            Tenside::VERSION . ' (symfony ' . Kernel::VERSION . ') ' .
-            ' - ' . $kernel->getName() . '/' . $kernel->getEnvironment() . ($kernel->isDebug() ? '/debug' : '')
+            sprintf(
+                '%s using symfony %s - %s/%s',
+                Tenside::VERSION,
+                Kernel::VERSION,
+                $kernel->getName(),
+                $kernel->getEnvironment(),
+                ($kernel->isDebug() ? '/debug' : ''))
         );
 
         $definition = $this->getDefinition();
