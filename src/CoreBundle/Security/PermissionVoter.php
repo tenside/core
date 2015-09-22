@@ -50,9 +50,7 @@ class PermissionVoter implements VoterInterface
      *
      * @param Router       $router       The router component.
      *
-     * @param RequestStack $requestStack The
-     *
-     * @internal param ContainerInterface $container The dependency injection container.
+     * @param RequestStack $requestStack The request stack.
      */
     public function __construct(Router $router, RequestStack $requestStack)
     {
