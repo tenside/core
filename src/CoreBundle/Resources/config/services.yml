@@ -32,7 +32,6 @@ services:
     tenside.user_provider:
         class:     Tenside\CoreBundle\Security\UserProviderFromConfig
         arguments: ["@tenside.config"]
-        public:    false
 
     tenside.exception_renderer:
         class: Tenside\CoreBundle\EventListener\ExceptionListener
