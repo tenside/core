@@ -50,15 +50,15 @@ class CoreTask extends AbstractTask
      */
     protected function alterFileContents($path, $content)
     {
-        if ($path === 'src/Composer/Composer.php') {
-            $version = $this->getVersionInformationFor('composer/composer', 'version');
+        if (false !== strpos($path, '/src/Composer/Composer.php')) {
+            $version = $this->getVersionInformationFor('composer/composer');
             $content = str_replace('@package_version@', $version['version'], $content);
             $content = str_replace('@package_branch_alias_version@', $version['version'], $content);
             $content = str_replace('@release_date@', $version['date'], $content);
         }
 
-        if ($path === 'src/Tenside.php') {
-            $version = $this->getVersionInformationFor('tenside/core', 'version');
+        if (false !== strpos($path, '/src/Tenside.php')) {
+            $version = $this->getVersionInformationFor('tenside/core');
             $content = str_replace('@package_version@', $version['version'], $content);
             $content = str_replace('@package_branch_alias_version@', $version['branch-alias'], $content);
             $content = str_replace('@release_date@', $version['date'], $content);
