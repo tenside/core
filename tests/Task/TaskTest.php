@@ -33,18 +33,25 @@ class TaskTest extends TestCase
      * Test that the base functionality works.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function testAll()
     {
+        $test = $this;
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
-            ->setMethods(['getType', 'perform'])
+            ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
         $task->method('getType')->willReturn('test-task');
+        $task->expects($this->once())->method('doPerform')->willReturnCallback(function () use ($test, $task) {
+            $this->assertEquals(Task::STATE_RUNNING, $task->getStatus());
+        });
 
         /** @var Task $task */
+        $task->perform($this->getTempFile('task.log'));
 
         $this->assertEquals('test-task-id', $task->getId());
         $this->assertEquals('', $task->getOutput());
@@ -55,10 +62,6 @@ class TaskTest extends TestCase
         $task->getIO()->write('Test');
         $this->assertEquals('FooTest' . PHP_EOL, $task->getOutput());
 
-        $this->assertNull($task->getStatus());
-        $reflection = new \ReflectionMethod('Tenside\Task\Task', 'setStatus');
-        $reflection->setAccessible(true);
-        $reflection->invoke($task, 'RUNNING');
-        $this->assertEquals('RUNNING', $task->getStatus());
+        $this->assertEquals(Task::STATE_FINISHED, $task->getStatus());
     }
 }

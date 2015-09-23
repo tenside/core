@@ -91,43 +91,33 @@ class InstallTask extends Task
 
     /**
      * {@inheritDoc}
+     *
+     * @throws \RuntimeException When the project directory is not empty or when the installation was not successful.
      */
-    public function perform()
+    public function doPerform()
     {
         $this->setStatus(self::STATE_RUNNING);
 
         if (!$this->mayInstall()) {
-            $this->addOutput('Error: project directory not empty.');
-            $this->setStatus(self::STATE_ERROR);
-
-            return;
+            throw new \RuntimeException('Error: project directory not empty.');
         }
 
-        try {
-            $this->prepareTmpDir();
-        } catch (\RuntimeException $exception) {
-            $this->addOutput('Error: ' . $exception->getMessage());
-            $this->setStatus(self::STATE_ERROR);
+        // Will throw exception upon error.
+        $this->prepareTmpDir();
 
-            return;
-        }
         $this->preserveEnvironment();
 
         try {
             $this->fetchProject();
             $this->moveFiles();
         } catch (\Exception $exception) {
-            $this->addOutput('Error: ' . $exception->getMessage());
-            $this->setStatus(self::STATE_ERROR);
             $this->restoreEnvironment();
-
-            return;
+            throw new \RuntimeException('Error: ' . $exception->getMessage(), 1, $exception);
         }
 
         $this->restoreEnvironment();
-
-        $this->setStatus(self::STATE_FINISHED);
     }
+
 
     /**
      * Prepare a temporary directory.

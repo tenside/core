@@ -45,10 +45,12 @@ class Runner
     /**
      * Run the task.
      *
+     * @param string $logfile The log file to use.
+     *
      * @return bool
      */
-    public function run()
+    public function run($logfile)
     {
-        return Task::STATE_FINISHED === $this->task->perform();
+        return Task::STATE_FINISHED === $this->task->perform($logfile);
     }
 }

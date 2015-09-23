@@ -86,6 +86,10 @@ abstract class Task
     public function __construct(JsonArray $file)
     {
         $this->file = $file;
+
+        if ($this->file->has('log')) {
+            $this->logFile = $this->file->get('log');
+        }
     }
 
     /**
@@ -102,14 +106,17 @@ abstract class Task
      * Retrieve the current output.
      *
      * @return string
+     *
+     * @throws \LogicException When the task has not been run yet.
      */
     public function getOutput()
     {
-        if ($this->logFile && is_file($this->logFile)) {
-            return file_get_contents($this->logFile);
+        if (!$this->logFile) {
+            throw new \LogicException('The has not started to run yet.');
         }
 
-        return '';
+        // FIXME: We need file locking here.
+        return file_get_contents($this->logFile);
     }
 
     /**
@@ -122,9 +129,45 @@ abstract class Task
     /**
      * Perform the task.
      *
+     * @param string $logFile The log file to write to.
+     *
+     * @return void
+     *
+     * @throws \LogicException   When the task has already been run.
+     *
+     * @throws \RuntimeException When the execution. failed.
+     */
+    public function perform($logFile)
+    {
+        if (null !== $this->getStatus()) {
+            throw new \LogicException('Attempted to run task ' . $this->getId() . ' twice.');
+        }
+
+        $this->setStatus(self::STATE_RUNNING);
+
+        file_put_contents($logFile, '', FILE_BINARY);
+
+        $this->logFile = $logFile;
+        $this->file->set('log', $logFile);
+
+        try {
+            $this->doPerform();
+        } catch (\Exception $exception) {
+            $this->addOutput('Error: ' . $exception->getMessage());
+            $this->setStatus(self::STATE_ERROR);
+
+            throw new \RuntimeException('Error: ' . $exception->getMessage(), 1, $exception);
+        }
+
+        $this->setStatus(self::STATE_FINISHED);
+    }
+
+    /**
+     * Perform the task.
+     *
      * @return void
      */
-    abstract public function perform();
+    abstract public function doPerform();
 
     /**
      * Add some output.
@@ -140,9 +183,8 @@ abstract class Task
         if (!$this->logFile) {
             throw new \LogicException('The has not started to run yet.');
         }
-        $file = fopen($this->logFile, 'a+t');
-        fputs($file, $string);
-        fclose($file);
+
+        file_put_contents($this->logFile, $string, (FILE_APPEND | FILE_BINARY));
     }
 
     /**

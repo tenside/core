@@ -99,10 +99,9 @@ class InstallTaskTest extends TestCase
             )
         );
 
+        $task->perform($this->getTempFile('logs/task.log'));
+
         $this->assertEquals('install-task-id', $task->getId());
-
-        $task->perform();
-
         $this->assertEquals(InstallTask::STATE_FINISHED, $task->getStatus());
 
         foreach ([
