@@ -65,6 +65,13 @@ abstract class Task
     protected $file;
 
     /**
+     * The log file to write to.
+     *
+     * @var string
+     */
+    protected $logFile;
+
+    /**
      * The input/output handler.
      *
      * @var IOInterface
@@ -98,7 +105,11 @@ abstract class Task
      */
     public function getOutput()
     {
-        return $this->file->get('output');
+        if ($this->logFile && is_file($this->logFile)) {
+            return file_get_contents($this->logFile);
+        }
+
+        return '';
     }
 
     /**
@@ -121,10 +132,17 @@ abstract class Task
      * @param string $string The output string to append to the output.
      *
      * @return void
+     *
+     * @throws \LogicException When called prior to perform().
      */
     public function addOutput($string)
     {
-        $this->file->set('output', $this->getOutput() . $string);
+        if (!$this->logFile) {
+            throw new \LogicException('The has not started to run yet.');
+        }
+        $file = fopen($this->logFile, 'a+t');
+        fputs($file, $string);
+        fclose($file);
     }
 
     /**
