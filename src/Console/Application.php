@@ -303,6 +303,9 @@ class Application extends SymfonyApplication
      * @param OutputInterface $output The output interface.
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
     protected function isUpdateNeeded(InputInterface $input, OutputInterface $output)
     {
