@@ -21,6 +21,7 @@
 
 namespace Tenside\Test\CoreBundle\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tenside\CoreBundle\Controller\InstallProjectController;
 
@@ -66,18 +67,30 @@ class InstallProjectControllerTest extends TestCase
             );
         $userProvider->expects($this->once())->method('addUser')->willReturn($userProvider);
 
+        $authenticator = $this
+            ->getMockBuilder('stdClass')
+            ->setMethods(['getTokenForData'])
+            ->getMock();
+        $authenticator->expects($this->once())->method('getTokenForData')->willReturn('token-value');
+
         $controller = $this->getMock(
             'Tenside\\CoreBundle\\Controller\\InstallProjectController',
-            ['generateUrl']
+            ['generateUrl', 'forward']
         );
         $controller->method('generateUrl')->willReturn('http://url/to/task');
+        $controller
+            ->expects($this->once())
+            ->method('forward')
+            ->with('TensideCoreBundle:TaskRunner:run')
+            ->willReturn(new JsonResponse(['status' => 'OK', ]));
 
         /** @var $controller InstallProjectController */
 
         $controller->setContainer(
             $container = $this->createDefaultContainer([
                 'security.password_encoder' => $passwordEncoder,
-                'tenside.user_provider'     => $userProvider
+                'tenside.user_provider'     => $userProvider,
+                'tenside.jwt_authenticator' => $authenticator
             ])
         );
 
@@ -92,6 +105,7 @@ class InstallProjectControllerTest extends TestCase
         $data     = json_decode($response->getContent(), true);
 
         $this->assertEquals('OK', $data['status']);
+        $this->assertEquals('token-value', $data['token']);
         $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
         $this->assertCount(1, $container->get('tenside.tasks')->getIds());
         $this->assertEquals($container->get('tenside.tasks')->getIds()[0], $data['task']);

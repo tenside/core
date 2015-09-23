@@ -23,6 +23,7 @@ namespace Tenside\CoreBundle\Controller;
 
 use Composer\IO\BufferIO;
 use Composer\Util\RemoteFilesystem;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
@@ -50,10 +51,11 @@ class InstallProjectController extends AbstractController
     {
         $this->checkUninstalled();
 
-        $inputData = new JsonArray($request->getContent());
-        $taskData  = new JsonArray();
+        $installDir = $this->get('tenside.home')->homeDir();
+        $inputData  = new JsonArray($request->getContent());
+        $taskData   = new JsonArray();
 
-        $taskData->set(InstallTask::SETTING_DESTINATION_DIR, $this->get('tenside.home')->homeDir());
+        $taskData->set(InstallTask::SETTING_DESTINATION_DIR, $installDir);
         $taskData->set(InstallTask::SETTING_PACKAGE, $inputData->get('project/name'));
         if ($version = $inputData->get('project/version')) {
             $taskData->set(InstallTask::SETTING_VERSION, $version);
@@ -76,14 +78,43 @@ class InstallProjectController extends AbstractController
             $this->get('security.password_encoder')->encodePassword($user, $inputData->get('credentials/password'))
         );
 
-        $this->get('tenside.user_provider')->addUser($user);
+        $user = $this->get('tenside.user_provider')->addUser($user)->refreshUser($user);
 
         $taskId = $this->getTensideTasks()->queue('install', $taskData);
+
+        try {
+            $this->runInstaller($taskId);
+        } catch (\Exception $e) {
+            // Error starting the install task, roll back and output the error.
+            $fileSystem = new Filesystem();
+            $fileSystem->remove(
+                array_map(
+                    function ($file) use ($installDir) {
+                        return $installDir. DIRECTORY_SEPARATOR . $file;
+                    },
+                    [
+                        'tenside.json',
+                        'tenside-tasks.json',
+                        'tenside-task-' . $taskId . '.json',
+                        'composer.json'
+                    ]
+                )
+            );
+
+            return new JsonResponse(
+                [
+                    'status'  => 'ERROR',
+                    'message' => 'The install task could not be started.'
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         return new JsonResponse(
             [
                 'status' => 'OK',
-                'task'   => $taskId
+                'task'   => $taskId,
+                'token'  => $this->get('tenside.jwt_authenticator')->getTokenForData($user)
             ],
             JsonResponse::HTTP_CREATED,
             [
@@ -128,8 +159,28 @@ class InstallProjectController extends AbstractController
      */
     private function checkUninstalled()
     {
-        if ($this->getTenside()->isInstalled()) {
-            throw new NotAcceptableHttpException('Already installed');
+        // FIXME: need to determine this somehow better. Can not check for tenside also as we need the secret and user.
+        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'composer.json')) {
+            throw new NotAcceptableHttpException('Already installed in ' . $this->get('tenside.home')->homeDir());
+        }
+    }
+
+    /**
+     * Run the given task and return a response when an error occurred or null if it worked out.
+     *
+     * @param string $taskId The task id.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException When the process could not be started.
+     */
+    private function runInstaller($taskId)
+    {
+        $runnerResponse = $this->forward('TensideCoreBundle:TaskRunner:run');
+
+        $runnerStarted = json_decode($runnerResponse->getContent(), true);
+        if ($runnerStarted['status'] !== 'OK' || $runnerStarted['task'] !== $taskId) {
+            throw new \RuntimeException('Status was not ok');
         }
     }
 }

@@ -51,7 +51,7 @@ services:
     tenside.jwt_authenticator:
         class:     Tenside\CoreBundle\Security\JWTAuthenticator
         arguments: ["@tenside.config"]
-        public:    false
+        public:    true
 
     tenside.permission_voter:
         class:     Tenside\CoreBundle\Security\PermissionVoter
