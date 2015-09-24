@@ -178,6 +178,8 @@ class InstallTask extends Task
      * Move the installed files to their intended destination.
      *
      * @return void
+     *
+     * @throws \RuntimeException When an unknown file type has been encountered.
      */
     private function moveFiles()
     {
