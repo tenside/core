@@ -46,9 +46,10 @@ class InstallTaskTest extends TestCase
         $zip->open($zipFile);
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
-            $stat     = $zip->statIndex($i);
-            $fileName = $stat['name'];
-            $this->assertFileExists($destDir . DIRECTORY_SEPARATOR . $fileName);
+            $stat      = $zip->statIndex($i);
+            $fileName  = $stat['name'];
+            $localFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
+            $this->assertTrue(is_link($localFile) || file_exists($localFile), 'File does not exist ' . $localFile);
 
             if (is_link($destDir . DIRECTORY_SEPARATOR . $fileName)) {
                 continue;
