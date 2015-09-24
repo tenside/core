@@ -149,6 +149,7 @@ class CoreTask extends AbstractTask
             ->ignoreVCS(true)
             ->name('*.php')
             ->exclude('Tests')
+            ->exclude('tests')
             ->notName(
                 '/(.*' .
                 implode(
@@ -166,6 +167,7 @@ class CoreTask extends AbstractTask
                     ]
                 ) . '.*)Command\.php$/'
             )
+            ->in($vendorDir . '/firebase/php-jwt')
             ->in($vendorDir . '/symfony/config')
             ->in($vendorDir . '/symfony/dependency-injection')
             ->in($vendorDir . '/symfony/debug')
