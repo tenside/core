@@ -54,6 +54,12 @@ class InstallProjectControllerTest extends TestCase
      */
     public function testInstalledProject()
     {
+        $taskList = $this
+            ->getMockBuilder('stdClass')
+            ->setMethods(['queue'])
+            ->getMock();
+        $taskList->expects($this->once())->method('queue')->willReturn('$taskId$');
+
         $passwordEncoder = $this
             ->getMockForAbstractClass('Symfony\\Component\\Security\\Core\\Encoder\\UserPasswordEncoderInterface');
         $passwordEncoder->method('encodePassword')->willReturn('s3cret');
@@ -82,13 +88,14 @@ class InstallProjectControllerTest extends TestCase
             ->expects($this->once())
             ->method('forward')
             ->with('TensideCoreBundle:TaskRunner:run')
-            ->willReturn(new JsonResponse(['status' => 'OK', ]));
+            ->willReturn(new JsonResponse(['status' => 'OK', 'task' => '$taskId$']));
 
         /** @var $controller InstallProjectController */
 
         $controller->setContainer(
-            $container = $this->createDefaultContainer([
+            $this->createDefaultContainer([
                 'security.password_encoder' => $passwordEncoder,
+                'tenside.tasks'             => $taskList,
                 'tenside.user_provider'     => $userProvider,
                 'tenside.jwt_authenticator' => $authenticator
             ])
@@ -107,7 +114,6 @@ class InstallProjectControllerTest extends TestCase
         $this->assertEquals('OK', $data['status']);
         $this->assertEquals('token-value', $data['token']);
         $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
-        $this->assertCount(1, $container->get('tenside.tasks')->getIds());
-        $this->assertEquals($container->get('tenside.tasks')->getIds()[0], $data['task']);
+        $this->assertEquals('$taskId$', $data['task']);
     }
 }
