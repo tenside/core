@@ -59,7 +59,9 @@ class RunTaskCommand extends ContainerAwareCommand
 
         $runner = new Runner($task);
 
-        if (!$runner->run($this->getContainer()->get('kernel')->getLogDir())) {
+        if (!$runner->run(
+            $this->getContainer()->get('kernel')->getLogDir() . DIRECTORY_SEPARATOR . 'task-' . $task->getId() . '.log'
+        )) {
             return 1;
         }
 
