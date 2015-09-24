@@ -61,6 +61,7 @@ class TaskTest extends TestCase
         $this->assertInstanceOf('Composer\IO\IOInterface', $task->getIO());
         $task->getIO()->write('Test');
         $this->assertEquals('FooTest' . PHP_EOL, $task->getOutput());
+        $this->assertEquals('Test' . PHP_EOL, $task->getOutput(3));
 
         $this->assertEquals(Task::STATE_FINISHED, $task->getStatus());
     }

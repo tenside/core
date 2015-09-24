@@ -56,19 +56,25 @@ class TaskRunnerController extends AbstractController
     /**
      * Retrieve the given task task.
      *
-     * @param string $taskId The id of the task to retrieve.
+     * @param string  $taskId  The id of the task to retrieve.
+     *
+     * @param Request $request The request.
      *
      * @return JsonResponse
      */
-    public function getTaskAction($taskId)
+    public function getTaskAction($taskId, Request $request)
     {
         // Retrieve the status file of the task.
-        $task = $this->getTensideTasks()->getTask($taskId);
+        $task   = $this->getTensideTasks()->getTask($taskId);
+        $offset = null;
+        if ($request->query->has('offset')) {
+            $offset = (int) $request->query->get('offset');
+        }
 
         return new JsonResponse(
             [
                 'status' => $task->getStatus(),
-                'output' => [$task->getOutput()]
+                'output' => [$task->getOutput($offset)]
             ]
         );
     }

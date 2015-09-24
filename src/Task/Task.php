@@ -105,18 +105,20 @@ abstract class Task
     /**
      * Retrieve the current output.
      *
+     * @param null|int $offset The offset in bytes to read from.
+     *
      * @return string
      *
      * @throws \LogicException When the task has not been run yet.
      */
-    public function getOutput()
+    public function getOutput($offset = null)
     {
         if (!$this->logFile) {
             throw new \LogicException('The has not started to run yet.');
         }
 
         // FIXME: We need file locking here.
-        return file_get_contents($this->logFile);
+        return (string) file_get_contents($this->logFile, FILE_BINARY, null, $offset);
     }
 
     /**
