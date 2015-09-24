@@ -195,6 +195,15 @@ class InstallTask extends Task
             $destinationFile = str_replace($this->tempDir, $destinationDir, $pathName);
 
             switch (true) {
+                // Symlink must(!) be handled first as the isDir() and isFile() checks return true for symlinks.
+                case $file->isLink():
+                    $target = $file->getLinkTarget();
+                    $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
+                    symlink($target, $destinationFile);
+                    unlink($pathName);
+
+                    break;
+
                 case $file->isDir():
                     $permissions = substr(decoct(fileperms($pathName)), 1);
                     $folders[]   = $pathName;
@@ -204,14 +213,6 @@ class InstallTask extends Task
                     }
                     break;
 
-                case $file->isLink():
-                    $target = readlink($pathName);
-                    $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
-                    symlink($target, $destinationFile);
-                    unlink($file->getPathname());
-
-                    break;
-
                 case $file->isFile():
                     $permissions = substr(decoct(fileperms($pathName)), 1);
                     $ioHandler->write(
@@ -219,7 +220,7 @@ class InstallTask extends Task
                     );
                     copy($pathName, $destinationFile);
                     chmod($destinationFile, octdec($permissions));
-                    unlink($file->getPathname());
+                    unlink($pathName);
 
                     break;
 
