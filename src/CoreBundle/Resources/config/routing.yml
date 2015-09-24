@@ -101,6 +101,11 @@ install_create_project:
     defaults: { _controller: TensideCoreBundle:InstallProject:createProject }
     methods:  [PUT]
 
+install_get_progress:
+    path:     /v1/install/get_progress.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:getInstallationTaskProgress }
+    methods:  [GET]
+
 install_search_project:
     path:     /v1/install/search-project/{vendor}/{project}.json
     defaults: { _controller: TensideCoreBundle:InstallProject:getProjectVersions }

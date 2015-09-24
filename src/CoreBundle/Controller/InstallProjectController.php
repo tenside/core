@@ -124,6 +124,21 @@ class InstallProjectController extends AbstractController
     }
 
     /**
+     * This is an install time gateway to the task reader controller available only at install time.
+     *
+     * @param Request $request The current request.
+     *
+     * @return JsonResponse
+     */
+    public function getInstallationTaskProgressAction(Request $request)
+    {
+        // FIXME: this will be a bit of a problem as we are currently in the progress of installing everything.
+        $this->checkUninstalled();
+
+        return $this->forward('TensideCoreBundle:TaskRunner:getTask', $request->attributes, $request->query);
+    }
+
+    /**
      * Create a project.
      *
      * @param string $vendor  The vendor name of the package.
