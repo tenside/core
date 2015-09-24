@@ -64,14 +64,6 @@ class CliScriptDeterminator
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function __toString()
-    {
-        return $this->cliExecutable();
-    }
-
-    /**
      * Determine the correct executable.
      *
      * @return string
