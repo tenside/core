@@ -55,15 +55,15 @@ class HomePathDeterminator
      */
     private function detectHomeDirectory()
     {
+        // Environment variable COMPOSER points to the composer.json we should use. The tenside.json is alongside.
+        if (false !== ($home = getenv('COMPOSER'))) {
+            return dirname($home);
+        }
+
         if ('' !== \Phar::running()) {
             // Strip scheme "phar://" prefix and "tenside.phar" suffix.
             $home = dirname(substr(\Phar::running(), 7));
         } else {
-            // Environment variable COMPOSER points to the composer.json we should use. The tenside.json is alongside.
-            if (false !== ($home = getenv('COMPOSER'))) {
-                return dirname($home);
-            };
-
             $home = getcwd();
         }
 
@@ -74,7 +74,6 @@ class HomePathDeterminator
             );
         }
 
-        // FIXME: really only one up? What about aliased web root in apache?
         return dirname($home);
     }
 }
