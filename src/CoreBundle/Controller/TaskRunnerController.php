@@ -117,12 +117,11 @@ class TaskRunnerController extends AbstractController
         // Fetch the next queued task.
         $task = $this->getTensideTasks()->dequeue();
 
-
         if (!$task) {
             return new JsonResponse(
                 [
                     'status' => 'OK',
-                    'id'     => null
+                    'task'   => null
                 ]
             );
         }
@@ -135,7 +134,7 @@ class TaskRunnerController extends AbstractController
         return new JsonResponse(
             [
                 'status' => 'OK',
-                'id'     => $task->getId()
+                'task'   => $task->getId()
             ]
         );
     }
@@ -146,6 +145,8 @@ class TaskRunnerController extends AbstractController
      * @param Task $task The task to spawn a process for.
      *
      * @return void
+     *
+     * @throws \RuntimeException When the task could not be started.
      */
     private function spawn(Task $task)
     {
@@ -157,14 +158,26 @@ class TaskRunnerController extends AbstractController
         }
 
         $cmd = sprintf(
-            '%s %s %s',
+            '%s %s tenside:runtask %s',
             escapeshellcmd($phpCli),
-            escapeshellarg($this->get('tenside.cli_script')),
+            escapeshellarg($this->get('tenside.cli_script')->cliExecutable()),
             escapeshellarg($task->getId())
         );
 
         $commandline = new Process($cmd);
+
         $commandline->start();
-        $commandline->getPid();
+        if (!$commandline->isRunning()) {
+            // If exit code is neither 0 nor null, we have a problem here.
+            if ($exitCode = $commandline->getPid()) {
+                throw new \RuntimeException(
+                    sprintf(
+                        'Spawning process task %s resulted in exit code %s',
+                        $task->getId(),
+                        $exitCode
+                    )
+                );
+            }
+        }
     }
 }
