@@ -59,6 +59,7 @@ if (!function_exists('curl_init')) {
 }
 
 Phar::mapPhar('tenside.phar');
+// @codingStandardsIgnoreStart
 
 // Compiler generated warning time:
 // @@TENSIDE_DEV_WARNING_TIME@@
@@ -72,3 +73,4 @@ if (PHP_SAPI == 'cli') {
 }
 
 __HALT_COMPILER();
+// @codingStandardsIgnoreEnd
