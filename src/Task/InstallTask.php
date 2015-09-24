@@ -187,7 +187,7 @@ class InstallTask extends Task
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR);
         $folders        = [$this->tempDir];
         $ioHandler      = $this->getIO();
-        foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false) as $file) {
+        foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false)->ignoreVCS(false) as $file) {
             /** @var SplFileInfo $file */
             $pathName        = $file->getPathname();
             $destinationFile = str_replace($this->tempDir, $destinationDir, $pathName);
