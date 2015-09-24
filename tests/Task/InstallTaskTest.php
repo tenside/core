@@ -46,11 +46,17 @@ class InstallTaskTest extends TestCase
         $zip->open($zipFile);
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
-            $fileName = $zip->getNameIndex($i);
+            $stat     = $zip->statIndex($i);
+            $fileName = $stat['name'];
             $this->assertFileExists($destDir . DIRECTORY_SEPARATOR . $fileName);
+
+            if (is_link($destDir . DIRECTORY_SEPARATOR . $fileName)) {
+                continue;
+            }
             $this->assertEquals(
-                stream_get_contents($zip->getStream($fileName)),
-                file_get_contents($destDir . DIRECTORY_SEPARATOR . $fileName)
+                $stat['crc'],
+                hexdec(hash_file('crc32b', $destDir . DIRECTORY_SEPARATOR . $fileName)),
+                'CRC mismatch for ' . $fileName
             );
         }
     }
@@ -103,6 +109,9 @@ class InstallTaskTest extends TestCase
 
         $this->assertEquals('install-task-id', $task->getId());
         $this->assertEquals(InstallTask::STATE_FINISHED, $task->getStatus());
+
+        // Ensure the temporary directory is gone.
+        $this->assertEmpty(glob($this->getTempDir() . DIRECTORY_SEPARATOR . 'install-*'));
 
         foreach ([
             'vendor/composer/autoload_classmap.php',

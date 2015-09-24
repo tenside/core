@@ -189,28 +189,46 @@ class InstallTask extends Task
         $ioHandler      = $this->getIO();
         foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false) as $file) {
             /** @var SplFileInfo $file */
-            $destinationFile = str_replace($this->tempDir, $destinationDir, $file->getPathName());
-            $permissions     = substr(decoct(fileperms($file->getPathName())), 1);
+            $pathName        = $file->getPathname();
+            $destinationFile = str_replace($this->tempDir, $destinationDir, $pathName);
 
-            if ($file->isDir()) {
-                $folders[] = $file->getPathname();
-                if (!is_dir($destinationFile)) {
-                    $ioHandler->write(sprintf(
-                        'mkdir %s %s',
-                        $file->getPathname(),
-                        octdec($permissions)
-                    ));
-                    mkdir($destinationFile, octdec($permissions), true);
-                }
-            } else {
-                $ioHandler->write(sprintf(
-                    'move %s to %s',
-                    $file->getPathname(),
-                    $destinationFile
-                ));
-                copy($file->getPathname(), $destinationFile);
-                chmod($destinationFile, octdec($permissions));
-                unlink($file->getPathname());
+            switch (true) {
+                case $file->isDir():
+                    $permissions = substr(decoct(fileperms($pathName)), 1);
+                    $folders[]   = $pathName;
+                    if (!is_dir($destinationFile)) {
+                        $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
+                        mkdir($destinationFile, octdec($permissions), true);
+                    }
+                    break;
+
+                case $file->isLink():
+                    $target = readlink($pathName);
+                    $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
+                    symlink($target, $destinationFile);
+                    unlink($file->getPathname());
+
+                    break;
+
+                case $file->isFile():
+                    $permissions = substr(decoct(fileperms($pathName)), 1);
+                    $ioHandler->write(
+                        sprintf('move %s to %s (permissions: %s)', $pathName, $destinationFile, $permissions)
+                    );
+                    copy($pathName, $destinationFile);
+                    chmod($destinationFile, octdec($permissions));
+                    unlink($file->getPathname());
+
+                    break;
+
+                default:
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Unknown file of type %s encountered for %s',
+                            filetype($pathName),
+                            $pathName
+                        )
+                    );
             }
         }
 
