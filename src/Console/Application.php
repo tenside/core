@@ -114,7 +114,8 @@ class Application extends SymfonyApplication
                 'Launch commands from shell as a separate process.'
             )
         );
-        if ('phar' !== $kernel->getEnvironment()) {
+
+        if (!\Phar::running()) {
             $definition->addOption(
                 new InputOption(
                     '--env',
