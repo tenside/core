@@ -34,6 +34,10 @@ class RuntimeHelper
      */
     public static function setupHome($home)
     {
+        if (empty($home)) {
+            throw new \InvalidArgumentException('Empty home directory encountered.');
+        }
+
         // FIXME: check that this really works correctly in CLI mode.
         if (false === getenv('COMPOSER')) {
             putenv('COMPOSER=' . $home . '/composer.json');
