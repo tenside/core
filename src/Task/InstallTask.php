@@ -96,8 +96,6 @@ class InstallTask extends Task
      */
     public function doPerform()
     {
-        $this->setStatus(self::STATE_RUNNING);
-
         if (!$this->mayInstall()) {
             throw new \RuntimeException('Error: project directory not empty.');
         }
