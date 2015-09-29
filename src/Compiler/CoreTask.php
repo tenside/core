@@ -179,10 +179,15 @@ class CoreTask extends AbstractTask
             ->in($vendorDir . '/symfony/translation')
             ->in($vendorDir . '/symfony/routing')
             ->in($vendorDir . '/symfony/security')
-            ->in($vendorDir . '/symfony/security-acl')
             ->in($vendorDir . '/symfony/security-bundle')
             ->in($vendorDir . '/symfony/yaml')
             ->in($vendorDir . '/psr/log');
+
+        if (is_dir($vendorDir . '/symfony/security-acl')) {
+            // Became a dependency in symfony 2.8
+            $finder->in($vendorDir . '/symfony/security-acl');
+
+        }
 
         foreach ($finder as $file) {
             $this->addFile($file);
