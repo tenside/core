@@ -48,9 +48,7 @@ class TaskRunnerController extends AbstractController
             ];
         }
 
-        return new JsonResponse(
-            $result
-        );
+        return JsonResponse::create($result);
     }
 
     /**
@@ -71,7 +69,7 @@ class TaskRunnerController extends AbstractController
             $offset = (int) $request->query->get('offset');
         }
 
-        return new JsonResponse(
+        return JsonResponse::create(
             [
                 'status' => $task->getStatus(),
                 'output' => [$task->getOutput($offset)]
@@ -102,7 +100,7 @@ class TaskRunnerController extends AbstractController
 
         $taskId = $this->getTensideTasks()->queue($metaData->get('type'), $metaData);
 
-        return new JsonResponse(
+        return JsonResponse::create(
             [
                 'status' => 'OK',
                 'task'   => $taskId
@@ -124,7 +122,7 @@ class TaskRunnerController extends AbstractController
         $task = $this->getTensideTasks()->dequeue();
 
         if (!$task) {
-            return new JsonResponse(
+            return JsonResponse::create(
                 [
                     'status' => 'OK',
                     'task'   => null
@@ -137,7 +135,7 @@ class TaskRunnerController extends AbstractController
         // Now spawn a runner.
         $this->spawn($task);
 
-        return new JsonResponse(
+        return JsonResponse::create(
             [
                 'status' => 'OK',
                 'task'   => $task->getId()
