@@ -20,11 +20,28 @@
 
 namespace Tenside\Task;
 
+use Composer\Command\UpdateCommand;
+use Composer\Composer;
+use Composer\Factory as ComposerFactory;
+use Symfony\Component\Console\Input\ArrayInput;
+use Tenside\Util\JsonArray;
+use Tenside\Util\RuntimeHelper;
+
 /**
  * This class holds the information for an upgrade of some or all packages.
  */
 class UpgradeTask extends Task
 {
+    /**
+     * The packages to upgrade.
+     */
+    const SETTING_PACKAGES = 'packages';
+
+    /**
+     * The packages to upgrade.
+     */
+    const SETTING_HOME = 'home';
+
     /**
      * Retrieve the names of the packages to upgrade or null if none.
      *
@@ -32,7 +49,7 @@ class UpgradeTask extends Task
      */
     public function getPackages()
     {
-        return $this->file->get('packages');
+        return $this->file->get(self::SETTING_PACKAGES);
     }
 
     /**
@@ -59,18 +76,52 @@ class UpgradeTask extends Task
      * {@inheritdoc}
      *
      * @return void
+     *
+     * @throws \RuntimeException When the upgrade did not execute successfully.
      */
-    public function perform()
+    public function doPerform()
     {
-        $this->setStatus($this::STATE_RUNNING);
+        $arguments = [];
 
-        $inputOutput = $this->getIO();
-        for ($i = 0; $i < 200; $i++) {
-            $inputOutput->write('Hello ' . $i);
-
-            sleep(5);
+        if ($this->isSelectiveUpgrade()) {
+            $arguments['packages'] = $this->getPackages();
         }
 
-        $this->setStatus($this::STATE_FINISHED);
+        $command = new UpdateCommand();
+        $input   = new ArrayInput($arguments);
+        $input->setInteractive(false);
+        $command->setIO($this->getIO());
+        $command->setComposer($this->getComposer());
+
+        try {
+            if (0 !== ($statusCode = $command->run($input, new TaskOutput($this)))) {
+                throw new \RuntimeException('Error: command exit code was ' . $statusCode);
+            }
+        } catch (\Exception $exception) {
+            throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
+        }
+    }
+
+    /**
+     * Load composer.
+     *
+     * @return Composer
+     */
+    public function getComposer()
+    {
+        if (!isset($this->composer)) {
+            RuntimeHelper::setupHome($homeDir = $this->file->get(self::SETTING_HOME));
+            chdir($homeDir);
+
+            $factory        = new ComposerFactory();
+            $this->composer = $factory->createComposer(
+                $this->getIO(),
+                null,
+                false,
+                $homeDir
+            );
+        }
+
+        return $this->composer;
     }
 }
