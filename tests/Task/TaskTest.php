@@ -54,14 +54,14 @@ class TaskTest extends TestCase
         $task->perform($this->getTempFile('task.log'));
 
         $this->assertEquals('test-task-id', $task->getId());
-        $this->assertEquals('', $task->getOutput());
         $task->addOutput('Foo');
-        $this->assertEquals('Foo', $task->getOutput());
+        $this->assertEquals('Foo', substr($task->getOutput(), -3));
 
         $this->assertInstanceOf('Composer\IO\IOInterface', $task->getIO());
         $task->getIO()->write('Test');
-        $this->assertEquals('FooTest' . PHP_EOL, $task->getOutput());
-        $this->assertEquals('Test' . PHP_EOL, $task->getOutput(3));
+        $this->assertEquals('FooTest' . PHP_EOL, substr($task->getOutput(), -8));
+        $skip = strlen($task->getOutput());
+        $this->assertEquals('Test' . PHP_EOL, $task->getOutput($skip - 5));
 
         $this->assertEquals(Task::STATE_FINISHED, $task->getStatus());
     }
