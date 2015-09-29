@@ -104,7 +104,7 @@ class Application extends SymfonyApplication
         );
 
         $definition = $this->getDefinition();
-        $definition->addOption(new InputOption('--shell', '-s', InputOption::VALUE_NONE, 'Launch the shell.'));
+        $definition->addOption(new InputOption('--shell', null, InputOption::VALUE_NONE, 'Launch the shell.'));
         $definition->addOption(
             new InputOption(
                 '--process-isolation',
