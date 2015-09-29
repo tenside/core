@@ -145,14 +145,19 @@ abstract class Task
             throw new \LogicException('Attempted to run task ' . $this->getId() . ' twice.');
         }
 
-        $this->setStatus(self::STATE_RUNNING);
-
-        file_put_contents($logFile, '', FILE_BINARY);
-
-        $this->logFile = $logFile;
-        $this->file->set('log', $logFile);
-
         try {
+            if (!is_dir(dirname($logFile))) {
+                mkdir(dirname($logFile), 0777, true);
+            }
+
+            file_put_contents($logFile, '', FILE_BINARY);
+
+            $this->logFile = $logFile;
+            $this->file->set('log', $logFile);
+
+            $this->setStatus(self::STATE_RUNNING);
+            $this->addOutput('Task started.' . "\n");
+
             $this->doPerform();
         } catch (\Exception $exception) {
             $this->addOutput('Error: ' . $exception->getMessage());
@@ -161,6 +166,7 @@ abstract class Task
             throw new \RuntimeException('Error: ' . $exception->getMessage(), 1, $exception);
         }
 
+        $this->addOutput('Finished without error.' . "\n");
         $this->setStatus(self::STATE_FINISHED);
     }
 
