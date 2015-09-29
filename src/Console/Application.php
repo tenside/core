@@ -20,6 +20,7 @@
 
 namespace Tenside\Console;
 
+use Composer\Command as ComposerCommand;
 use Composer\Command\ScriptAliasCommand;
 use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
@@ -230,6 +231,8 @@ class Application extends SymfonyApplication
             }
         }
 
+        $this->addComposerCommands();
+
         /** @var ComposerJson $file */
         $file = $container->get('tenside.composer_json');
 
@@ -252,6 +255,37 @@ class Application extends SymfonyApplication
                 }
             }
         }
+    }
+
+    /**
+     * Add the composer base commands.
+     *
+     * @return void
+     */
+    protected function addComposerCommands()
+    {
+        $this->add(new ComposerCommand\AboutCommand());
+        $this->add(new ComposerCommand\ConfigCommand());
+        $this->add(new ComposerCommand\DependsCommand());
+        $this->add(new ComposerCommand\InitCommand());
+        $this->add(new ComposerCommand\InstallCommand());
+        $this->add(new ComposerCommand\CreateProjectCommand());
+        $this->add(new ComposerCommand\UpdateCommand());
+        $this->add(new ComposerCommand\SearchCommand());
+        $this->add(new ComposerCommand\ValidateCommand());
+        $this->add(new ComposerCommand\ShowCommand());
+        $this->add(new ComposerCommand\SuggestsCommand());
+        $this->add(new ComposerCommand\RequireCommand());
+        $this->add(new ComposerCommand\DumpAutoloadCommand());
+        $this->add(new ComposerCommand\StatusCommand());
+        $this->add(new ComposerCommand\ArchiveCommand());
+        $this->add(new ComposerCommand\DiagnoseCommand());
+        $this->add(new ComposerCommand\RunScriptCommand());
+        $this->add(new ComposerCommand\LicensesCommand());
+        $this->add(new ComposerCommand\GlobalCommand());
+        $this->add(new ComposerCommand\ClearCacheCommand());
+        $this->add(new ComposerCommand\RemoveCommand());
+        $this->add(new ComposerCommand\HomeCommand());
     }
 
     /**
