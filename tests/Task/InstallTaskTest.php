@@ -89,8 +89,12 @@ class InstallTaskTest extends TestCase
             )
         );
 
-        $this->provideFixture($rootZip       = 'test-repository' . DIRECTORY_SEPARATOR. 'vendor-package-name.zip');
-        $this->provideFixture($dependencyZip = 'test-repository' . DIRECTORY_SEPARATOR. 'vendor-dependency-name.zip');
+        $this->provideFixture(
+            $rootZip       = 'test-repository' . DIRECTORY_SEPARATOR. 'vendor-package-name-1.0.0.zip'
+        );
+        $this->provideFixture(
+            $dependencyZip = 'test-repository' . DIRECTORY_SEPARATOR. 'vendor-dependency-name-1.0.0.zip'
+        );
 
         $task = new InstallTask(
             new JsonArray(
