@@ -31,6 +31,8 @@ class RuntimeHelper
      * @param string $home The home directory.
      *
      * @return void
+     *
+     * @throws \InvalidArgumentException For empty value of $home.
      */
     public static function setupHome($home)
     {
@@ -41,8 +43,8 @@ class RuntimeHelper
         // FIXME: check that this really works correctly in CLI mode.
         if (false === getenv('COMPOSER')) {
             putenv('COMPOSER=' . $home . '/composer.json');
-            chdir($home);
         }
+        chdir($home);
 
         // Ensure at least one of the environment variables is available.
         if (!getenv('COMPOSER_HOME') && !getenv('HOME')) {

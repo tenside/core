@@ -186,7 +186,6 @@ class Application extends SymfonyApplication
             return 0;
         }
 
-        // FIXME: this is broken now.
         RuntimeHelper::setupHome($container->get('tenside.home')->homeDir());
 
         $this->inputOutput = new ConsoleIO($input, $output, $this->getHelperSet());
@@ -211,7 +210,7 @@ class Application extends SymfonyApplication
     {
         // FIXME: we should check if the command needs the composer instance.
         if ($command instanceof \Composer\Command\Command) {
-            $command->setComposer($this->kernel->getContainer()->get('tenside')->getComposer());
+            $command->setComposer(ComposerFactory::create($this->inputOutput));
         }
 
         return parent::doRunCommand($command, $input, $output);

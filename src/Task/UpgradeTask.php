@@ -24,7 +24,6 @@ use Composer\Command\UpdateCommand;
 use Composer\Composer;
 use Composer\Factory as ComposerFactory;
 use Symfony\Component\Console\Input\ArrayInput;
-use Tenside\Util\JsonArray;
 use Tenside\Util\RuntimeHelper;
 
 /**
@@ -107,21 +106,10 @@ class UpgradeTask extends Task
      *
      * @return Composer
      */
-    public function getComposer()
+    private function getComposer()
     {
-        if (!isset($this->composer)) {
-            RuntimeHelper::setupHome($homeDir = $this->file->get(self::SETTING_HOME));
-            chdir($homeDir);
+        RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
 
-            $factory        = new ComposerFactory();
-            $this->composer = $factory->createComposer(
-                $this->getIO(),
-                null,
-                false,
-                $homeDir
-            );
-        }
-
-        return $this->composer;
+        return ComposerFactory::create($this->getIO());
     }
 }

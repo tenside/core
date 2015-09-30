@@ -74,19 +74,15 @@ class Tenside
      * Load composer.
      *
      * @return Composer
+     *
+     * @deprecated Create the composer instance where needed with correct i/o instance.
      */
     public function getComposer()
     {
         if (!isset($this->composer)) {
             RuntimeHelper::setupHome($this->home->homeDir());
 
-            $factory        = new ComposerFactory();
-            $this->composer = $factory->createComposer(
-                new BufferIO(),
-                null,
-                false,
-                $this->home->homeDir()
-            );
+            $this->composer = ComposerFactory::create(new BufferIO());
         }
 
         return $this->composer;
