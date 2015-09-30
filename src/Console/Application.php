@@ -22,6 +22,7 @@ namespace Tenside\Console;
 
 use Composer\Command as ComposerCommand;
 use Composer\Command\ScriptAliasCommand;
+use Composer\IO\IOInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Composer\IO\ConsoleIO;
@@ -58,6 +59,13 @@ class Application extends SymfonyApplication
      * @var bool
      */
     private $commandsRegistered = false;
+
+    /**
+     * The io interface in use.
+     *
+     * @var IOInterface
+     */
+    private $inputOutput;
 
     /**
      * Out logo, will get concatenated with the composer logo.
@@ -181,7 +189,7 @@ class Application extends SymfonyApplication
         // FIXME: this is broken now.
         RuntimeHelper::setupHome($container->get('tenside.home')->homeDir());
 
-        $this->io = new ConsoleIO($input, $output, $this->getHelperSet());
+        $this->inputOutput = new ConsoleIO($input, $output, $this->getHelperSet());
 
         if (version_compare(PHP_VERSION, '5.4', '<')) {
             $output->writeln(
