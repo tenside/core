@@ -20,10 +20,15 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Composer\Composer;
+use Composer\Factory as ComposerFactory;
+use Composer\IO\BufferIO;
+use Composer\IO\IOInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Tenside\CoreBundle\TensideJsonConfig;
 use Tenside\Task\TaskList;
 use Tenside\Tenside;
+use Tenside\Util\RuntimeHelper;
 
 /**
  * Abstract controller class.
@@ -31,9 +36,28 @@ use Tenside\Tenside;
 abstract class AbstractController extends Controller
 {
     /**
+     * Retrieve a composer instance.
+     *
+     * @param IOInterface $inputOutput The input/output handler to use.
+     *
+     * @return Composer
+     */
+    public function getComposer(IOInterface $inputOutput = null)
+    {
+        if (null === $inputOutput) {
+            $inputOutput = new BufferIO();
+        }
+        RuntimeHelper::setupHome($this->getTensideHome());
+
+        return ComposerFactory::create($inputOutput);
+    }
+
+    /**
      * Retrieve the tenside instance.
      *
      * @return Tenside
+     *
+     * @deprecated The tenside class will get phased out to be a simple version constant container.
      */
     public function getTenside()
     {

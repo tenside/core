@@ -46,7 +46,7 @@ class SearchPackageController extends AbstractController
     public function searchAction(Request $request)
     {
         $data              = new JsonArray($request->getContent());
-        $composer          = $this->getTenside()->getComposer();
+        $composer          = $this->getComposer();
         $repositoryManager = $composer->getRepositoryManager();
         $localRepository   = $repositoryManager->getLocalRepository();
 

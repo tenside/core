@@ -47,7 +47,7 @@ class PackageController extends AbstractController
      */
     public function packageListAction(Request $request)
     {
-        $composer  = $this->getTenside()->getComposer();
+        $composer  = $this->getComposer();
         $converter = new PackageConverter($composer->getPackage());
         if ($request->query->has('solve')) {
             $upgrades = $this->fullSolvePass();
@@ -79,7 +79,7 @@ class PackageController extends AbstractController
     {
         $packageName = $vendor . '/' . $package;
 
-        $composer  = $this->getTenside()->getComposer();
+        $composer  = $this->getComposer();
         $converter = new PackageConverter($composer->getPackage());
 
         foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
@@ -114,7 +114,7 @@ class PackageController extends AbstractController
             return new Response('Invalid payload', Response::HTTP_BAD_REQUEST);
         }
 
-        $composer  = $this->getTenside()->getComposer();
+        $composer  = $this->getComposer();
         $converter = new PackageConverter($composer->getPackage());
 
         try {
@@ -144,7 +144,7 @@ class PackageController extends AbstractController
     {
         $packageName = $vendor . '/' . $package;
 
-        $composer  = $this->getTenside()->getComposer();
+        $composer  = $this->getComposer();
         $converter = new PackageConverter($composer->getPackage());
 
         foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
@@ -164,7 +164,7 @@ class PackageController extends AbstractController
      */
     private function fullSolvePass()
     {
-        $composer  = $this->getTenside()->getComposer();
+        $composer  = $this->getComposer();
         $converter = new PackageConverter($composer->getPackage());
         $upgrades  = new JsonArray();
         $solver    = new SolverRunner($composer);
@@ -189,7 +189,7 @@ class PackageController extends AbstractController
     private function quickSolvePass()
     {
         // FIXME: implement quick solving here.
-        $composer     = $this->getTenside()->getComposer();
+        $composer     = $this->getComposer();
         $upgrades     = new JsonArray();
         $manager      = $composer->getRepositoryManager();
         $local        = $manager->getLocalRepository();
