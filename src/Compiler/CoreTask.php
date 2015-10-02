@@ -101,12 +101,16 @@ class CoreTask extends AbstractTask
         }
 
         $this->addFile(new \SplFileInfo($vendorDir . '/seld/cli-prompt/res/hiddeninput.exe'), false);
+        $this->addFile(new \SplFileInfo($vendorDir . '/composer/spdx-licenses/res/spdx-licenses.json'), false);
+        $this->addFile(new \SplFileInfo($vendorDir . '/composer/spdx-licenses/res/spdx-exceptions.json'), false);
 
         $finder = new Finder();
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
             ->exclude('Tests')
+            ->in($vendorDir . '/composer/spdx-licenses')
+            ->in($vendorDir . '/composer/semver')
             ->in($vendorDir . '/symfony/console')
             ->in($vendorDir . '/symfony/finder')
             ->in($vendorDir . '/symfony/process')
