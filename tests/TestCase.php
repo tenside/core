@@ -35,6 +35,17 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected $workDir;
 
     /**
+     * {@inheritDoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        // Ensure we have a clean environment.
+        putenv('COMPOSER=');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function tearDown()
