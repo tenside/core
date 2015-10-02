@@ -22,14 +22,14 @@ namespace Tenside\Task;
 
 use Composer\Command\UpdateCommand;
 use Composer\Composer;
-use Composer\Factory as ComposerFactory;
+use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Tenside\Util\RuntimeHelper;
 
 /**
  * This class holds the information for an upgrade of some or all packages.
  */
-class UpgradeTask extends Task
+class UpgradeTask extends AbstractComposerCommandTask
 {
     /**
      * The packages to upgrade.
@@ -72,13 +72,22 @@ class UpgradeTask extends Task
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return void
-     *
-     * @throws \RuntimeException When the upgrade did not execute successfully.
+     * {@inheritDoc}
      */
-    public function doPerform()
+    protected function prepareCommand()
+    {
+        RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
+
+        $command = new UpdateCommand();
+        $command->setComposer(Factory::create($this->getIO()));
+
+        return $command;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareInput()
     {
         $arguments = [];
 
@@ -86,30 +95,9 @@ class UpgradeTask extends Task
             $arguments['packages'] = $this->getPackages();
         }
 
-        $command = new UpdateCommand();
-        $input   = new ArrayInput($arguments);
+        $input = new ArrayInput($arguments);
         $input->setInteractive(false);
-        $command->setIO($this->getIO());
-        $command->setComposer($this->getComposer());
 
-        try {
-            if (0 !== ($statusCode = $command->run($input, new TaskOutput($this)))) {
-                throw new \RuntimeException('Error: command exit code was ' . $statusCode);
-            }
-        } catch (\Exception $exception) {
-            throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
-        }
-    }
-
-    /**
-     * Load composer.
-     *
-     * @return Composer
-     */
-    private function getComposer()
-    {
-        RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
-
-        return ComposerFactory::create($this->getIO());
+        return $input;
     }
 }
