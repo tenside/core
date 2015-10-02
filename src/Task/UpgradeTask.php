@@ -37,7 +37,7 @@ class UpgradeTask extends Task
     const SETTING_PACKAGES = 'packages';
 
     /**
-     * The packages to upgrade.
+     * The home path of tenside.
      */
     const SETTING_HOME = 'home';
 

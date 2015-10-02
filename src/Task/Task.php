@@ -117,7 +117,6 @@ abstract class Task
             throw new \LogicException('The has not started to run yet.');
         }
 
-        // FIXME: We need file locking here.
         return (string) file_get_contents($this->logFile, FILE_BINARY, null, $offset);
     }
 

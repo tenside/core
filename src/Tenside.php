@@ -92,6 +92,10 @@ class Tenside
      * Check if the installation is already done.
      *
      * @return bool
+     *
+     * @deprecated To be replaced.
+     *
+     * FIXME: get this out of the way.
      */
     public function isInstalled()
     {

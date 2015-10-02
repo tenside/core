@@ -40,7 +40,7 @@ class RuntimeHelper
             throw new \InvalidArgumentException('Empty home directory encountered.');
         }
 
-        // FIXME: check that this really works correctly in CLI mode.
+        // FIXME: check that this really works correctly in CLI mode, maybe the chdir is already enough?
         if (false === getenv('COMPOSER')) {
             putenv('COMPOSER=' . $home . '/composer.json');
         }
