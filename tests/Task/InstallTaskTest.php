@@ -97,8 +97,8 @@ class InstallTaskTest extends TestCase
             $this->assertFileExists($this->getTempDir() . DIRECTORY_SEPARATOR . $file);
         }
 
-        $this->zipHasBeenUnpackedTo($this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $rootZip);
-        $this->zipHasBeenUnpackedTo(
+        $this->assertZipHasBeenUnpackedTo($this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $rootZip);
+        $this->assertZipHasBeenUnpackedTo(
             $this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $dependencyZip,
             'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
         );

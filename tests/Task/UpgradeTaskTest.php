@@ -107,7 +107,7 @@ class UpgradeTaskTest extends TestCase
 
         $this->assertContains('Installing vendor/dependency-name (1.1.0)', $task->getOutput());
 
-        $this->zipHasBeenUnpackedTo(
+        $this->assertZipHasBeenUnpackedTo(
             $this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $newZip,
             'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
         );

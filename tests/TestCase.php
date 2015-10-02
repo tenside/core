@@ -174,7 +174,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    protected function zipHasBeenUnpackedTo($zipFile, $destinationDir = '')
+    protected function assertZipHasBeenUnpackedTo($zipFile, $destinationDir = '')
     {
         $destinationDir = $this->getTempDir() . DIRECTORY_SEPARATOR . $destinationDir;
 
