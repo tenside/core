@@ -149,7 +149,7 @@ class JsonArray implements \JsonSerializable
      *
      * @param bool   $forceArray Flag if the result shall be casted to array.
      *
-     * @return array|null
+     * @return array|string|int|null
      */
     public function get($path, $forceArray = false)
     {
@@ -196,7 +196,7 @@ class JsonArray implements \JsonSerializable
     {
         // special case, root element.
         if ($path === '/') {
-            $this->data = $value;
+            $this->data = (array) $value;
             return $this;
         }
 

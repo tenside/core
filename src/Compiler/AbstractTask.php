@@ -138,7 +138,7 @@ abstract class AbstractTask
      */
     protected function addFile($file, $strip = true, $pathOverride = null)
     {
-        if ($pathOverride) {
+        if (!empty($pathOverride)) {
             $path = $pathOverride;
         } else {
             $path = strtr(
@@ -169,7 +169,7 @@ abstract class AbstractTask
      */
     protected function addFileRaw($file, $pathOverride = null)
     {
-        if ($pathOverride) {
+        if (!empty($pathOverride)) {
             $path = $pathOverride;
         } else {
             $path = strtr(
