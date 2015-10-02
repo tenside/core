@@ -36,16 +36,21 @@ class ProjectTask extends AbstractTask
     {
         // Add autoload information.
         // FIXME: optimize autoloader here.
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/autoload.php'));
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/autoload_namespaces.php'));
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/autoload_psr4.php'));
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/autoload_classmap.php'));
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/autoload_real.php'));
-        if (file_exists($this->getVendorDir() . '/composer/include_paths.php')) {
-            $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/include_paths.php'));
+        $vendor = $this->getVendorDir();
+        foreach ([
+            '/autoload.php',
+            '/composer/autoload_classmap.php',
+            '/composer/autoload_files.php',
+            '/composer/autoload_namespaces.php',
+            '/composer/autoload_psr4.php',
+            '/composer/autoload_real.php',
+            '/composer/include_paths.php',
+            '/composer/ClassLoader.php',
+            '/../LICENSE',
+        ] as $file) {
+            if (file_exists($vendor . $file)) {
+                $this->addFile(new \SplFileInfo($vendor . $file));
+            }
         }
-
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/composer/ClassLoader.php'));
-        $this->addFile(new \SplFileInfo($this->getVendorDir() . '/../LICENSE'), false);
     }
 }
