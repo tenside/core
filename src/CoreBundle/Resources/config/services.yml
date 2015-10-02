@@ -1,8 +1,4 @@
 services:
-    tenside:
-        class:         Tenside\Tenside
-        arguments:     ["@tenside.home"]
-
     tenside.home:
         class:  Tenside\CoreBundle\HomePathDeterminator
         public: true
