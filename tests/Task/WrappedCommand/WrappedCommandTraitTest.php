@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Test\Task\WrappedCommand;
 
 use Composer\Composer;
 use Tenside\Task\WrappedCommand\WrappedCommandTrait;
