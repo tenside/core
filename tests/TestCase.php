@@ -164,4 +164,37 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         return file_get_contents($this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $path);
     }
+
+    /**
+     * Ensure the contents of a zip file are present in the given dir.
+     *
+     * @param string $zipFile        The source zip to scan (full path).
+     *
+     * @param string $destinationDir The directory where the contents shall be checked (relative to temp dir).
+     *
+     * @return void
+     */
+    protected function zipHasBeenUnpackedTo($zipFile, $destinationDir = '')
+    {
+        $destinationDir = $this->getTempDir() . DIRECTORY_SEPARATOR . $destinationDir;
+
+        $zip = new \ZipArchive();
+        $zip->open($zipFile);
+
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $stat      = $zip->statIndex($i);
+            $fileName  = $stat['name'];
+            $localFile = $destinationDir . DIRECTORY_SEPARATOR . $fileName;
+            $this->assertTrue(is_link($localFile) || file_exists($localFile), 'File does not exist ' . $localFile);
+
+            if (is_link($destinationDir . DIRECTORY_SEPARATOR . $fileName)) {
+                continue;
+            }
+            $this->assertEquals(
+                $stat['crc'],
+                hexdec(hash_file('crc32b', $destinationDir . DIRECTORY_SEPARATOR . $fileName)),
+                'CRC mismatch for ' . $fileName
+            );
+        }
+    }
 }

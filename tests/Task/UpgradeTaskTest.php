@@ -32,39 +32,6 @@ use Tenside\Util\JsonFile;
 class UpgradeTaskTest extends TestCase
 {
     /**
-     * Ensure the contents of a zip file are present in the given dir.
-     *
-     * @param string $zipFile The source zip to scan.
-     *
-     * @param string $destDir The directory where the contents shall be checked.
-     *
-     * @return void
-     */
-    private function zipHasBeenUnpackedTo($zipFile, $destDir = '')
-    {
-        $destDir = $this->getTempDir() . DIRECTORY_SEPARATOR . $destDir;
-
-        $zip = new \ZipArchive();
-        $zip->open($zipFile);
-
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $stat      = $zip->statIndex($i);
-            $fileName  = $stat['name'];
-            $localFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
-            $this->assertTrue(is_link($localFile) || file_exists($localFile), 'File does not exist ' . $localFile);
-
-            if (is_link($destDir . DIRECTORY_SEPARATOR . $fileName)) {
-                continue;
-            }
-            $this->assertEquals(
-                $stat['crc'],
-                hexdec(hash_file('crc32b', $destDir . DIRECTORY_SEPARATOR . $fileName)),
-                'CRC mismatch for ' . $fileName
-            );
-        }
-    }
-
-    /**
      * Test that the base functionality works.
      *
      * @return void
