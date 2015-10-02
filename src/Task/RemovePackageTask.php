@@ -20,9 +20,11 @@
 
 namespace Tenside\Task;
 
+use Composer\Command\Command;
 use Composer\Composer;
 use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Tenside\Task\WrappedCommand\RemoveCommand;
 use Tenside\Util\RuntimeHelper;
@@ -30,7 +32,7 @@ use Tenside\Util\RuntimeHelper;
 /**
  * This class holds the information for an installation request of a package.
  */
-class RemovePackageTask extends Task
+class RemovePackageTask extends AbstractComposerCommandTask
 {
     /**
      * The package to install.
@@ -63,51 +65,37 @@ class RemovePackageTask extends Task
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return void
-     *
-     * @throws \RuntimeException When the upgrade did not execute successfully.
+     * {@inheritDoc}
      */
-    public function doPerform()
+    protected function prepareCommand()
     {
         // Switch home first, this is needed as the command manipulates the RAW composer.json prior to creating the
         // composer instance.
         RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
 
-        $arguments = [];
-
-        $arguments['packages'] = $this->getPackage();
-
         $command = new RemoveCommand();
-        $input   = new ArrayInput($arguments);
-        $input->setInteractive(false);
-        $command->setIO($this->getIO());
-        $that = $this;
+        $that    = $this;
         $command->setComposerFactory(
             function () use ($that) {
                 return Factory::create($that->getIO());
             }
         );
 
-        // Hack, the remove command does not define the verbose option but relies on the application to do so.
-        $command
-            ->getDefinition()
-            ->addOption(
-                new InputOption(
-                    'verbose',
-                    'v|vv|vvv',
-                    InputOption::VALUE_NONE,
-                    'Shows more details including new commits pulled in when updating packages.'
-                )
-            );
+        return $command;
+    }
 
-        try {
-            if (0 !== ($statusCode = $command->run($input, new TaskOutput($this)))) {
-                throw new \RuntimeException('Error: command exit code was ' . $statusCode);
-            }
-        } catch (\Exception $exception) {
-            throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareInput()
+    {
+        $arguments = [
+            'packages' => $this->getPackage()
+        ];
+
+        $input = new ArrayInput($arguments);
+        $input->setInteractive(false);
+
+        return $input;
     }
 }
