@@ -114,7 +114,6 @@ class JsonArray implements \JsonSerializable
      */
     protected function splitPath($path)
     {
-        // TODO: what about escaped \/?
         return array_map([$this, 'unescape'], preg_split('#(?<!\\\)\/#', ltrim($path, '/')));
     }
 
