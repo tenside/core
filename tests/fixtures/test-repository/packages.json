@@ -5,7 +5,7 @@
         "name": "vendor\/package-name",
         "version": "1.0.0",
         "dist": {
-          "url": "file://##URL##/test-repository/vendor-package-name-1.0.0.zip",
+          "url": "file://##URL##vendor-package-name-1.0.0.zip",
           "type": "zip",
           "reference": "master"
         }
@@ -16,7 +16,7 @@
         "name": "vendor\/dependency-name",
         "version": "1.0.0",
         "dist": {
-          "url": "file://##URL##/test-repository/vendor-dependency-name-1.0.0.zip",
+          "url": "file://##URL##vendor-dependency-name-1.0.0.zip",
           "type": "zip",
           "reference": "master"
         }
@@ -25,7 +25,7 @@
         "name": "vendor\/dependency-name",
         "version": "1.1.0",
         "dist": {
-          "url": "file://##URL##/test-repository/vendor-dependency-name-1.1.0.zip",
+          "url": "file://##URL##vendor-dependency-name-1.1.0.zip",
           "type": "zip",
           "reference": "master"
         }

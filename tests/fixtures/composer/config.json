@@ -6,7 +6,7 @@
         "packagist": false,
         "test": {
             "type": "composer",
-            "url": "file://##URL##/test-repository/packages.json"
+            "url": "file://##URL##packages.json"
         }
     }
 }
