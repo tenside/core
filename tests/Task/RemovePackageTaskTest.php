@@ -45,7 +45,7 @@ class RemovePackageTaskTest extends TestCase
                 '##URL##',
                 str_replace(
                     '\\',
-                    '\\\\',
+                    '/',
                     $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR
                 ),
                 $this->readFixture('composer' . DIRECTORY_SEPARATOR . 'config.json')
@@ -58,7 +58,7 @@ class RemovePackageTaskTest extends TestCase
                 '##URL##',
                 str_replace(
                     '\\',
-                    '\\\\',
+                    '/',
                     $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR
                 ),
                 $this->readFixture('test-repository' . DIRECTORY_SEPARATOR . 'packages.json')
