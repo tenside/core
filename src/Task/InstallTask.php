@@ -114,6 +114,7 @@ class InstallTask extends Task
         }
 
         $this->restoreEnvironment();
+        rmdir($this->tempDir);
     }
 
 
@@ -185,8 +186,8 @@ class InstallTask extends Task
         clearstatcache();
         // Now move all the files over.
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR);
-        $folders        = [$this->tempDir];
         $ioHandler      = $this->getIO();
+        $folders        = [];
         foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false)->ignoreVCS(false) as $file) {
             /** @var SplFileInfo $file */
             $pathName        = $file->getPathname();

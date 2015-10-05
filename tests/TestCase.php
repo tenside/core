@@ -187,7 +187,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
             $localFile = $destinationDir . DIRECTORY_SEPARATOR . $fileName;
             $this->assertTrue(is_link($localFile) || file_exists($localFile), 'File does not exist ' . $localFile);
 
-            if (is_link($destinationDir . DIRECTORY_SEPARATOR . $fileName)) {
+            if (is_link($destinationDir . DIRECTORY_SEPARATOR . $fileName)
+                || is_dir($destinationDir . DIRECTORY_SEPARATOR . $fileName)) {
                 continue;
             }
             $this->assertEquals(
