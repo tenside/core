@@ -1,15 +1,10 @@
 platform: x86
 clone_folder: c:\projects\tenside-core
 
-environment:
-  matrix:
-  - PHPVERSION: 5.5.16
-  - PHPVERSION: 5.6.3
-
 install:
   - cinst -y OpenSSL.Light
   - SET PATH=C:\Program Files\OpenSSL;%PATH%
-  - cinst -y php --version=%PHPVERSION%
+  - cinst -y php
   - cd c:\tools\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
