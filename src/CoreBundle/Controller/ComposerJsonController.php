@@ -88,9 +88,9 @@ class ComposerJsonController extends AbstractController
         $errors   = str_replace(dirname($tempFile), '', $errors);
         $warnings = str_replace(dirname($tempFile), '', $warnings);
 
-        return array(
+        return [
             'error'   => $errors,
             'warning' => $warnings,
-        );
+        ];
     }
 }

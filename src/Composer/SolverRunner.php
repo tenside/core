@@ -88,8 +88,8 @@ class SolverRunner
         $this->composer = $composer;
         $this->package  = $this->composer->getPackage();
         $installedRoot  = clone $this->package;
-        $installedRoot->setRequires(array());
-        $installedRoot->setDevRequires(array());
+        $installedRoot->setRequires([]);
+        $installedRoot->setDevRequires([]);
 
         $this->pool      = new Pool($this->package->getMinimumStability(), $this->package->getStabilityFlags());
         $this->platform  = new PlatformRepository();

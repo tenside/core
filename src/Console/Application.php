@@ -180,7 +180,7 @@ class Application extends SymfonyApplication
 
         if (true === $input->hasParameterOption('--shell')) {
             $shell = new Shell($this);
-            $shell->setProcessIsolation($input->hasParameterOption(array('--process-isolation')));
+            $shell->setProcessIsolation($input->hasParameterOption(['--process-isolation']));
             $shell->run();
 
             return 0;

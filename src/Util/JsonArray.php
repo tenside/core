@@ -115,7 +115,7 @@ class JsonArray implements \JsonSerializable
     protected function splitPath($path)
     {
         // TODO: what about escaped \/?
-        return array_map(array($this, 'unescape'), preg_split('#(?<!\\\)\/#', ltrim($path, '/')));
+        return array_map([$this, 'unescape'], preg_split('#(?<!\\\)\/#', ltrim($path, '/')));
     }
 
     /**
@@ -174,7 +174,7 @@ class JsonArray implements \JsonSerializable
                 }
             } else {
                 if ($forceArray) {
-                    return array();
+                    return [];
                 } else {
                     return null;
                 }
@@ -213,7 +213,7 @@ class JsonArray implements \JsonSerializable
             $count = count($chunks);
 
             if ((!(isset($scope[$sub]) && is_array($scope[$sub])))) {
-                $scope[$sub] = array();
+                $scope[$sub] = [];
             }
 
             $scope = &$scope[$sub];

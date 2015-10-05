@@ -55,7 +55,7 @@ class JavascriptWebToken extends AbstractToken
      *
      * @throws \InvalidArgumentException When the provider key is empty.
      */
-    public function __construct($token, $providerKey, $user = 'anon.', array $roles = array())
+    public function __construct($token, $providerKey, $user = 'anon.', array $roles = [])
     {
         parent::__construct($roles);
 
@@ -105,7 +105,7 @@ class JavascriptWebToken extends AbstractToken
      */
     public function serialize()
     {
-        return serialize(array($this->token, $this->providerKey, parent::serialize()));
+        return serialize([$this->token, $this->providerKey, parent::serialize()]);
     }
 
     /**
