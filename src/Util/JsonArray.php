@@ -294,13 +294,13 @@ class JsonArray implements \JsonSerializable
     {
         $entries = $this->get($path);
         $result  = [];
-        $prefix  = trim($path, '/'); // TODO: what about escaped \/?
+        $prefix  = trim($path, '/');
         if (strlen($prefix)) {
             $prefix .= '/';
         }
         if (is_array($entries)) {
             foreach (array_keys($entries) as $key) {
-                $result[] = $prefix . $key;
+                $result[] = $prefix . $this->escape($key);
             }
         }
 

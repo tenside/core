@@ -86,9 +86,9 @@ class JsonArrayTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetEntries()
     {
-        $json = new JsonArray(['test' => ['key1' => 'value1', 'key2' => 'value2', ]]);
+        $json = new JsonArray(['test' => ['key1' => 'value1', 'key2' => 'value2', 'bar/baz' => 'foo']]);
 
         $this->assertEquals(['test'], $json->getEntries('/'));
-        $this->assertEquals(['test/key1', 'test/key2'], $json->getEntries('/test'));
+        $this->assertEquals(['test/key1', 'test/key2', 'test/bar\/baz'], $json->getEntries('/test'));
     }
 }
