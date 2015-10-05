@@ -42,7 +42,11 @@ class InstallTaskTest extends TestCase
             '.composer' . DIRECTORY_SEPARATOR . 'config.json',
             str_replace(
                 '##URL##',
-                $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR,
+                str_replace(
+                    '\\',
+                    '\\\\',
+                    $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR
+                ),
                 $this->readFixture('composer' . DIRECTORY_SEPARATOR . 'config.json')
             )
         );
@@ -51,7 +55,11 @@ class InstallTaskTest extends TestCase
             'test-repository' . DIRECTORY_SEPARATOR. 'packages.json',
             str_replace(
                 '##URL##',
-                $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR,
+                str_replace(
+                    '\\',
+                    '\\\\',
+                    $this->getTempDir() . DIRECTORY_SEPARATOR . 'test-repository' . DIRECTORY_SEPARATOR
+                ),
                 $this->readFixture('test-repository' . DIRECTORY_SEPARATOR . 'packages.json')
             )
         );
