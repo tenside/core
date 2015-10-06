@@ -59,9 +59,9 @@ class TaskTest extends TestCase
 
         $this->assertInstanceOf('Composer\IO\IOInterface', $task->getIO());
         $task->getIO()->write('Test');
-        $this->assertEquals('FooTest' . PHP_EOL, substr($task->getOutput(), -(7 + strlen(PHP_EOL))));
+        $this->assertEquals('FooTest' . "\n", substr($task->getOutput(), -8));
         $skip = strlen($task->getOutput());
-        $this->assertEquals('Test' . PHP_EOL, $task->getOutput($skip - (4 + strlen(PHP_EOL))));
+        $this->assertEquals('Test' . "\n", $task->getOutput($skip - 5));
 
         $this->assertEquals(Task::STATE_FINISHED, $task->getStatus());
     }
