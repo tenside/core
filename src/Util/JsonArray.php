@@ -334,7 +334,8 @@ class JsonArray implements \JsonSerializable
      */
     public function __toString()
     {
-        return json_encode($this, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . PHP_EOL;
+        // Do not use PHP_EOL here, PHP only uses newline and not crlf on Windows.
+        return json_encode($this, (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . "\n";
     }
 
     /**
