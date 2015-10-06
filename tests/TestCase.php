@@ -35,11 +35,19 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected $workDir;
 
     /**
+     * The initial working directory.
+     *
+     * @var string
+     */
+    private $initialWorkingDirectory;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
+        $this->initialWorkingDirectory = getcwd();
 
         // Ensure we have a clean environment.
         putenv('COMPOSER=');
@@ -50,6 +58,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
+        if (isset($this->initialWorkingDirectory)) {
+            chdir($this->initialWorkingDirectory);
+        }
+
         if (isset($this->workDir)) {
             $filesystem = new Filesystem();
             $filesystem->remove($this->workDir);
