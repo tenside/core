@@ -83,13 +83,12 @@ class PackageController extends AbstractController
         $converter = new PackageConverter($composer->getPackage());
 
         foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
-            /** @var PackageInterface $package */
             if ($package->getPrettyName() === $packageName) {
                 return new JsonResponse($converter->convertPackageToArray($package), 200);
             }
         }
 
-        return new Response('Not found', 404);
+        return new Response('Not found', Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -125,7 +124,7 @@ class PackageController extends AbstractController
             );
             return new JsonResponse($new, 200);
         } catch (\InvalidArgumentException $exception) {
-            return new Response('Not found', 404);
+            return new Response('Not found', Response::HTTP_NOT_FOUND);
         }
     }
 
@@ -148,13 +147,12 @@ class PackageController extends AbstractController
         $converter = new PackageConverter($composer->getPackage());
 
         foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
-            /** @var PackageInterface $package */
             if ($package->getPrettyName() === $packageName) {
                 return new JsonResponse($converter->convertPackageToArray($package), 200);
             }
         }
 
-        return new Response('Not found', 404);
+        return new Response('Not found', Response::HTTP_NOT_FOUND);
     }
 
     /**
