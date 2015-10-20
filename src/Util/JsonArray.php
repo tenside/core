@@ -41,8 +41,7 @@ class JsonArray implements \JsonSerializable
     {
         if (is_string($data)) {
             $this->load($data);
-        }
-        if (is_array($data)) {
+        } elseif (is_array($data)) {
             $this->setData($data);
         }
     }
@@ -74,7 +73,7 @@ class JsonArray implements \JsonSerializable
     }
 
     /**
-     * Retrieve the data as json string.
+     * Retrieve the data as array.
      *
      * @return array
      */

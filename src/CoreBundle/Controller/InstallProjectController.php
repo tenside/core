@@ -90,7 +90,7 @@ class InstallProjectController extends AbstractController
             $fileSystem->remove(
                 array_map(
                     function ($file) use ($installDir) {
-                        return $installDir. DIRECTORY_SEPARATOR . $file;
+                        return $installDir . DIRECTORY_SEPARATOR . $file;
                     },
                     [
                         'tenside.json',
