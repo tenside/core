@@ -76,7 +76,8 @@ class TaskList
 
         $metaData
             ->set(Task::SETTING_ID, $taskId)
-            ->set(Task::SETTING_TYPE, $type);
+            ->set(Task::SETTING_TYPE, $type)
+            ->set('status', Task::STATE_PENDING);
 
         $this->getConfig()->set($taskId, $metaData->getData());
 

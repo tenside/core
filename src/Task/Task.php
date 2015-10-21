@@ -43,6 +43,11 @@ abstract class Task
     const SETTING_ID = 'id';
 
     /**
+     * This state determines that the task is still awaiting to be executed.
+     */
+    const STATE_PENDING = 'PENDING';
+
+    /**
      * This state determines that the task is still running.
      */
     const STATE_RUNNING = 'RUNNING';
@@ -140,7 +145,7 @@ abstract class Task
      */
     public function perform($logFile)
     {
-        if (null !== $this->getStatus()) {
+        if (self::STATE_PENDING !== $this->getStatus()) {
             throw new \LogicException('Attempted to run task ' . $this->getId() . ' twice.');
         }
 
