@@ -117,6 +117,7 @@ class PackageController extends AbstractController
         $converter = new PackageConverter($composer->getPackage());
 
         try {
+            // FIXME: Allow to update the constraint in composer.json besides locking/unlocking.
             $new = $converter->updatePackageFromArray(
                 $info,
                 $composer->getRepositoryManager()->getLocalRepository(),
@@ -150,6 +151,8 @@ class PackageController extends AbstractController
             if ($package->getPrettyName() === $packageName) {
                 return new JsonResponse($converter->convertPackageToArray($package), 200);
             }
+
+            // FIXME: remove package from composer.json now.
         }
 
         return new Response('Not found', Response::HTTP_NOT_FOUND);
