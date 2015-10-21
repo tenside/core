@@ -36,6 +36,41 @@ use Tenside\Util\RuntimeHelper;
 abstract class AbstractController extends Controller
 {
     /**
+     * The io interface in use.
+     *
+     * @var IOInterface
+     */
+    private $inputOutput;
+
+    /**
+     * Retrieve the io instance or create a new one.
+     *
+     * @return IOInterface
+     */
+    public function getInputOutput()
+    {
+        if (!$this->inputOutput) {
+            $this->inputOutput = new BufferIO();
+        }
+
+        return $this->inputOutput;
+    }
+
+    /**
+     * Return the output from the buffer io, if any is set.
+     *
+     * @return string|null
+     */
+    protected function getOutput()
+    {
+        if ($this->inputOutput instanceof BufferIO) {
+            return $this->inputOutput->getOutput();
+        }
+
+        return null;
+    }
+
+    /**
      * Retrieve a composer instance.
      *
      * @param IOInterface $inputOutput The input/output handler to use.
@@ -45,7 +80,7 @@ abstract class AbstractController extends Controller
     public function getComposer(IOInterface $inputOutput = null)
     {
         if (null === $inputOutput) {
-            $inputOutput = new BufferIO();
+            $inputOutput = $this->getInputOutput();
         }
         RuntimeHelper::setupHome($this->getTensideHome());
 

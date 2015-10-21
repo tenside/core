@@ -21,7 +21,6 @@
 
 namespace Tenside\CoreBundle\Controller;
 
-use Composer\IO\BufferIO;
 use Composer\Util\RemoteFilesystem;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -151,7 +150,7 @@ class InstallProjectController extends AbstractController
 
         // FIXME: we only search the packagist API here.
         $url     = sprintf('https://packagist.org/packages/%s/%s.json', $vendor, $project);
-        $rfs     = new RemoteFilesystem(new BufferIO());
+        $rfs     = new RemoteFilesystem($this->getInputOutput());
         $results = $rfs->getContents($url, $url);
         $data    = new JsonArray($results);
 
