@@ -182,6 +182,7 @@ class TaskRunnerController extends AbstractController
 
         $commandline->start();
         if (!$commandline->isRunning()) {
+            // We might end up here when the process has been forked.
             // If exit code is neither 0 nor null, we have a problem here.
             if ($exitCode = $commandline->getExitCode()) {
                 $logger = $this->get('logger');
