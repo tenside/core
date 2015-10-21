@@ -183,7 +183,12 @@ class TaskRunnerController extends AbstractController
         $commandline->start();
         if (!$commandline->isRunning()) {
             // If exit code is neither 0 nor null, we have a problem here.
-            if ($exitCode = $commandline->getPid()) {
+            if ($exitCode = $commandline->getExitCode()) {
+                $logger = $this->get('logger');
+                $logger->error('Failed to execute "' . $cmd . '"');
+                $logger->error('Exit code: ' . $commandline->getExitCode());
+                $logger->error('Output: ' . $commandline->getOutput());
+                $logger->error('Error output: ' . $commandline->getErrorOutput());
                 throw new \RuntimeException(
                     sprintf(
                         'Spawning process task %s resulted in exit code %s',
