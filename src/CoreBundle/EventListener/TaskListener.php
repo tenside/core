@@ -22,6 +22,8 @@ namespace Tenside\CoreBundle\EventListener;
 
 use Tenside\CoreBundle\Events\CreateTaskEvent;
 use Tenside\Task\InstallTask;
+use Tenside\Task\RemovePackageTask;
+use Tenside\Task\RequirePackageTask;
 use Tenside\Task\Task;
 use Tenside\Task\UpgradeTask;
 
@@ -51,6 +53,12 @@ class TaskListener
                 return;
             case 'upgrade':
                 $event->setTask(new UpgradeTask($config));
+                return;
+            case 'require-package':
+                $event->setTask(new RequirePackageTask($config));
+                return;
+            case 'remove-package':
+                $event->setTask(new RemovePackageTask($config));
                 return;
             default:
         }
