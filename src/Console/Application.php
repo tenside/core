@@ -29,6 +29,7 @@ use Composer\IO\ConsoleIO;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Formatter\OutputFormatter;
@@ -308,6 +309,31 @@ class Application extends SymfonyApplication
         }
 
         return parent::run($input, $output);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function renderException($exception, $output)
+    {
+        // Preserve plain echoing to console...
+        parent::renderException($exception, $output);
+
+        // ... but pass to logger as well.
+        if ($container = $this->kernel->getContainer()) {
+            $logger = $container->get('logger');
+
+            // We want stack traces, therefore be very verbose.
+            $buffer = new BufferedOutput(BufferedOutput::VERBOSITY_VERBOSE);
+            parent::renderException($exception, $buffer);
+            $logger->error('--------------------------------------------------------');
+            foreach (explode("\n", str_replace("\n\n", "\n", $buffer->fetch())) as $line) {
+                if ('' !== $line) {
+                    $logger->error($line);
+                }
+            }
+            $logger->error('--------------------------------------------------------');
+        }
     }
 
     /**
