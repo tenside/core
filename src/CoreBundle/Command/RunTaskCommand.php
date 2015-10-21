@@ -20,12 +20,14 @@
 
 namespace Tenside\CoreBundle\Command;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\LockHandler;
 use Tenside\Task\Runner;
+use Tenside\Util\FunctionAvailabilityCheck;
 
 /**
  * This class executes a queued task in detached mode.
@@ -54,6 +56,13 @@ class RunTaskCommand extends ContainerAwareCommand
         $container = $this->getContainer();
         /** @var LoggerInterface $logger */
         $logger = $container->get('logger');
+
+        // If successfully forked, exit now as the parenting process is done.
+        if ($this->fork()) {
+            $output->writeln('Forked into background.');
+            return 0;
+        }
+
         $lockDir = $container->get('tenside.home')->tensideDataDir();
         $lock    = new LockHandler('task-run', $lockDir);
         $logger->info('Acquire lock file.');
@@ -107,5 +116,40 @@ class RunTaskCommand extends ContainerAwareCommand
         }
 
         return 0;
+    }
+
+    /**
+     * Try to fork.
+     *
+     * The return value determines if the caller shall exit (when forking was successful and it is the forking process)
+     * or rather proceed execution (is the fork or unable to fork).
+     *
+     * True means go on, false means exit.
+     *
+     * @return bool
+     *
+     * @throws \RuntimeException When the forking caused an error.
+     */
+    private function fork()
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->getContainer()->get('logger');
+        if (!FunctionAvailabilityCheck::isFunctionEnabled('pcntl_fork', 'pcntl')) {
+            $logger->warning('pcntl_fork() is not available, execution will block until the command has finished.');
+
+            return false;
+        } else {
+            $pid = pcntl_fork();
+            if (-1 === $pid) {
+                throw new \RuntimeException('pcntl_fork() returned -1.');
+            } elseif (0 !== $pid) {
+                // Tell the calling method to exit now.
+                $logger->error('Forked process ' . posix_getpid() . ' to pid ' . $pid);
+                return true;
+            }
+
+            $logger->error('Processing task in forked process with pid ' . posix_getpid());
+            return false;
+        }
     }
 }
