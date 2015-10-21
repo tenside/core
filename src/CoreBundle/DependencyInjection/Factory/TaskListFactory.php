@@ -40,6 +40,6 @@ class TaskListFactory
      */
     public static function create(HomePathDeterminator $home, EventDispatcherInterface $eventDispatcher)
     {
-        return new TaskList($home->homeDir(), $eventDispatcher);
+        return new TaskList($home->tensideDataDir(), $eventDispatcher);
     }
 }
