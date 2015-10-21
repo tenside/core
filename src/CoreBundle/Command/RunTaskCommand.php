@@ -83,7 +83,8 @@ class RunTaskCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $task      = $container->get('tenside.tasks')->getTask($input->getArgument('taskId'));
+        $taskList  = $container->get('tenside.tasks');
+        $task      = $taskList->getTask($input->getArgument('taskId'));
 
         if (!$task) {
             throw new \InvalidArgumentException('Task not found: ' . $input->getArgument('taskId'));
@@ -91,10 +92,18 @@ class RunTaskCommand extends ContainerAwareCommand
 
         $runner = new Runner($task);
 
-        if (!$runner->run(
-            $this->getContainer()->get('kernel')->getLogDir() . DIRECTORY_SEPARATOR . 'task-' . $task->getId() . '.log'
-        )) {
-            return 1;
+        try {
+            if (!$runner->run(
+                $container->get('kernel')->getLogDir() . DIRECTORY_SEPARATOR . 'task-' . $task->getId() . '.log'
+            )) {
+                $container->get('logger')->info($task->getOutput());
+
+                return 1;
+            }
+        } catch (\Exception $exception) {
+            // TODO: $taskList->pushBack($task);
+
+            throw $exception;
         }
 
         return 0;
