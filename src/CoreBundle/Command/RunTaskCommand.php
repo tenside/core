@@ -51,8 +51,13 @@ class RunTaskCommand extends ContainerAwareCommand
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
+        $container = $this->getContainer();
+        /** @var LoggerInterface $logger */
+        $logger = $container->get('logger');
         $lockDir = $container->get('tenside.home')->tensideDataDir();
         $lock    = new LockHandler('task-run', $lockDir);
+        $logger->info('Acquire lock file.');
+
         if (!$lock->lock()) {
             $logger->error('Could not acquire lock file.');
             throw new \RuntimeException(
@@ -65,6 +70,7 @@ class RunTaskCommand extends ContainerAwareCommand
         try {
             return parent::run($input, $output);
         } finally {
+            $logger->info('Release lock file.');
             $lock->release();
         }
     }
