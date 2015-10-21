@@ -20,10 +20,8 @@
 
 namespace Tenside\Task;
 
-use Composer\Composer;
 use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputOption;
 use Tenside\Task\WrappedCommand\RequireCommand;
 use Tenside\Util\RuntimeHelper;
 
