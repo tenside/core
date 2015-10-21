@@ -60,8 +60,6 @@ class InstallProjectController extends AbstractController
         if ($version = $inputData->get('project/version')) {
             $taskData->set(InstallTask::SETTING_VERSION, $version);
         }
-        $taskData->set(InstallTask::SETTING_USER, $inputData->get('credentials/username'));
-        $taskData->set(InstallTask::SETTING_PASSWORD, $inputData->get('credentials/password'));
 
         // Add tenside configuration.
         $tensideConfig = $this->get('tenside.config');

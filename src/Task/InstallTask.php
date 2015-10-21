@@ -51,16 +51,6 @@ class InstallTask extends Task
     const SETTING_REPOSITORY_URL = 'repository-url';
 
     /**
-     * Constant for the new user name.
-     */
-    const SETTING_USER = 'username';
-
-    /**
-     * Constant for the password of the new user.
-     */
-    const SETTING_PASSWORD = 'password';
-
-    /**
      * The temporary directory to use.
      *
      * @var string
