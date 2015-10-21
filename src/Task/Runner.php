@@ -51,6 +51,8 @@ class Runner
      */
     public function run($logfile)
     {
-        return Task::STATE_FINISHED === $this->task->perform($logfile);
+        $this->task->perform($logfile);
+
+        return Task::STATE_FINISHED === $this->task->getStatus();
     }
 }
