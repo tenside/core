@@ -28,6 +28,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tenside\Task\AbstractComposerCommandTask;
+use Tenside\Task\Task;
 use Tenside\Test\TestCase;
 use Tenside\Util\JsonArray;
 use Tenside\Util\RuntimeHelper;
@@ -47,7 +48,7 @@ class AbstractComposerCommandTaskTest extends TestCase
         $task = $this
             ->getMockForAbstractClass(
                 'Tenside\\Task\\AbstractComposerCommandTask',
-                [new JsonArray()]
+                [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
@@ -78,7 +79,7 @@ class AbstractComposerCommandTaskTest extends TestCase
         $task = $this
             ->getMockForAbstractClass(
                 'Tenside\\Task\\AbstractComposerCommandTask',
-                [new JsonArray()]
+                [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
@@ -107,7 +108,7 @@ class AbstractComposerCommandTaskTest extends TestCase
         $task = $this
             ->getMockForAbstractClass(
                 'Tenside\\Task\\AbstractComposerCommandTask',
-                [new JsonArray()]
+                [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this

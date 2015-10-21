@@ -82,6 +82,7 @@ class RequirePackageTaskTest extends TestCase
                     RequirePackageTask::SETTING_ID      => 'require-task-id',
                     RequirePackageTask::SETTING_PACKAGE => ['vendor/dependency-name', '1.0.0'],
                     RequirePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                            => RequirePackageTask::STATE_PENDING
                 ]
             )
         );

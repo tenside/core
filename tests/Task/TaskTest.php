@@ -41,7 +41,7 @@ class TaskTest extends TestCase
         $test = $this;
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
+            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
@@ -77,7 +77,7 @@ class TaskTest extends TestCase
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
+            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
         $task->expects($this->once())->method('doPerform');
@@ -99,7 +99,7 @@ class TaskTest extends TestCase
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
+            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
@@ -117,7 +117,7 @@ class TaskTest extends TestCase
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
+            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
@@ -133,7 +133,7 @@ class TaskTest extends TestCase
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id'])])
+            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
         $task->expects($this->once())->method('doPerform')->willReturnCallback(function () {
@@ -164,7 +164,9 @@ class TaskTest extends TestCase
         $log  = $this->getTempFile('testlog');
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'log' => $log])])
+            ->setConstructorArgs(
+                [new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING, 'log' => $log])]
+            )
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
         /** @var Task $task */

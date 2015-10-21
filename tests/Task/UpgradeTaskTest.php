@@ -79,8 +79,7 @@ class UpgradeTaskTest extends TestCase
                     InstallTask::SETTING_PACKAGE         => 'vendor/package-name',
                     InstallTask::SETTING_VERSION         => '1.0.0',
                     InstallTask::SETTING_DESTINATION_DIR => $this->getTempDir(),
-                    InstallTask::SETTING_USER            => 'testuser',
-                    InstallTask::SETTING_PASSWORD        => 'abc1234',
+                    'status'                             => InstallTask::STATE_PENDING,
                 ]
             )
         );
@@ -103,7 +102,8 @@ class UpgradeTaskTest extends TestCase
                     UpgradeTask::SETTING_TYPE            => 'upgrade',
                     UpgradeTask::SETTING_ID              => 'upgrade-task-id',
                     UpgradeTask::SETTING_HOME            => $this->getTempDir(),
-                    UpgradeTask::SETTING_PACKAGES        => ['vendor/dependency-name']
+                    UpgradeTask::SETTING_PACKAGES        => ['vendor/dependency-name'],
+                    'status'                             => UpgradeTask::STATE_PENDING,
                 ]
             )
         );

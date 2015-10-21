@@ -40,10 +40,11 @@ class TaskRunnerTest extends TestCase
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
-            ->setMethods(['perform'])
-            ->setConstructorArgs([new JsonArray()])
+            ->setMethods(['perform', 'getStatus'])
+            ->setConstructorArgs([new JsonArray([])])
             ->getMockForAbstractClass();
-        $task->expects($this->once())->method('perform')->willReturn(Task::STATE_FINISHED);
+        $task->expects($this->once())->method('perform');
+        $task->expects($this->once())->method('getStatus')->willReturn(Task::STATE_FINISHED);
 
         $runner = new Runner($task);
 

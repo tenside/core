@@ -79,8 +79,7 @@ class InstallTaskTest extends TestCase
                     InstallTask::SETTING_PACKAGE         => 'vendor/package-name',
                     InstallTask::SETTING_VERSION         => '1.0.0',
                     InstallTask::SETTING_DESTINATION_DIR => $this->getTempDir(),
-                    InstallTask::SETTING_USER            => 'testuser',
-                    InstallTask::SETTING_PASSWORD        => 'abc1234',
+                    'status'                             => InstallTask::STATE_PENDING
                 ]
             )
         );

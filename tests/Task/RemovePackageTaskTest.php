@@ -78,8 +78,7 @@ class RemovePackageTaskTest extends TestCase
                     InstallTask::SETTING_PACKAGE         => 'vendor/package-name',
                     InstallTask::SETTING_VERSION         => '1.0.0',
                     InstallTask::SETTING_DESTINATION_DIR => $this->getTempDir(),
-                    InstallTask::SETTING_USER            => 'testuser',
-                    InstallTask::SETTING_PASSWORD        => 'abc1234',
+                    'status'                             => InstallTask::STATE_PENDING
                 ]
             )
         );
@@ -105,6 +104,7 @@ class RemovePackageTaskTest extends TestCase
                     RemovePackageTask::SETTING_ID      => 'remove-task-id',
                     RemovePackageTask::SETTING_PACKAGE => ['vendor/dependency-name'],
                     RemovePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                           => RemovePackageTask::STATE_PENDING
                 ]
             )
         );
