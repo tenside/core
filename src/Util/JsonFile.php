@@ -59,7 +59,7 @@ class JsonFile extends JsonArray
             $backupFile = $filename . '~';
         }
 
-        $this->backupFile = (string) $backupFile;
+        $this->backupFile = $backupFile;
 
         if (file_exists($this->filename)) {
             try {
@@ -109,7 +109,7 @@ class JsonFile extends JsonArray
      */
     private function makeBackup()
     {
-        if (null === $this->backupFile || !file_exists($this->filename)) {
+        if ((null === $this->backupFile) || !file_exists($this->filename)) {
             return;
         }
 

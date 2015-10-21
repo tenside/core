@@ -137,7 +137,7 @@ class TaskList
             return null;
         }
 
-        return $this->createTaskFromMetaData(new JsonFile($filename));
+        return $this->createTaskFromMetaData(new JsonFile($filename, null));
     }
 
     /**
