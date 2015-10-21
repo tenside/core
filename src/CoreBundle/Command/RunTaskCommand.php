@@ -74,6 +74,10 @@ class RunTaskCommand extends ContainerAwareCommand
             $lock->release();
         }
     }
+
+    /**
+     * {@inheritdoc}
+     *
      * @throws \InvalidArgumentException When an invalid task id has been passed.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
