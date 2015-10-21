@@ -24,6 +24,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\LockHandler;
 use Tenside\Task\Runner;
 
 /**
@@ -46,6 +47,27 @@ class RunTaskCommand extends ContainerAwareCommand
     /**
      * {@inheritdoc}
      *
+     * @throws \RuntimeException When another task is already running.
+     */
+    public function run(InputInterface $input, OutputInterface $output)
+    {
+        $lockDir = $container->get('tenside.home')->tensideDataDir();
+        $lock    = new LockHandler('task-run', $lockDir);
+        if (!$lock->lock()) {
+            $logger->error('Could not acquire lock file.');
+            throw new \RuntimeException(
+                'Another task appears to be running. ' .
+                'If this is not the case, please remove the lock file in ' .
+                $lockDir
+            );
+        }
+
+        try {
+            return parent::run($input, $output);
+        } finally {
+            $lock->release();
+        }
+    }
      * @throws \InvalidArgumentException When an invalid task id has been passed.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
