@@ -255,7 +255,8 @@ class InstallTask extends Task
         $this->previousWorkingDir  = getcwd();
         // Clear any potential overriding env variable.
         putenv('COMPOSER=');
-        chdir($this->tempDir);
+        // Removed, confuses git clones somehow.
+        // chdir($this->tempDir);
     }
 
     /**
