@@ -101,9 +101,9 @@ class InstallTask extends Task
         } catch (\Exception $exception) {
             $this->restoreEnvironment();
             throw new \RuntimeException('Project could not be created.', 1, $exception);
+        } finally {
+            $this->restoreEnvironment();
         }
-
-        $this->restoreEnvironment();
         rmdir($this->tempDir);
     }
 
