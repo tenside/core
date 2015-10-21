@@ -47,6 +47,16 @@ class HomePathDeterminator
     }
 
     /**
+     * Retrieve the directory to store tenside related data.
+     *
+     * @return string
+     */
+    public function tensideDataDir()
+    {
+        return $this->homeDir() . '/tenside';
+    }
+
+    /**
      * Determine the correct working directory.
      *
      * @return string
