@@ -178,7 +178,7 @@ class TaskRunnerController extends AbstractController
             escapeshellarg($task->getId())
         );
 
-        $commandline = new Process($cmd);
+        $commandline = new Process($cmd, $this->get('tenside.home')->homeDir(), null, null, null);
 
         $commandline->start();
         if (!$commandline->isRunning()) {
