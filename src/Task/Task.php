@@ -164,10 +164,23 @@ abstract class Task
 
             $this->doPerform();
         } catch (\Exception $exception) {
-            $this->addOutput('Error: ' . $exception->getMessage());
+            $this->addOutput('--------------------------------------------------------' . "\n");
+            $this->addOutput('Exception occured: ' . $exception->getMessage() . "\n");
+            $this->addOutput($exception->getTraceAsString() . "\n");
+            $loopException = $exception;
+            while ($loopException = $loopException->getPrevious()) {
+                $this->addOutput('Chained exception: ' . $loopException->getMessage() . "\n");
+                $this->addOutput($loopException->getTraceAsString() . "\n");
+            }
+            $this->addOutput('--------------------------------------------------------' . "\n");
+
             $this->setStatus(self::STATE_ERROR);
 
-            throw new \RuntimeException('Error: ' . $exception->getMessage(), 1, $exception);
+            throw new \RuntimeException(
+                'Task ' . $this->getId() . ' errored: ' . $exception->getMessage(),
+                1,
+                $exception
+            );
         }
 
         $this->addOutput('Finished without error.' . "\n");
