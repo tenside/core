@@ -87,7 +87,7 @@ class InstallTask extends Task
     public function doPerform()
     {
         if (!$this->mayInstall()) {
-            throw new \RuntimeException('Error: project directory not empty.');
+            throw new \RuntimeException('Project directory not empty.');
         }
 
         // Will throw exception upon error.
@@ -100,7 +100,7 @@ class InstallTask extends Task
             $this->moveFiles();
         } catch (\Exception $exception) {
             $this->restoreEnvironment();
-            throw new \RuntimeException('Error: ' . $exception->getMessage(), 1, $exception);
+            throw new \RuntimeException('Project could not be created.', 1, $exception);
         }
 
         $this->restoreEnvironment();
@@ -121,7 +121,7 @@ class InstallTask extends Task
 
         // If the temporary folder could not be created, error out.
         if (!mkdir($tempDir, 0700)) {
-            throw new \RuntimeException('Error: Could not create the temporary directory');
+            throw new \RuntimeException('Could not create the temporary directory');
         }
 
         $this->tempDir = $tempDir;
@@ -156,7 +156,7 @@ class InstallTask extends Task
 
         try {
             if (0 !== ($statusCode = $command->run($input, new TaskOutput($this)))) {
-                throw new \RuntimeException('Error: command exit code was ' . $statusCode);
+                throw new \RuntimeException('Command exit code was non zero ' . $statusCode);
             }
         } catch (\Exception $exception) {
             throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
