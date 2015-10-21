@@ -161,9 +161,19 @@ class TaskRunnerController extends AbstractController
             $phpCli = $config->get('php-cli');
         }
 
+        // If defined, add the php-cli interpreter arguments.
+        if ($config->has('php-cli-arguments')) {
+            $arguments = [];
+            foreach ($config->get('php-cli-arguments') as $argument) {
+                $arguments[] = $argument;
+            }
+            $arguments = implode(' ', array_map('escapeshellarg', $arguments));
+        }
+
         $cmd = sprintf(
             '%s %s tenside:runtask %s',
             escapeshellcmd($phpCli),
+            isset($arguments) ? $arguments : '',
             escapeshellarg($this->get('tenside.cli_script')->cliExecutable()),
             escapeshellarg($task->getId())
         );
