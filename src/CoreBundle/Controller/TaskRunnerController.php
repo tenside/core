@@ -72,7 +72,7 @@ class TaskRunnerController extends AbstractController
         return JsonResponse::create(
             [
                 'status' => $task->getStatus(),
-                'output' => [$task->getOutput($offset)]
+                'output' => $task->getOutput($offset)
             ]
         );
     }
