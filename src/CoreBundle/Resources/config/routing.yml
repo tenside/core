@@ -117,6 +117,16 @@ install_get_progress:
     defaults: { _controller: TensideCoreBundle:InstallProject:getInstallationTaskProgress }
     methods:  [GET]
 
+install_selftest:
+    path:     /v1/install/selftest.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:getSelfTest }
+    methods:  [GET]
+
+install_autoconfig:
+    path:     /v1/install/autoconfig.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:getAutoConfig }
+    methods:  [GET]
+
 install_search_project:
     path:     /v1/install/search-project/{vendor}/{project}.json
     defaults: { _controller: TensideCoreBundle:InstallProject:getProjectVersions }
@@ -124,3 +134,13 @@ install_search_project:
     requirements:
         vendor: "[\-\_a-zA-Z0-9]+"
         project: "[\-\_a-zA-Z0-9]+"
+
+selftest_alltests:
+    path:     /v1/selftest.json
+    defaults: { _controller: TensideCoreBundle:SelfTest:getAllTests }
+    methods:  [GET]
+
+selftest_autoconfig:
+    path:     /v1/autoconfig.json
+    defaults: { _controller: TensideCoreBundle:SelfTest:getAutoConfig }
+    methods:  [GET]

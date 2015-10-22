@@ -37,8 +37,6 @@ use Tenside\Util\JsonArray;
  */
 class InstallProjectController extends AbstractController
 {
-    // FIXME: add an endpoint to check the system. See Selftest namespace.
-
     /**
      * Create a project.
      *
@@ -133,6 +131,30 @@ class InstallProjectController extends AbstractController
         $this->checkUninstalled();
 
         return $this->forward('TensideCoreBundle:TaskRunner:getTask', $request->attributes, $request->query);
+    }
+
+    /**
+     * This is a gateway to the self test controller available only at install time.
+     *
+     * @return JsonResponse
+     */
+    public function getSelfTestAction()
+    {
+        $this->checkUninstalled();
+
+        return $this->forward('TensideCoreBundle:SelfTest:getAllTests');
+    }
+
+    /**
+     * This is a gateway to the auto config controller available only at install time.
+     *
+     * @return JsonResponse
+     */
+    public function getAutoConfigAction()
+    {
+        $this->checkUninstalled();
+
+        return $this->forward('TensideCoreBundle:SelfTest:getAutoConfig');
     }
 
     /**
