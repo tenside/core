@@ -20,8 +20,8 @@
 
 namespace Tenside\CoreBundle\EventListener;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -36,6 +36,8 @@ class ExceptionListener
      * @param GetResponseForExceptionEvent $event The event object.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
@@ -51,12 +53,12 @@ class ExceptionListener
             case 'Symfony\\Component\\HttpKernel\\Exception\\InternalServerErrorHttpException':
             case 'Symfony\\Component\\HttpKernel\\Exception\\BadRequestHttpException':
             case 'Symfony\\Component\\HttpKernel\\Exception\\ServiceUnavailableHttpException':
+            case 'Symfony\\Component\\HttpKernel\\Exception\\NotAcceptableHttpException':
             case 'Symfony\\Component\\HttpKernel\\Exception\\HttpException':
                 /** @var HttpException $exception */
                 $response = $this->createHttpExceptionResponse($exception);
                 break;
             default:
-                return;
         }
 
         if (null === $response) {
@@ -71,29 +73,35 @@ class ExceptionListener
      *
      * @param Request $request The http request.
      *
-     * @return Response
+     * @return JsonResponse
      *
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function createNotFoundResponse($request)
     {
-        return new Response(
-            Response::$statusTexts[Response::HTTP_NOT_FOUND] . $request->getRequestUri(),
-            Response::HTTP_NOT_FOUND
+        return new JsonResponse(
+            [
+                'status'  => 'ERROR',
+                'message' => 'Uri ' . $request->getRequestUri() . ' could not be found'
+            ],
+            JsonResponse::HTTP_NOT_FOUND
         );
     }
 
     /**
-     * Create a 401 response.
+     * Create a http response.
      *
      * @param HttpException $exception The exception to create a response for.
      *
-     * @return Response
+     * @return JsonResponse
      */
     private function createHttpExceptionResponse(HttpException $exception)
     {
-        return new Response(
-            Response::$statusTexts[$exception->getStatusCode()],
+        return new JsonResponse(
+            [
+                'status'  => 'ERROR',
+                'message' => $exception->getMessage()
+            ],
             $exception->getStatusCode(),
             $exception->getHeaders()
         );
@@ -102,13 +110,16 @@ class ExceptionListener
     /**
      * Create a 500 response.
      *
-     * @return Response
+     * @return JsonResponse
      */
     private function createInternalServerError()
     {
-        return new Response(
-            Response::$statusTexts[Response::HTTP_INTERNAL_SERVER_ERROR],
-            Response::HTTP_INTERNAL_SERVER_ERROR
+        return new JsonResponse(
+            [
+                'status'  => 'ERROR',
+                'message' => JsonResponse::$statusTexts[JsonResponse::HTTP_INTERNAL_SERVER_ERROR]
+            ],
+            JsonResponse::HTTP_INTERNAL_SERVER_ERROR
         );
     }
 }
