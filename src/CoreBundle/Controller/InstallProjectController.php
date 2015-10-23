@@ -185,6 +185,31 @@ class InstallProjectController extends AbstractController
     }
 
     /**
+     * Check if installation is new, partial or complete.
+     *
+     * @return JsonResponse
+     */
+    public function getInstallationStateAction()
+    {
+        $state = 'FRESH';
+
+        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'tenside.json')) {
+            $state = 'PARTIAL';
+        }
+
+        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'composer.json')) {
+            $state = 'COMPLETE';
+        }
+
+        return new JsonResponse(
+            [
+                'status' => 'OK',
+                'installation' => $state
+            ]
+        );
+    }
+
+    /**
      * Ensure that we are not installed yet.
      *
      * @return void

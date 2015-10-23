@@ -135,6 +135,11 @@ install_search_project:
         vendor: "[\-\_a-zA-Z0-9]+"
         project: "[\-\_a-zA-Z0-9]+"
 
+install_get_state:
+    path:     /v1/install/get_state.json
+    defaults: { _controller: TensideCoreBundle:InstallProject:getInstallationState }
+    methods:  [GET]
+
 selftest_alltests:
     path:     /v1/selftest.json
     defaults: { _controller: TensideCoreBundle:SelfTest:getAllTests }
