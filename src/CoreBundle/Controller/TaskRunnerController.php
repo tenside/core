@@ -216,7 +216,7 @@ class TaskRunnerController extends AbstractController
         }
 
         $cmd = sprintf(
-            '%s %s tenside:runtask %s',
+            '%s %s %s tenside:runtask %s',
             escapeshellcmd($phpCli),
             isset($arguments) ? $arguments : '',
             escapeshellarg($this->get('tenside.cli_script')->cliExecutable()),
