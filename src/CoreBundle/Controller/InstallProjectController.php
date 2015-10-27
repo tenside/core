@@ -89,8 +89,10 @@ class InstallProjectController extends AbstractController
                     },
                     [
                         'tenside.json',
+                        'tenside.json~',
                         'tenside-tasks.json',
                         'tenside-task-' . $taskId . '.json',
+                        'tenside-task-' . $taskId . '.json~',
                         'composer.json'
                     ]
                 )
