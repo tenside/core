@@ -178,6 +178,7 @@ class InstallTask extends Task
         // Now move all the files over.
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR);
         $ioHandler      = $this->getIO();
+        $logging        = $ioHandler->isVeryVerbose();
         $folders        = [];
         foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false)->ignoreVCS(false) as $file) {
             /** @var SplFileInfo $file */
@@ -188,7 +189,9 @@ class InstallTask extends Task
                 // Symlink must(!) be handled first as the isDir() and isFile() checks return true for symlinks.
                 case $file->isLink():
                     $target = $file->getLinkTarget();
-                    $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
+                    if ($logging) {
+                        $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
+                    }
                     symlink($target, $destinationFile);
                     unlink($pathName);
 
@@ -198,16 +201,20 @@ class InstallTask extends Task
                     $permissions = substr(decoct(fileperms($pathName)), 1);
                     $folders[]   = $pathName;
                     if (!is_dir($destinationFile)) {
-                        $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
+                        if ($logging) {
+                            $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
+                        }
                         mkdir($destinationFile, octdec($permissions), true);
                     }
                     break;
 
                 case $file->isFile():
                     $permissions = substr(decoct(fileperms($pathName)), 1);
-                    $ioHandler->write(
-                        sprintf('move %s to %s (permissions: %s)', $pathName, $destinationFile, $permissions)
-                    );
+                    if ($logging) {
+                        $ioHandler->write(
+                            sprintf('move %s to %s (permissions: %s)', $pathName, $destinationFile, $permissions)
+                        );
+                    }
                     copy($pathName, $destinationFile);
                     chmod($destinationFile, octdec($permissions));
                     unlink($pathName);
@@ -226,7 +233,9 @@ class InstallTask extends Task
         }
 
         foreach (array_reverse($folders) as $folder) {
-            $ioHandler->write(sprintf('remove directory %s', $folder));
+            if ($logging) {
+                $ioHandler->write(sprintf('remove directory %s', $folder));
+            }
             rmdir($folder);
         }
     }
