@@ -125,7 +125,8 @@ class TaskRunnerController extends AbstractController
      *
      * @return JsonResponse
      *
-     * @throws NotFoundHttpException When the given task could not be found.
+     * @throws NotFoundHttpException      When the given task could not be found.
+     * @throws NotAcceptableHttpException When trying to delete a running task.
      */
     public function deleteTaskAction($taskId)
     {
@@ -134,6 +135,10 @@ class TaskRunnerController extends AbstractController
 
         if (!$task) {
             throw new NotFoundHttpException('Task id ' . $taskId . ' not found');
+        }
+
+        if ($task->getStatus() === Task::STATE_RUNNING) {
+            throw new NotAcceptableHttpException('Task id ' . $taskId . ' is running and can not be deleted');
         }
 
         $list->remove($task->getId());
