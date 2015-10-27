@@ -64,7 +64,7 @@ class RunTaskCommand extends ContainerAwareCommand
         }
 
         $lockDir = $container->get('tenside.home')->tensideDataDir();
-        $lock    = new LockHandler('task-run', $lockDir);
+        $lock = $container->get('tenside.taskrun_lock');
         $logger->info('Acquire lock file.');
 
         if (!$lock->lock()) {

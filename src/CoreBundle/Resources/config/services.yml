@@ -30,6 +30,12 @@ services:
         arguments:      ["@tenside.home"]
         shared:         false
 
+    tenside.taskrun_lock:
+        class:          Symfony\Component\Filesystem\LockHandler
+        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\TaskRunLockHandlerFactory
+        factory_method: create
+        arguments:      ["@tenside.home"]
+
     tenside.user_provider:
         class:     Tenside\CoreBundle\Security\UserProviderFromConfig
         arguments: ["@tenside.config"]
