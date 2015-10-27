@@ -63,17 +63,25 @@ class RunTaskCommand extends ContainerAwareCommand
             return 0;
         }
 
-        $lockDir = $container->get('tenside.home')->tensideDataDir();
         $lock = $container->get('tenside.taskrun_lock');
         $logger->info('Acquire lock file.');
 
         if (!$lock->lock()) {
-            $logger->error('Could not acquire lock file.');
-            throw new \RuntimeException(
-                'Another task appears to be running. ' .
-                'If this is not the case, please remove the lock file in ' .
-                $lockDir
-            );
+            $locked = false;
+            $retry  = 3;
+            // Try up to 3 times to acquire with short delay in between.
+            while ($retry > 0) {
+                sleep(1000);
+                if ($locked = $lock->lock()) {
+                    break;
+                }
+            }
+            if (!$locked) {
+                $logger->error('Could not acquire lock file.');
+                throw new \RuntimeException(
+                    'Another task appears to be running. If this is not the case, please remove the lock file.'
+                );
+            }
         }
 
         try {
