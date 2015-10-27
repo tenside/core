@@ -21,13 +21,9 @@
 namespace Tenside\Task;
 
 use Composer\Command\Command;
-use Composer\Composer;
-use Composer\Factory;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tenside\Util\RuntimeHelper;
 
 /**
  * This task provides the basic framework for building tasks that perform composer commands.

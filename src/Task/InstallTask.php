@@ -108,7 +108,6 @@ class InstallTask extends Task
         rmdir($this->tempDir);
     }
 
-
     /**
      * Prepare a temporary directory.
      *
@@ -138,8 +137,8 @@ class InstallTask extends Task
     private function fetchProject()
     {
         $arguments = [
-            'package'      => $this->file->get(self::SETTING_PACKAGE),
-            'directory'    => $this->tempDir,
+            'package'   => $this->file->get(self::SETTING_PACKAGE),
+            'directory' => $this->tempDir,
         ];
 
         if ($version = $this->file->get(self::SETTING_VERSION)) {
@@ -248,6 +247,7 @@ class InstallTask extends Task
     private function mayInstall()
     {
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR) . DIRECTORY_SEPARATOR;
+
         return !(file_exists($destinationDir . 'composer.json')
             /*&& file_exists($destinationDir . 'tenside.json')*/);
         // FIXME: need to determine this somehow better. Can not check for tenside also as we need the secret and user.
