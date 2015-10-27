@@ -59,12 +59,19 @@ class TaskRunnerController extends AbstractController
      * @param Request $request The request.
      *
      * @return JsonResponse
+     *
+     * @throws NotFoundHttpException When the task could not be found.
      */
     public function getTaskAction($taskId, Request $request)
     {
         // Retrieve the status file of the task.
         $task   = $this->getTensideTasks()->getTask($taskId);
         $offset = null;
+
+        if (!$task) {
+            throw new NotFoundHttpException('No such task.');
+        }
+
         if ($request->query->has('offset')) {
             $offset = (int) $request->query->get('offset');
         }
@@ -113,6 +120,8 @@ class TaskRunnerController extends AbstractController
      * Starts the next pending task if any.
      *
      * @return JsonResponse
+     *
+     * @throws NotFoundHttpException When no task could be found.
      */
     public function runAction()
     {
@@ -122,12 +131,7 @@ class TaskRunnerController extends AbstractController
         $task = $this->getTensideTasks()->dequeue();
 
         if (!$task) {
-            return JsonResponse::create(
-                [
-                    'status' => 'OK',
-                    'task'   => null
-                ]
-            );
+            throw new NotFoundHttpException('Task not found');
         }
 
         // FIXME: need some way to call back when running inline. Must be done from UI though.
