@@ -54,6 +54,8 @@ services:
         class:     Tenside\CoreBundle\Security\JWTAuthenticator
         arguments: ["@tenside.config"]
         public:    true
+        # cannot be shared as the install controller is manipulating the secret.
+        shared:    false
 
     tenside.permission_voter:
         class:     Tenside\CoreBundle\Security\PermissionVoter
