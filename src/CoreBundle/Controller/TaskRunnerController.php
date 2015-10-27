@@ -155,11 +155,16 @@ class TaskRunnerController extends AbstractController
      *
      * @return JsonResponse
      *
-     * @throws NotFoundHttpException When no task could be found.
+     * @throws NotFoundHttpException      When no task could be found.
+     * @throws NotAcceptableHttpException When a task is already running and holds the lock.
      */
     public function runAction()
     {
-        // FIXME: we need a way to ensure that no other task is running for the moment to prevent race conditions.
+        $lock = $this->container->get('tenside.taskrun_lock');
+
+        if (!$lock->lock()) {
+            throw new NotAcceptableHttpException('Task already running');
+        }
 
         // Fetch the next queued task.
         $task = $this->getTensideTasks()->dequeue();
@@ -168,10 +173,10 @@ class TaskRunnerController extends AbstractController
             throw new NotFoundHttpException('Task not found');
         }
 
-        // FIXME: need some way to call back when running inline. Must be done from UI though.
-
         // Now spawn a runner.
         $this->spawn($task);
+        // TODO: Should we rather release the lock prior? What about when we can not run in background?
+        $lock->release();
 
         return JsonResponse::create(
             [
