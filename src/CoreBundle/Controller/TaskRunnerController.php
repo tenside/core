@@ -169,7 +169,7 @@ class TaskRunnerController extends AbstractController
         }
 
         // Fetch the next queued task.
-        $task = $this->getTensideTasks()->dequeue();
+        $task = $this->getTensideTasks()->getNext();
 
         if (!$task) {
             throw new NotFoundHttpException('Task not found');
