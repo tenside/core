@@ -115,6 +115,21 @@ class TaskList
     }
 
     /**
+     * Retrieve the first task from the queue without removing it.
+     *
+     * @return Task|null
+     */
+    public function getNext()
+    {
+        $idList = $this->getIds();
+        if (false === ($taskId = current($idList))) {
+            return null;
+        }
+
+        return $this->getTask($taskId);
+    }
+
+    /**
      * Remove a task from the list, including it's task file.
      *
      * @param string $taskId The task to remove.
