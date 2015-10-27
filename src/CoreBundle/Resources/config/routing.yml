@@ -75,19 +75,19 @@ search_package_put:
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
-tasks_get:
-    path:     /v1/tasks
-    defaults: { _controller: TensideCoreBundle:TaskRunner:getTasks }
-    methods:  [GET]
-    options:
-        required_role: ROLE_MANIPULATE_REQUIREMENTS
-
 task_get:
     path:     /v1/tasks/{taskId}
     defaults: { _controller: TensideCoreBundle:TaskRunner:getTask }
     methods:  [GET]
     requirements:
         taskId: "[a-z0-9]+"
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
+
+tasks_get:
+    path:     /v1/tasks
+    defaults: { _controller: TensideCoreBundle:TaskRunner:getTasks }
+    methods:  [GET]
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
