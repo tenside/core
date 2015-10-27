@@ -25,7 +25,6 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\LockHandler;
 use Tenside\Task\Runner;
 use Tenside\Util\FunctionAvailabilityCheck;
 
@@ -113,12 +112,13 @@ class RunTaskCommand extends ContainerAwareCommand
             if (!$runner->run(
                 $container->get('kernel')->getLogDir() . DIRECTORY_SEPARATOR . 'task-' . $task->getId() . '.log'
             )) {
-                $container->get('logger')->info($task->getOutput());
+                $container->get('logger')->error($task->getOutput());
 
                 return 1;
             }
         } catch (\Exception $exception) {
-            // TODO: $taskList->pushBack($task);
+            $container->get('logger')->error($exception->getMessage());
+            $container->get('logger')->error($task->getOutput());
 
             throw $exception;
         }
@@ -152,11 +152,11 @@ class RunTaskCommand extends ContainerAwareCommand
                 throw new \RuntimeException('pcntl_fork() returned -1.');
             } elseif (0 !== $pid) {
                 // Tell the calling method to exit now.
-                $logger->error('Forked process ' . posix_getpid() . ' to pid ' . $pid);
+                $logger->info('Forked process ' . posix_getpid() . ' to pid ' . $pid);
                 return true;
             }
 
-            $logger->error('Processing task in forked process with pid ' . posix_getpid());
+            $logger->info('Processing task in forked process with pid ' . posix_getpid());
             return false;
         }
     }
