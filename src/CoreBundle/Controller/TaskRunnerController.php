@@ -20,9 +20,11 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Process;
 use Tenside\Task\Task;
 use Tenside\Util\JsonArray;
@@ -189,6 +191,7 @@ class TaskRunnerController extends AbstractController
             // We might end up here when the process has been forked.
             // If exit code is neither 0 nor null, we have a problem here.
             if ($exitCode = $commandline->getExitCode()) {
+                /** @var LoggerInterface $logger */
                 $logger = $this->get('logger');
                 $logger->error('Failed to execute "' . $cmd . '"');
                 $logger->error('Exit code: ' . $commandline->getExitCode());
