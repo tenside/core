@@ -142,6 +142,7 @@ class TaskRunnerController extends AbstractController
             throw new NotAcceptableHttpException('Task id ' . $taskId . ' is running and can not be deleted');
         }
 
+        $task->removeAssets();
         $list->remove($task->getId());
 
         return JsonResponse::create(

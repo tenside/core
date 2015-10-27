@@ -237,6 +237,23 @@ abstract class Task
     }
 
     /**
+     * Remove the attached files for this task from disk.
+     *
+     * @return void
+     */
+    public function removeAssets()
+    {
+        // Base implementation does only know about log file.
+        if ($this->logFile) {
+            if (file_exists($this->logFile)) {
+                unlink($this->logFile);
+            }
+            $this->logFile = null;
+            $this->file->remove('log');
+        }
+    }
+
+    /**
      * Set the task state.
      *
      * @param string $status The status code.

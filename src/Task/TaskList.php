@@ -115,7 +115,7 @@ class TaskList
     }
 
     /**
-     * Remove a task from the list.
+     * Remove a task from the list, including it's task file.
      *
      * @param string $taskId The task to remove.
      *
@@ -127,6 +127,7 @@ class TaskList
 
         if (in_array($taskId, $idList)) {
             $this->getConfig()->remove($taskId);
+            unlink($this->taskIdToFileName($taskId));
         }
 
         return $this;
