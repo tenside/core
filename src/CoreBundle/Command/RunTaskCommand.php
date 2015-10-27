@@ -132,7 +132,7 @@ class RunTaskCommand extends ContainerAwareCommand
      * The return value determines if the caller shall exit (when forking was successful and it is the forking process)
      * or rather proceed execution (is the fork or unable to fork).
      *
-     * True means go on, false means exit.
+     * True means exit, false means go on in this process.
      *
      * @return bool
      *
