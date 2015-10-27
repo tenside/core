@@ -115,6 +115,24 @@ class TaskList
     }
 
     /**
+     * Remove a task from the list.
+     *
+     * @param string $taskId The task to remove.
+     *
+     * @return TaskList
+     */
+    public function remove($taskId)
+    {
+        $idList = $this->getIds();
+
+        if (in_array($taskId, $idList)) {
+            $this->getConfig()->remove($taskId);
+        }
+
+        return $this;
+    }
+
+    /**
      * Retrieve the ids of all registered tasks.
      *
      * @return string[]

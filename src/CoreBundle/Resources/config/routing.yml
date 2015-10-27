@@ -98,6 +98,15 @@ task_add:
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
+task_delete:
+    path:     /v1/tasks/{taskId}
+    defaults: { _controller: TensideCoreBundle:TaskRunner:deleteTask }
+    methods:  [DELETE]
+    requirements:
+        taskId: "[a-z0-9]+"
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
+
 # FIXME: unsure about this one not really an API call like the others.
 tasks_run:
     path:     /v1/tasks/run

@@ -119,6 +119,33 @@ class TaskRunnerController extends AbstractController
     }
 
     /**
+     * Remove a task from the list.
+     *
+     * @param string $taskId The id of the task to remove.
+     *
+     * @return JsonResponse
+     *
+     * @throws NotFoundHttpException When the given task could not be found.
+     */
+    public function deleteTaskAction($taskId)
+    {
+        $list = $this->getTensideTasks();
+        $task = $list->getTask($taskId);
+
+        if (!$task) {
+            throw new NotFoundHttpException('Task id ' . $taskId . ' not found');
+        }
+
+        $list->remove($task->getId());
+
+        return JsonResponse::create(
+            [
+                'status' => 'OK'
+            ]
+        );
+    }
+
+    /**
      * Starts the next pending task if any.
      *
      * @return JsonResponse
