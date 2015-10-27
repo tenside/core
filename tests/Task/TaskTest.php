@@ -92,10 +92,8 @@ class TaskTest extends TestCase
      * Test that retrieving the output of a not yet started task raises an exception.
      *
      * @return void
-     *
-     * @expectedException \LogicException
      */
-    public function testGetOutputFromNotStartedTaskRaisesException()
+    public function testGetOutputFromNotStartedTaskReturnsEmptyString()
     {
         $task = $this
             ->getMockBuilder('Tenside\Task\Task')
@@ -103,7 +101,7 @@ class TaskTest extends TestCase
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
-        $task->getOutput();
+        $this->assertEquals('', $task->getOutput());
     }
 
     /**
