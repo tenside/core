@@ -50,7 +50,8 @@ class TaskRunnerController extends AbstractController
             ];
         }
 
-        return JsonResponse::create($result);
+        return JsonResponse::create($result)
+            ->setEncodingOptions(JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_FORCE_OBJECT);
     }
 
     /**
