@@ -108,16 +108,6 @@ class VersionedPackageTest extends TestCase
     }
 
     /**
-     * Mock a package.
-     *
-     * @return PackageInterface
-     */
-    private function mockPackage()
-    {
-        return $this->getMockForAbstractClass('Composer\Package\PackageInterface');
-    }
-
-    /**
      * Mock a package version.
      *
      * @param string $versionString The version string.
@@ -128,7 +118,7 @@ class VersionedPackageTest extends TestCase
      */
     private function mockVersion($versionString, $releaseDate)
     {
-        $version = $this->mockPackage();
+        $version = $this->getMockForAbstractClass('Composer\Package\PackageInterface');
         /** @var \PHPUnit_Framework_MockObject_MockObject $version */
         $version->method('getVersion')->willReturn($versionString);
         $version->method('getReleaseDate')->willReturn(new \DateTime($releaseDate));
@@ -143,7 +133,7 @@ class VersionedPackageTest extends TestCase
      */
     public function testMetaData()
     {
-        $versioned = new VersionedPackage($this->mockPackage());
+        $versioned = new VersionedPackage($this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'));
 
         $this->assertEquals(null, $versioned->getMetaData('test'));
         $this->assertEquals($versioned, $versioned->addMetaData('test', 'initial value', false));
@@ -165,7 +155,7 @@ class VersionedPackageTest extends TestCase
     public function testVersionHandling()
     {
         $versioned           = new VersionedPackage(
-            $this->mockPackage(),
+            $this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'),
             [$initialVersion = $this->mockVersion('1.0.0.0', '2000-01-01 00:00:00')]
         );
 
@@ -201,7 +191,7 @@ class VersionedPackageTest extends TestCase
             $this->mockVersion('1.2.0.0', '2015-01-01 10:00:00'),
         ];
 
-        $versioned = new VersionedPackage($this->mockPackage(), $versions);
+        $versioned = new VersionedPackage($this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'), $versions);
 
         array_shift($versions);
 
@@ -223,21 +213,40 @@ class VersionedPackageTest extends TestCase
             $this->mockVersion('1.2.0.0', '2015-01-01 10:00:00'),
         ];
 
-        $versioned = new VersionedPackage($this->mockPackage(), $versions);
+        $versioned = new VersionedPackage($this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'), $versions);
 
         $this->assertEquals($versioned, $versioned->removeVersion(array_shift($versions)));
         $this->assertEquals($versions, array_values($versioned->getVersions()));
     }
 
     /**
-     * Test that calling getLatestVersion on a package without versions returns null.
+     * Test that calling getLatestVersion on a package without versions returns the package itself.
      *
      * @return void
      */
-    public function testGetLatestVersionforNoVersionsReturnsNull()
+    public function testGetLatestVersionForNoVersionsReturnsPackage()
     {
-        $versioned = new VersionedPackage($this->mockPackage());
-        $this->assertNull($versioned->getLatestVersion());
+        $versioned = new VersionedPackage($package = $this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'));
+        $this->assertEquals($package, $versioned->getLatestVersion());
+    }
+
+    /**
+     * Test that calling getLatestVersion on a package with older alternative versions returns the package itself.
+     *
+     * @return void
+     */
+    public function testGetLatestVersionForOlderVersionsReturnsPackage()
+    {
+        $versioned   = new VersionedPackage(
+            $package = $this->mockVersion('10.0.0.0', '2030-01-01 00:00:00'),
+            [
+                $this->mockVersion('1.0.0.0', '2000-01-01 00:00:00'),
+                $this->mockVersion('1.1.0.0', '2010-01-01 00:00:00'),
+                $this->mockVersion('1.1.5.0', '2012-04-15 10:00:00'),
+                $this->mockVersion('1.2.0.0', '2015-01-01 10:00:00'),
+            ]
+        );
+        $this->assertEquals($package, $versioned->getLatestVersion());
     }
 
     /**
@@ -249,7 +258,7 @@ class VersionedPackageTest extends TestCase
      */
     public function testRemovalOfInvalidVersionRaisesException()
     {
-        $versioned = new VersionedPackage($this->mockPackage());
+        $versioned = new VersionedPackage($this->mockVersion('0.1.0.0', '2000-01-01 00:00:00'));
 
         $versioned->removeVersion(15);
     }

@@ -177,7 +177,6 @@ class VersionedPackage implements PackageInterface
      */
     public function removeVersion($version)
     {
-
         $versionParser = new VersionParser();
 
         if ($version instanceof PackageInterface) {
@@ -203,15 +202,16 @@ class VersionedPackage implements PackageInterface
     /**
      * Retrieve the latest version of the package (if any available).
      *
-     * @return PackageInterface|null
+     * @return PackageInterface
      */
     public function getLatestVersion()
     {
         if (!count($this->versions)) {
-            return null;
+            return $this->package;
         }
 
-        $latestVersion = reset($this->versions);
+        $latestVersion = $this->package;
+        reset($this->versions);
 
         foreach ($this->versions as $version) {
             if ($version->getReleaseDate() > $latestVersion->getReleaseDate()) {
