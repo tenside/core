@@ -75,8 +75,10 @@ class SearchPackageController extends AbstractController
                 /** @var PackageInterface[] $installed */
                 $installedVersionNumber = $installed[0]->getPrettyVersion();
             }
-
-            $latestVersion = $versionedResult->getLatestVersion();
+            // Might have no version matching the current stability setting.
+            if (null === ($latestVersion = $versionedResult->getLatestVersion())) {
+                continue;
+            }
 
             $package = [
                 'name'        => $latestVersion->getName(),
