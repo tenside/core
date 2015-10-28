@@ -24,6 +24,7 @@ namespace Tenside\CoreBundle\Controller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
+use Composer\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tenside\Composer\Package\VersionedPackage;
@@ -71,10 +72,6 @@ class SearchPackageController extends AbstractController
         foreach ($results as $versionedResult) {
             /** @var VersionedPackage $versionedResult */
 
-            if (count($installed = $localRepository->findPackages($versionedResult->getName()))) {
-                /** @var PackageInterface[] $installed */
-                $installedVersionNumber = $installed[0]->getPrettyVersion();
-            }
             // Might have no version matching the current stability setting.
             if (null === ($latestVersion = $versionedResult->getLatestVersion())) {
                 continue;
@@ -82,9 +79,7 @@ class SearchPackageController extends AbstractController
 
             $package = [
                 'name'        => $latestVersion->getName(),
-                'installed'   => isset($installedVersionNumber)
-                    ? $installedVersionNumber
-                    : null,
+                'installed'   => $this->getInstalledVersion($localRepository, $versionedResult->getName()),
                 'type'        => $latestVersion->getType(),
                 'description' => method_exists($latestVersion, 'getDescription')
                     ? $latestVersion->getDescription()
@@ -95,9 +90,27 @@ class SearchPackageController extends AbstractController
             ];
 
             $responseData[$package['name']] = $package;
-
         }
 
         return new JsonResponse($responseData);
+    }
+
+    /**
+     * Retrieve the installed version of a package (if any).
+     *
+     * @param RepositoryInterface $localRepository The local repository.
+     *
+     * @param string              $packageName     The name of the package to search.
+     *
+     * @return null|string
+     */
+    private function getInstalledVersion($localRepository, $packageName)
+    {
+        if (count($installed = $localRepository->findPackages($packageName))) {
+            /** @var PackageInterface[] $installed */
+            return $installed[0]->getPrettyVersion();
+        }
+
+        return null;
     }
 }
