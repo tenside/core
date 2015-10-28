@@ -23,7 +23,6 @@ namespace Tenside\Composer\Search;
 
 use Composer\IO\BufferIO;
 use Composer\Package\PackageInterface;
-use Composer\Repository\CompositeRepository;
 use Composer\Repository\RepositoryInterface;
 use Composer\Util\RemoteFilesystem;
 use Tenside\Composer\Package\VersionedPackage;
@@ -49,18 +48,18 @@ class RepositorySearch extends AbstractSearch
     /**
      * The repository to search on.
      *
-     * @var CompositeRepository|null
+     * @var RepositoryInterface|null
      */
-    protected $repositories;
+    protected $repository;
 
     /**
      * Create a new instance.
      *
-     * @param CompositeRepository $repositories
+     * @param RepositoryInterface $repository
      */
-    public function __construct(CompositeRepository $repositories = null)
+    public function __construct(RepositoryInterface $repository = null)
     {
-        $this->repositories = $repositories;
+        $this->repository = $repository;
     }
 
     /**
@@ -73,7 +72,7 @@ class RepositorySearch extends AbstractSearch
         foreach ($this->enabledSearchTypes as $searchType) {
             $results = array_merge(
                 $results,
-                $this->repositories->search($keywords, $searchType)
+                $this->repository->search($keywords, $searchType)
             );
         }
 
@@ -90,7 +89,7 @@ class RepositorySearch extends AbstractSearch
         foreach ($this->enabledSearchTypes as $searchType) {
             $results = array_merge(
                 $results,
-                $this->repositories->search($keywords, $searchType)
+                $this->repository->search($keywords, $searchType)
             );
 
             if (count($results) >= $this->getSatisfactionThreshold()) {
@@ -134,7 +133,7 @@ class RepositorySearch extends AbstractSearch
     protected function decorate($packageName)
     {
 
-        $results = $this->repositories->findPackages($packageName);
+        $results = $this->repository->findPackages($packageName);
 
         if (!count($results)) {
             throw new \InvalidArgumentException('Could not find package with specified name ' . $packageName);
@@ -178,23 +177,23 @@ class RepositorySearch extends AbstractSearch
     /**
      * Retrieve the composite repository.
      *
-     * @return CompositeRepository|null
+     * @return RepositoryInterface|null
      */
-    public function getRepositories()
+    public function getRepository()
     {
-        return $this->repositories;
+        return $this->repository;
     }
 
     /**
      * Set the composite repository.
      *
-     * @param CompositeRepository $repositories The composite repository.
+     * @param RepositoryInterface $repository The composite repository.
      *
      * @return $this
      */
-    public function setRepositories(CompositeRepository $repositories)
+    public function setRepository(RepositoryInterface $repository)
     {
-        $this->repositories = $repositories;
+        $this->repository = $repository;
 
         return $this;
     }
