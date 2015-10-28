@@ -46,28 +46,11 @@ class SearchPackageController extends AbstractController
      */
     public function searchAction(Request $request)
     {
-        $data              = new JsonArray($request->getContent());
-        $composer          = $this->getComposer();
-        $repositoryManager = $composer->getRepositoryManager();
-        $localRepository   = $repositoryManager->getLocalRepository();
-
-        $repositories = new CompositeRepository(
-            [
-                new CompositeRepository($repositoryManager->getRepositories()),
-                new PlatformRepository(),
-                $localRepository,
-            ]
-        );
-
-        $searcher = new CompositeSearch(
-            [
-                new RepositorySearch($repositories)
-            ]
-        );
-
-        $results = $searcher->searchAndDecorate($data->get('keywords'));
-
-        $responseData = [];
+        $data            = new JsonArray($request->getContent());
+        $localRepository = $this->getComposer()->getRepositoryManager()->getLocalRepository();
+        $searcher        = $this->getRepositorySearch($data);
+        $results         = $searcher->searchAndDecorate($data->get('keywords'));
+        $responseData    = [];
 
         foreach ($results as $versionedResult) {
             /** @var VersionedPackage $versionedResult */
@@ -112,5 +95,39 @@ class SearchPackageController extends AbstractController
         }
 
         return null;
+    }
+
+    /**
+     * Create a repository search instance.
+     *
+     * @param JsonArray $data The search data.
+     *
+     * @return CompositeSearch
+     */
+    private function getRepositorySearch($data)
+    {
+        $composer          = $this->getComposer();
+        $repositoryManager = $composer->getRepositoryManager();
+        $localRepository   = $repositoryManager->getLocalRepository();
+
+        $repositories = new CompositeRepository(
+            [
+                new PlatformRepository(),
+                $localRepository,
+            ]
+        );
+
+        // If we do not search locally, add the other repositories now.
+        if ('installed' === $data->get('type')) {
+            $repositories->addRepository(new CompositeRepository($repositoryManager->getRepositories()));
+        }
+
+        $searcher = new CompositeSearch(
+            [
+                new RepositorySearch($repositories)
+            ]
+        );
+
+        return $searcher;
     }
 }
