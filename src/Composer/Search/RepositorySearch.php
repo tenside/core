@@ -112,7 +112,11 @@ class RepositorySearch extends AbstractSearch
         $decorated = [];
 
         foreach ($results as $packageName) {
-            $decorated[] = $this->decorate($packageName);
+            try {
+                $decorated[] = $this->decorate($packageName);
+            } catch (\InvalidArgumentException $exception) {
+                // Ignore the exception as some repositories return names they do not contain (i.e. replaced packages).
+            }
         }
 
         return $decorated;
