@@ -92,11 +92,11 @@ class PackageConverter
     {
         $name = $package->getPrettyName();
         $data = new JsonArray([
-            'name' => $name,
-            'version' => $this->convertPackageVersion($package),
+            'name'       => $name,
+            'version'    => $this->convertPackageVersion($package),
             'constraint' => $this->getConstraint($name),
-            'type' => $package->getType(),
-            'locked' => $this->isLocked($name)
+            'type'       => $package->getType(),
+            'locked'     => $this->isLocked($name),
             'time'       => $package->getReleaseDate()
         ]);
 
