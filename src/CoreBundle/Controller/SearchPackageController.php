@@ -50,7 +50,7 @@ class SearchPackageController extends AbstractController
         $data            = new JsonArray($request->getContent());
         $localRepository = $this->getComposer()->getRepositoryManager()->getLocalRepository();
         $searcher        = $this->getRepositorySearch($data);
-        $results         = $searcher->searchAndDecorate($data->get('keywords'));
+        $results         = $searcher->searchAndDecorate($data->get('keywords'), $this->getFilters($data));
         $responseData    = [];
         $rootPackage     = $this->getComposer()->getPackage();
         $converter       = new PackageConverter($rootPackage);
@@ -74,6 +74,27 @@ class SearchPackageController extends AbstractController
 
         return JsonResponse::create($responseData)
             ->setEncodingOptions((JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_FORCE_OBJECT));
+    }
+
+    /**
+     * Get the array of filter closures.
+     *
+     * @param JsonArray $data The search data.
+     *
+     * @return \Closure[]
+     */
+    private function getFilters($data)
+    {
+        $filters = [];
+        if ('contao' === $data->get('type')) {
+            $filters[] =
+                function ($package) {
+                    /** @var PackageInterface $package */
+                    return in_array($package->getType(), ['contao-module', 'contao-bundle', 'legacy-contao-module']);
+                };
+        }
+
+        return $filters;
     }
 
     /**
