@@ -72,7 +72,8 @@ class SearchPackageController extends AbstractController
             $responseData[$package->get('name')] = $package->getData();
         }
 
-        return new JsonResponse($responseData);
+        return JsonResponse::create($responseData)
+            ->setEncodingOptions((JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_FORCE_OBJECT));
     }
 
     /**
