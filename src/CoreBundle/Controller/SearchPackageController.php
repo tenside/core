@@ -28,6 +28,7 @@ use Composer\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tenside\Composer\Package\VersionedPackage;
+use Tenside\Composer\PackageConverter;
 use Tenside\Composer\Search\CompositeSearch;
 use Tenside\Composer\Search\RepositorySearch;
 use Tenside\Util\JsonArray;
@@ -51,6 +52,8 @@ class SearchPackageController extends AbstractController
         $searcher        = $this->getRepositorySearch($data);
         $results         = $searcher->searchAndDecorate($data->get('keywords'));
         $responseData    = [];
+        $rootPackage     = $this->getComposer()->getPackage();
+        $converter       = new PackageConverter($rootPackage);
 
         foreach ($results as $versionedResult) {
             /** @var VersionedPackage $versionedResult */
@@ -60,19 +63,13 @@ class SearchPackageController extends AbstractController
                 continue;
             }
 
-            $package = [
-                'name'        => $latestVersion->getName(),
-                'installed'   => $this->getInstalledVersion($localRepository, $versionedResult->getName()),
-                'type'        => $latestVersion->getType(),
-                'description' => method_exists($latestVersion, 'getDescription')
-                    ? $latestVersion->getDescription()
-                    : '',
-                'latestVersion' => $latestVersion->getVersion(),
-                'downloads' => $versionedResult->getMetaData('downloads'),
-                'favers' => $versionedResult->getMetaData('favers'),
-            ];
+            $package = $converter->convertPackageToArray($latestVersion);
+            $package
+                ->set('installed', $this->getInstalledVersion($localRepository, $versionedResult->getName()))
+                ->set('downloads', $versionedResult->getMetaData('downloads'))
+                ->set('favers', $versionedResult->getMetaData('favers'));
 
-            $responseData[$package['name']] = $package;
+            $responseData[$package->get('name')] = $package->getData();
         }
 
         return new JsonResponse($responseData);
