@@ -48,7 +48,7 @@ class CompositeSearch extends AbstractSearch
     /**
      * {@inheritdoc}
      */
-    public function search($keywords)
+    public function search($keywords, $filters = [])
     {
         $results = [];
 
@@ -69,14 +69,14 @@ class CompositeSearch extends AbstractSearch
     /**
      * {@inheritdoc}
      */
-    public function searchAndDecorate($keywords)
+    public function searchAndDecorate($keywords, $filters = [])
     {
         $results = [];
 
         foreach ($this->getSearchers() as $searcher) {
             $results = array_merge(
                 $results,
-                $searcher->searchAndDecorate($keywords)
+                $searcher->searchAndDecorate($keywords, $filters)
             );
 
             if (count($results) >= $this->getSatisfactionThreshold()) {
@@ -90,14 +90,14 @@ class CompositeSearch extends AbstractSearch
     /**
      * {@inheritdoc}
      */
-    public function searchFully($keywords)
+    public function searchFully($keywords, $filters = [])
     {
         $results = [];
 
         foreach ($this->getSearchers() as $searcher) {
             $results = array_merge(
                 $results,
-                $searcher->search($keywords)
+                $searcher->search($keywords, $filters)
             );
         }
 

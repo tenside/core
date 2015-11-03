@@ -59,11 +59,13 @@ interface SearchInterface
      * and return a maximum number of results as returned
      * by the getSatisfactionThreshold() method.
      *
-     * @param string $keywords The search keywords.
+     * @param string     $keywords The search keywords.
+     *
+     * @param \Closure[] $filters  Optional filters for filtering the package instances.
      *
      * @return \string[]
      */
-    public function search($keywords);
+    public function search($keywords, $filters = []);
 
     /**
      * The concrete searcher's search method takes a string
@@ -74,11 +76,13 @@ interface SearchInterface
      * and return a maximum number of results as returned
      * by the getSatisfactionThreshold() method.
      *
-     * @param string $keywords The search keywords.
+     * @param string     $keywords The search keywords.
+     *
+     * @param \Closure[] $filters  Optional filters for filtering the package instances.
      *
      * @return PackageInterface[]
      */
-    public function searchAndDecorate($keywords);
+    public function searchAndDecorate($keywords, $filters = []);
 
     /**
      * The concrete searcher's search method takes a string
@@ -89,9 +93,11 @@ interface SearchInterface
      * and return all search results regardless of the
      * satisfacetion threshold.
      *
-     * @param string $keywords The search keywords.
+     * @param string     $keywords The search keywords.
+     *
+     * @param \Closure[] $filters  Optional filters for filtering the package instances.
      *
      * @return \string[]
      */
-    public function searchFully($keywords);
+    public function searchFully($keywords, $filters = []);
 }

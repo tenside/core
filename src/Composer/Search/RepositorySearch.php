@@ -65,7 +65,7 @@ class RepositorySearch extends AbstractSearch
     /**
      * {@inheritDoc}
      */
-    public function searchFully($keywords)
+    public function searchFully($keywords, $filters = [])
     {
         $results = [];
 
@@ -76,20 +76,20 @@ class RepositorySearch extends AbstractSearch
             );
         }
 
-        return $this->normalizeResultSet($results);
+        return $this->filter($this->normalizeResultSet($results), $filters);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function search($keywords)
+    public function search($keywords, $filters = [])
     {
         $results = [];
 
         foreach ($this->enabledSearchTypes as $searchType) {
             $results = array_merge(
                 $results,
-                $this->repository->search($keywords, $searchType)
+                $this->filter($this->normalizeResultSet($this->repository->search($keywords, $searchType)), $filters)
             );
 
             if (count($results) >= $this->getSatisfactionThreshold()) {
@@ -98,15 +98,15 @@ class RepositorySearch extends AbstractSearch
             }
         }
 
-        return $this->normalizeResultSet($results);
+        return array_keys($results);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function searchAndDecorate($keywords)
+    public function searchAndDecorate($keywords, $filters = [])
     {
-        $results = $this->search($keywords);
+        $results = $this->search($keywords, $filters);
 
         $decorated = [];
 
@@ -119,6 +119,41 @@ class RepositorySearch extends AbstractSearch
         }
 
         return $decorated;
+    }
+
+    /**
+     * Filter the passed list of package names.
+     *
+     * @param string[]   $packageNames The package names.
+     *
+     * @param \Closure[] $filters      The filters to apply.
+     *
+     * @return string[]
+     */
+    protected function filter($packageNames, $filters)
+    {
+        if (empty($filters)) {
+            return $packageNames;
+        }
+
+        $packages = [];
+        foreach ($packageNames as $packageName) {
+            if (count($package = $this->repository->findPackages($packageName)) > 0) {
+                $packages[$packageName] = current($package);
+            }
+        }
+
+        foreach ($filters as $filter) {
+            $packages = array_filter($packages, $filter);
+        }
+
+        return array_map(
+            function ($package) {
+                /** @var PackageInterface $package */
+                return $package->getName();
+            },
+            $packages
+        );
     }
 
     /**
