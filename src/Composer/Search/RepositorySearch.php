@@ -144,7 +144,6 @@ class RepositorySearch extends AbstractSearch
         $package  = new VersionedPackage($latest, $versions);
 
         return $this->decorateWithPackagistStats($package);
-
     }
 
     /**
