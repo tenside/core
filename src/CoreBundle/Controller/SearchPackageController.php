@@ -115,7 +115,7 @@ class SearchPackageController extends AbstractController
         );
 
         // If we do not search locally, add the other repositories now.
-        if ('installed' === $data->get('type')) {
+        if ('installed' !== $data->get('type')) {
             $repositories->addRepository(new CompositeRepository($repositoryManager->getRepositories()));
         }
 
