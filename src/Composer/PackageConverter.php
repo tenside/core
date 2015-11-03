@@ -97,6 +97,7 @@ class PackageConverter
             'constraint' => $this->getConstraint($name),
             'type' => $package->getType(),
             'locked' => $this->isLocked($name)
+            'time'       => $package->getReleaseDate()
         ]);
 
         if (null !== $upgradeVersion) {
