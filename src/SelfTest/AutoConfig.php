@@ -62,4 +62,28 @@ class AutoConfig
 
         return $this;
     }
+
+    /**
+     * Retrieve command line arguments.
+     *
+     * @return array
+     */
+    public function getCommandLineArguments()
+    {
+        return $this->commandLineArguments;
+    }
+
+    /**
+     * Add a command line argument.
+     *
+     * @param string $argument The argument to add.
+     *
+     * @return AutoConfig
+     */
+    public function addCommandLineArgument($argument)
+    {
+        $this->commandLineArguments[] = $argument;
+
+        return $this;
+    }
 }

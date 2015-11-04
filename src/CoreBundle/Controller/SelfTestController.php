@@ -71,6 +71,9 @@ class SelfTestController extends AbstractController
         if ($phpCli = $config->getPhpInterpreter()) {
             $result['php-cli'] = $phpCli;
         }
+        if ($phpArguments = $config->getPhpInterpreter()) {
+            $result['php-cli-arguments'] = $phpArguments;
+        }
 
         return JsonResponse::create($result);
     }
