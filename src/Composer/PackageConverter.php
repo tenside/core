@@ -97,8 +97,11 @@ class PackageConverter
             'constraint' => $this->getConstraint($name),
             'type'       => $package->getType(),
             'locked'     => $this->isLocked($name),
-            'time'       => $package->getReleaseDate()->format(\DateTime::ATOM)
         ]);
+
+        if (null !== ($releaseDate = $package->getReleaseDate())) {
+            $data->set('time', $releaseDate->format(\DateTime::ATOM));
+        }
 
         if (null !== $upgradeVersion) {
             $data->set('upgrade_version', $upgradeVersion);
