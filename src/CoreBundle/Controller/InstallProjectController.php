@@ -13,6 +13,7 @@
  * @package    tenside/core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @author     Nico Schneider <nico.tcap@gmail.com>
+ * @author     Andreas Schempp <andreas.schempp@terminal42.ch>
  * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
  * @link       https://github.com/tenside/core
