@@ -45,7 +45,7 @@ class SelfTestController extends AbstractController
 
         $data = [];
         foreach ($tester->perform() as $result) {
-            $data[] = [
+            $data[$this->testClassToSlug($result->getTestClass())] = [
                 'state'   => $result->getState(),
                 'message' => $result->getMessage(),
                 'explain' => $result->getExplain(),
@@ -73,6 +73,26 @@ class SelfTestController extends AbstractController
         }
 
         return JsonResponse::create($result);
+    }
+
+    /**
+     * Create a slug from a test class.
+     *
+     * @param string $className The class name to convert.
+     *
+     * @return string
+     */
+    private function testClassToSlug($className)
+    {
+        $className = basename(str_replace('\\', '/', $className));
+
+        if ('SelfTest' === substr($className, 0, 8)) {
+            $className = substr($className, 8);
+        }
+
+        $className = strtolower(substr(preg_replace('#([A-Z])#', '-$1', $className), 1));
+
+        return $className;
     }
 
     /**
