@@ -75,6 +75,13 @@ search_package_put:
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
+tasks_run:
+    path:     /v1/tasks/run
+    defaults: { _controller: TensideCoreBundle:TaskRunner:run }
+    methods:  [GET]
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
+
 task_get:
     path:     /v1/tasks/{taskId}
     defaults: { _controller: TensideCoreBundle:TaskRunner:getTask }
@@ -106,15 +113,6 @@ task_delete:
         taskId: "[a-z0-9]+"
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
-
-# FIXME: unsure about this one not really an API call like the others.
-tasks_run:
-    path:     /v1/tasks/run
-    defaults: { _controller: TensideCoreBundle:TaskRunner:run }
-    methods:  [GET]
-    options:
-        required_role: ROLE_MANIPULATE_REQUIREMENTS
-
 
 install_create_project:
     path:     /v1/install/create-project.json
