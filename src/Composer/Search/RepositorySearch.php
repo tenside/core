@@ -98,7 +98,7 @@ class RepositorySearch extends AbstractSearch
             }
         }
 
-        return array_keys($results);
+        return array_values($results);
     }
 
     /**
