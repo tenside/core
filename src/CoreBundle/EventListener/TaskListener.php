@@ -21,6 +21,7 @@
 namespace Tenside\CoreBundle\EventListener;
 
 use Tenside\CoreBundle\Events\CreateTaskEvent;
+use Tenside\CoreBundle\HomePathDeterminator;
 use Tenside\Task\InstallTask;
 use Tenside\Task\RemovePackageTask;
 use Tenside\Task\RequirePackageTask;
@@ -32,6 +33,23 @@ use Tenside\Task\UpgradeTask;
  */
 class TaskListener
 {
+    /**
+     * The home path determinator.
+     *
+     * @var HomePathDeterminator
+     */
+    private $home;
+
+    /**
+     * Create a new instance.
+     *
+     * @param HomePathDeterminator $home The home path determinator.
+     */
+    public function __construct($home)
+    {
+        $this->home = $home;
+    }
+
     /**
      * Handle the event.
      *
@@ -55,9 +73,15 @@ class TaskListener
                 $event->setTask(new UpgradeTask($config));
                 return;
             case 'require-package':
+                if (!$config->has(RequirePackageTask::SETTING_HOME)) {
+                    $config->set(RequirePackageTask::SETTING_HOME, $this->home->homeDir());
+                }
                 $event->setTask(new RequirePackageTask($config));
                 return;
             case 'remove-package':
+                if (!$config->has(RemovePackageTask::SETTING_HOME)) {
+                    $config->set(RemovePackageTask::SETTING_HOME, $this->home->homeDir());
+                }
                 $event->setTask(new RemovePackageTask($config));
                 return;
             default:

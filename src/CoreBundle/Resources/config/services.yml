@@ -46,7 +46,8 @@ services:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
 
     tenside.task_listener:
-        class: Tenside\CoreBundle\EventListener\TaskListener
+        class:     Tenside\CoreBundle\EventListener\TaskListener
+        arguments: ["@tenside.home"]
         tags:
             - { name: kernel.event_listener, event: tenside.create_task, method: onCreateTask }
 
