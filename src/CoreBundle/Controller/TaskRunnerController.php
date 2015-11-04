@@ -108,7 +108,11 @@ class TaskRunnerController extends AbstractController
             throw new NotAcceptableHttpException('Invalid payload');
         }
 
-        $taskId = $this->getTensideTasks()->queue($metaData->get('type'), $metaData);
+        try {
+            $taskId = $this->getTensideTasks()->queue($metaData->get('type'), $metaData);
+        } catch (\InvalidArgumentException $exception) {
+            throw new NotAcceptableHttpException($exception->getMessage());
+        }
 
         return JsonResponse::create(
             [

@@ -65,6 +65,8 @@ class TaskList
      * @param JsonArray|null $metaData The (optional) meta data.
      *
      * @return string
+     *
+     * @throws \InvalidArgumentException When no task instance can be created from the meta data.
      */
     public function queue($type, JsonArray $metaData = null)
     {
@@ -79,13 +81,15 @@ class TaskList
             ->set(Task::SETTING_TYPE, $type)
             ->set('status', Task::STATE_PENDING);
 
-        $this->getConfig()->set($taskId, $metaData->getData());
-
         $taskFile = new JsonFile($this->taskIdToFileName($taskId));
         $taskFile->setData($metaData->getData());
         $taskFile->save();
 
-        $this->createTaskFromMetaData($taskFile);
+        if (!$this->createTaskFromMetaData($taskFile)) {
+            throw new \InvalidArgumentException('Could not create task of type "' . $metaData->get('type') . '"');
+        }
+
+        $this->getConfig()->set($taskId, $metaData->getData());
 
         return $taskId;
     }

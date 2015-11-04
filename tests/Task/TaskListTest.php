@@ -119,16 +119,14 @@ class TaskListTest extends TestCase
      * Test that adding a task works.
      *
      * @return void
+     *
+     * @expectedException \InvalidArgumentException
      */
-    public function testUnknownTypeReturnsNull()
+    public function testUnknownTypeRaisesException()
     {
         $list = new TaskList($this->workDir, $this->getEventDispatcher());
 
-        $taskId = $list->queue('unknown-type');
-
-        $this->assertContains($taskId, $list->getIds());
-        $this->assertNull($list->dequeue($taskId));
-        $this->assertEmpty($list->getIds());
+        $list->queue('unknown-type');
     }
 
     /**
