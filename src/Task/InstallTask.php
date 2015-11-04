@@ -248,9 +248,7 @@ class InstallTask extends Task
     {
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR) . DIRECTORY_SEPARATOR;
 
-        return !(file_exists($destinationDir . 'composer.json')
-            /*&& file_exists($destinationDir . 'tenside.json')*/);
-        // FIXME: need to determine this somehow better. Can not check for tenside also as we need the secret and user.
+        return !(file_exists($destinationDir . 'composer.json'));
     }
 
     /**
@@ -264,8 +262,6 @@ class InstallTask extends Task
         $this->previousWorkingDir  = getcwd();
         // Clear any potential overriding env variable.
         putenv('COMPOSER=');
-        // Removed, confuses git clones somehow.
-        // chdir($this->tempDir);
     }
 
     /**
