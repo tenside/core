@@ -21,6 +21,7 @@
 namespace Tenside\Task;
 
 use Composer\Command\CreateProjectCommand;
+use Composer\IO\IOInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -174,8 +175,6 @@ class InstallTask extends Task
      * Move the installed files to their intended destination.
      *
      * @return void
-     *
-     * @throws \RuntimeException When an unknown file type has been encountered.
      */
     private function moveFiles()
     {
@@ -187,55 +186,7 @@ class InstallTask extends Task
         $logging        = $ioHandler->isVeryVerbose();
         $this->folders  = [];
         foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false)->ignoreVCS(false) as $file) {
-            /** @var SplFileInfo $file */
-            $pathName        = $file->getPathname();
-            $destinationFile = str_replace($this->tempDir, $destinationDir, $pathName);
-
-            switch (true) {
-                // Symlink must(!) be handled first as the isDir() and isFile() checks return true for symlinks.
-                case $file->isLink():
-                    $target = $file->getLinkTarget();
-                    if ($logging) {
-                        $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
-                    }
-                    symlink($target, $destinationFile);
-                    unlink($pathName);
-
-                    break;
-
-                case $file->isDir():
-                    $permissions     = substr(decoct(fileperms($pathName)), 1);
-                    $this->folders[] = $pathName;
-                    if (!is_dir($destinationFile)) {
-                        if ($logging) {
-                            $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
-                        }
-                        mkdir($destinationFile, octdec($permissions), true);
-                    }
-                    break;
-
-                case $file->isFile():
-                    $permissions = substr(decoct(fileperms($pathName)), 1);
-                    if ($logging) {
-                        $ioHandler->write(
-                            sprintf('move %s to %s (permissions: %s)', $pathName, $destinationFile, $permissions)
-                        );
-                    }
-                    copy($pathName, $destinationFile);
-                    chmod($destinationFile, octdec($permissions));
-                    unlink($pathName);
-
-                    break;
-
-                default:
-                    throw new \RuntimeException(
-                        sprintf(
-                            'Unknown file of type %s encountered for %s',
-                            filetype($pathName),
-                            $pathName
-                        )
-                    );
-            }
+            $this->moveFile($file, $destinationDir, $logging, $ioHandler);
         }
 
         foreach (array_reverse($this->folders) as $folder) {
@@ -244,6 +195,74 @@ class InstallTask extends Task
             }
             rmdir($folder);
         }
+    }
+
+    /**
+     * Move a single file or folder.
+     *
+     * @param SplFileInfo $file      The file to move.
+     *
+     * @param string      $targetDir The destination directory.
+     *
+     * @param bool        $logging   Flag determining if actions shall get logged.
+     *
+     * @param IOInterface $ioHandler The io handler to log to.
+     *
+     * @return void
+     *
+     * @throws \RuntimeException When an unknown file type has been encountered.
+     */
+    private function moveFile(SplFileInfo $file, $targetDir, $logging, $ioHandler)
+    {
+        $pathName        = $file->getPathname();
+        $destinationFile = str_replace($this->tempDir, $targetDir, $pathName);
+
+        // Symlink must(!) be handled first as the isDir() and isFile() checks return true for symlinks.
+        if ($file->isLink()) {
+            $target = $file->getLinkTarget();
+            if ($logging) {
+                $ioHandler->write(sprintf('link %s to %s', $target, $destinationFile));
+            }
+            symlink($target, $destinationFile);
+            unlink($pathName);
+
+            return;
+        }
+
+        if ($file->isDir()) {
+            $permissions     = substr(decoct(fileperms($pathName)), 1);
+            $this->folders[] = $pathName;
+            if (!is_dir($destinationFile)) {
+                if ($logging) {
+                    $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
+                }
+                mkdir($destinationFile, octdec($permissions), true);
+            }
+
+            return;
+        }
+
+        if ($file->isFile()) {
+            $permissions = substr(decoct(fileperms($pathName)), 1);
+            if ($logging) {
+                $ioHandler->write(
+                    sprintf('move %s to %s (permissions: %s)', $pathName, $destinationFile, $permissions)
+                );
+            }
+            copy($pathName, $destinationFile);
+            chmod($destinationFile, octdec($permissions));
+            unlink($pathName);
+
+            return;
+        }
+
+        throw new \RuntimeException(
+            sprintf(
+                'Unknown file of type %s encountered for %s',
+                filetype($pathName),
+                $pathName
+            )
+        );
     }
 
     /**
