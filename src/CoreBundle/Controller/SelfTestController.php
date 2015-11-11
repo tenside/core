@@ -72,7 +72,7 @@ class SelfTestController extends AbstractController
         if ($phpCli = $config->getPhpInterpreter()) {
             $result['php-cli'] = $phpCli;
         }
-        if ($phpArguments = $config->getPhpInterpreter()) {
+        if ($phpArguments = $config->getCommandLineArguments()) {
             $result['php-cli-arguments'] = $phpArguments;
         }
 
