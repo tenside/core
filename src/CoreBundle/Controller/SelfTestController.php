@@ -22,6 +22,7 @@ namespace Tenside\CoreBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Tenside\SelfTest\Cli\SelfTestCanSpawnProcesses;
+use Tenside\SelfTest\Cli\SelfTestCliArguments;
 use Tenside\SelfTest\Cli\SelfTestCliRuntime;
 use Tenside\SelfTest\Generic\SelfTestCalledViaHttps;
 use Tenside\SelfTest\Generic\SelfTestFileOwnerMatches;
@@ -113,10 +114,8 @@ class SelfTestController extends AbstractController
         $tester->addTest(new SelfTestSuhosin());
         $tester->addTest(new SelfTestCanSpawnProcesses());
         $tester->addTest(new SelfTestCliRuntime());
-        // Can execute stand alone.
-        // Can raise memory limit in web/console (remote execution test - if 500/exit code != 0 - impossible).
-        // Future:
-        // can execute standalone websocket.
+        $tester->addTest(new SelfTestCliArguments());
+
         return $tester;
     }
 }
