@@ -72,6 +72,13 @@ class InstallTask extends Task
     private $previousWorkingDir;
 
     /**
+     * The list of folders to remove after the installation was complete.
+     *
+     * @var string[]
+     */
+    private $folders;
+
+    /**
      * {@inheritDoc}
      */
     public function getType()
@@ -178,7 +185,7 @@ class InstallTask extends Task
         $destinationDir = $this->file->get(self::SETTING_DESTINATION_DIR);
         $ioHandler      = $this->getIO();
         $logging        = $ioHandler->isVeryVerbose();
-        $folders        = [];
+        $this->folders  = [];
         foreach (Finder::create()->in($this->tempDir)->ignoreDotFiles(false)->ignoreVCS(false) as $file) {
             /** @var SplFileInfo $file */
             $pathName        = $file->getPathname();
@@ -197,8 +204,8 @@ class InstallTask extends Task
                     break;
 
                 case $file->isDir():
-                    $permissions = substr(decoct(fileperms($pathName)), 1);
-                    $folders[]   = $pathName;
+                    $permissions     = substr(decoct(fileperms($pathName)), 1);
+                    $this->folders[] = $pathName;
                     if (!is_dir($destinationFile)) {
                         if ($logging) {
                             $ioHandler->write(sprintf('mkdir %s (permissions: %s)', $pathName, $permissions));
@@ -231,7 +238,7 @@ class InstallTask extends Task
             }
         }
 
-        foreach (array_reverse($folders) as $folder) {
+        foreach (array_reverse($this->folders) as $folder) {
             if ($logging) {
                 $ioHandler->write(sprintf('remove directory %s', $folder));
             }
