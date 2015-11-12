@@ -132,36 +132,6 @@ class PackageController extends AbstractController
             return new Response('Not found', Response::HTTP_NOT_FOUND);
         }
     }
-
-    /**
-     * Remove a package.
-     *
-     * @param string $vendor  The name of the vendor.
-     *
-     * @param string $package The name of the package.
-     *
-     * @return JsonResponse
-     *
-     * @api
-     */
-    public function deletePackageAction($vendor, $package)
-    {
-        $packageName = $vendor . '/' . $package;
-
-        $composer  = $this->getComposer();
-        $converter = new PackageConverter($composer->getPackage());
-
-        foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
-            if ($package->getPrettyName() === $packageName) {
-                return new JsonResponse($converter->convertPackageToArray($package), 200);
-            }
-
-            // FIXME: remove package from composer.json now.
-        }
-
-        return new Response('Not found', Response::HTTP_NOT_FOUND);
-    }
-
     /**
      * Perform a complete package version solving and return the available upgrade versions.
      *

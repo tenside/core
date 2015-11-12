@@ -58,16 +58,6 @@ package_put:
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
-package_delete:
-    path:     /v1/packages/{vendor}/{package}
-    defaults: { _controller: TensideCoreBundle:Package:deletePackage }
-    methods:  [DELETE]
-    requirements:
-        vendor: "[\-\_a-zA-Z0-9]+"
-        package: "[\-\_a-zA-Z0-9]+"
-    options:
-        required_role: ROLE_MANIPULATE_REQUIREMENTS
-
 search_package_put:
     path:     /v1/search
     defaults: { _controller: TensideCoreBundle:SearchPackage:search }
