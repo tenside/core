@@ -175,7 +175,13 @@ class SelfTestCliRuntime extends AbstractSelfTest
      */
     private function testCliRuntime($binary)
     {
-        $process = new Process($binary . ' --version');
+        $process = new Process(
+            sprintf(
+                '%s %s',
+                escapeshellcmd($binary),
+                escapeshellarg('--version')
+            )
+        );
 
         if (0 !== $process->run()) {
             return null;
