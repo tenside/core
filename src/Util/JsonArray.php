@@ -23,6 +23,8 @@ namespace Tenside\Util;
 
 /**
  * Generic path following json file handler.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class JsonArray implements \JsonSerializable
 {
