@@ -95,6 +95,7 @@ class TaskListTest extends TestCase
 
         $this->assertContains($taskId, $list->getIds());
         $this->assertInstanceOf('Tenside\Task\Task', $list->getTask($taskId));
+        $this->assertInstanceOf('Tenside\Task\Task', $list->getNext());
     }
 
     /**
@@ -149,5 +150,32 @@ class TaskListTest extends TestCase
 
         $this->assertEmpty($list->getIds());
         $this->assertNull($list->dequeue());
+    }
+
+    /**
+     * Test that an task list will return all tasks as they have been added but not remove them.
+     *
+     * @return void
+     */
+    public function testListGetNextReturnsCorrectTasksAndRemoveRemovesThem()
+    {
+        $list   = new TaskList($this->workDir, $this->getEventDispatcher());
+        $first  = $list->queue('upgrade', new JsonArray(['test' => 'value1']));
+        $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
+
+        $task = $list->getNext();
+        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertEquals($first, $task->getId());
+        $task = $list->getNext();
+        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertEquals($first, $task->getId());
+        $list->remove($first);
+
+        $task = $list->getNext();
+        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertEquals($second, $task->getId());
+
+        $list->remove($second);
+        $this->assertNull($list->getNext());
     }
 }
