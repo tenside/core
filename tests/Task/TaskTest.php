@@ -50,8 +50,11 @@ class TaskTest extends TestCase
             $this->assertEquals(Task::STATE_RUNNING, $task->getStatus());
         });
 
+        $logfile = $this->getTempDir() . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'task.log';
         /** @var Task $task */
-        $task->perform($this->getTempFile('task.log'));
+        $task->perform($logfile);
+
+        $this->assertFileExists($logfile);
 
         $this->assertEquals('test-task-id', $task->getId());
         $task->addOutput('Foo');
@@ -64,6 +67,10 @@ class TaskTest extends TestCase
         $this->assertEquals('Test' . "\n", $task->getOutput($skip - 5));
 
         $this->assertEquals(Task::STATE_FINISHED, $task->getStatus());
+
+        $task->removeAssets();
+
+        $this->assertFileNotExists($logfile);
     }
 
     /**
