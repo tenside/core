@@ -30,6 +30,28 @@ use Tenside\Util\JsonArray;
 class RequirePackageTaskTest extends TestCase
 {
     /**
+     * Test that the getting of the type name returns the known value.
+     *
+     * @return void
+     */
+    public function testGetTypeIsCorrect()
+    {
+        $task = new RequirePackageTask(
+            new JsonArray(
+                [
+                    RequirePackageTask::SETTING_TYPE    => 'require-package',
+                    RequirePackageTask::SETTING_ID      => 'require-task-id',
+                    RequirePackageTask::SETTING_PACKAGE => ['vendor/dependency-name', '1.0.0'],
+                    RequirePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                            => RequirePackageTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $this->assertEquals('require-package', $task->getType());
+    }
+
+    /**
      * Test that the base functionality works.
      *
      * @return void

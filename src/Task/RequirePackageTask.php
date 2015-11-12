@@ -20,40 +20,14 @@
 
 namespace Tenside\Task;
 
-use Symfony\Component\Console\Input\ArrayInput;
 use Tenside\Task\WrappedCommand\RequireCommand;
 use Tenside\Util\RuntimeHelper;
 
 /**
  * This class holds the information for an installation request of a package.
  */
-class RequirePackageTask extends AbstractComposerCommandTask
+class RequirePackageTask extends AbstractPackageManipulatingTask
 {
-    /**
-     * The package to install.
-     */
-    const SETTING_PACKAGE = 'package';
-
-    /**
-     * The version to request.
-     */
-    const SETTING_VERSION = 'version';
-
-    /**
-     * The home path of tenside.
-     */
-    const SETTING_HOME = 'home';
-
-    /**
-     * Retrieve the names of the packages to upgrade or null if none.
-     *
-     * @return string
-     */
-    public function getPackage()
-    {
-        return $this->file->get(self::SETTING_PACKAGE);
-    }
-
     /**
      * Returns 'upgrade'.
      *
@@ -71,23 +45,8 @@ class RequirePackageTask extends AbstractComposerCommandTask
     {
         // Switch home first, this is needed as the command manipulates the RAW composer.json prior to creating the
         // composer instance.
-        RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
+        RuntimeHelper::setupHome($this->getHome());
 
         return $this->attachComposerFactory(new RequireCommand());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function prepareInput()
-    {
-        $arguments = [
-            'packages' => $this->getPackage()
-        ];
-
-        $input = new ArrayInput($arguments);
-        $input->setInteractive(false);
-
-        return $input;
     }
 }

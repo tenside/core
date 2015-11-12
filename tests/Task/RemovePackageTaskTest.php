@@ -31,6 +31,28 @@ use Tenside\Util\JsonArray;
 class RemovePackageTaskTest extends TestCase
 {
     /**
+     * Test that the getting of the type name returns the known value.
+     *
+     * @return void
+     */
+    public function testGetTypeIsCorrect()
+    {
+        $task = new RemovePackageTask(
+            new JsonArray(
+                [
+                    RemovePackageTask::SETTING_TYPE    => 'remove-package',
+                    RemovePackageTask::SETTING_ID      => 'remove-task-id',
+                    RemovePackageTask::SETTING_PACKAGE => ['vendor/dependency-name', '1.0.0'],
+                    RemovePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                           => RemovePackageTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $this->assertEquals('remove-package', $task->getType());
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
