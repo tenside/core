@@ -22,12 +22,16 @@
 namespace Tenside\CoreBundle\Controller;
 
 use Composer\DependencyResolver\Operation\UpdateOperation;
+use Composer\Package\AliasPackage;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
+use Composer\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tenside\Composer\PackageConverter;
 use Tenside\Composer\SolverRunner;
 use Tenside\Util\JsonArray;
@@ -43,8 +47,6 @@ class PackageController extends AbstractController
      * @param Request $request The request to process.
      *
      * @return JsonResponse
-     *
-     * @api
      */
     public function packageListAction(Request $request)
     {
@@ -76,8 +78,6 @@ class PackageController extends AbstractController
      * @param string $package The name of the package.
      *
      * @return JsonResponse
-     *
-     * @api
      */
     public function getPackageAction($vendor, $package)
     {
@@ -106,32 +106,61 @@ class PackageController extends AbstractController
      *
      * @return JsonResponse
      *
-     * @api
+     * @throws NotAcceptableHttpException When the passed payload is invalid.
+     * @throws NotFoundHttpException When the package has not been found.
      */
     public function putPackageAction($vendor, $package, Request $request)
     {
         $packageName = $vendor . '/' . $package;
         $info        = new JsonArray($request->getContent());
+        $name        = $info->get('name');
 
-        if ($info->get('name') !== $packageName) {
-            return new Response('Invalid payload', Response::HTTP_BAD_REQUEST);
+        if (!($info->has('name') && $info->has('locked') && $info->has('constraint'))) {
+            throw new NotAcceptableHttpException('Invalid package information.');
         }
 
-        $composer  = $this->getComposer();
-        $converter = new PackageConverter($composer->getPackage());
-
-        try {
-            // FIXME: Allow to update the constraint in composer.json besides locking/unlocking.
-            $new = $converter->updatePackageFromArray(
-                $info,
-                $composer->getRepositoryManager()->getLocalRepository(),
-                $this->get('tenside.composer_json')
-            );
-            return new JsonResponse($new, 200);
-        } catch (\InvalidArgumentException $exception) {
-            return new Response('Not found', Response::HTTP_NOT_FOUND);
+        if ($name !== $packageName) {
+            throw new NotAcceptableHttpException('Invalid package information.');
         }
+
+        $composer = $this->getComposer();
+        $json     = $this->get('tenside.composer_json');
+
+        $package = $this->findPackage($name, $composer->getRepositoryManager()->getLocalRepository());
+
+        if (null === $package) {
+            throw new NotFoundHttpException('Package not found.');
+        }
+
+        $json->setLock($package, $info->get('locked'));
+        return $this->forward('TensideCoreBundle:Package:getPackage');
     }
+
+    /**
+     * Search the repository for a package.
+     *
+     * @param string              $name       The pretty name of the package to search.
+     *
+     * @param RepositoryInterface $repository The repository to be searched.
+     *
+     * @return null|PackageInterface
+     */
+    private function findPackage($name, RepositoryInterface $repository)
+    {
+        /** @var PackageInterface[] $packages */
+        $packages = $repository->findPackages($name);
+
+        while (!empty($packages) && $packages[0] instanceof AliasPackage) {
+            array_shift($packages);
+        }
+
+        if (empty($packages)) {
+            return null;
+        }
+
+        return $packages[0];
+    }
+
     /**
      * Perform a complete package version solving and return the available upgrade versions.
      *

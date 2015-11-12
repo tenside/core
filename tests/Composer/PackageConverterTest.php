@@ -25,7 +25,6 @@ use Composer\Package\Link;
 use Composer\Package\RootPackage;
 use Composer\Repository\ArrayRepository;
 use Composer\Semver\Constraint\Constraint;
-use Composer\Semver\Constraint\EmptyConstraint;
 use Tenside\Composer\PackageConverter;
 use Tenside\Test\TestCase;
 
@@ -45,9 +44,7 @@ class PackageConverterTest extends TestCase
         $package->setType('project');
         $package->setLicense(['LGPL-3']);
 
-        $converter = new PackageConverter($package);
-
-        $converted = $converter->convertPackageToArray($package);
+        $converted = PackageConverter::create($package)->convertPackageToArray($package);
 
         $this->assertEquals(
             [
@@ -110,8 +107,7 @@ class PackageConverterTest extends TestCase
         );
         $package->setAbandoned('another/package');
 
-        $converter = new PackageConverter($package);
-        $converted = $converter->convertPackageToArray($package, '1.1.1.1');
+        $converted = PackageConverter::create($package)->convertPackageToArray($package, '1.1.1.1');
 
         $this->assertEquals(
             [
@@ -160,9 +156,8 @@ class PackageConverterTest extends TestCase
      */
     public function testConvertPackageVersionBailsWithoutReferences()
     {
-        $package   = new RootPackage('test/package', 'dev-master', 'dev-master');
-        $converter = new PackageConverter($package);
-        $converter->convertPackageVersion($package);
+        $package = new RootPackage('test/package', 'dev-master', 'dev-master');
+        PackageConverter::create($package)->convertPackageVersion($package);
     }
 
     /**
@@ -180,7 +175,7 @@ class PackageConverterTest extends TestCase
         $package->setSourceReference('4f934d928260e126b5d06392e12ee20fae258232');
         $package->setSourceUrl('https://example.com/4f934d928260e126b5d06392e12ee20fae258232.zip');
 
-        $converter = new PackageConverter($package);
+        $converter = PackageConverter::create($package);
         $this->assertEquals(
             'dev-master#4f934d928260e126b5d06392e12ee20fae258232',
             $converter->convertPackageVersion($package, true)
@@ -203,7 +198,7 @@ class PackageConverterTest extends TestCase
         $package->setSourceReference('4f934d928260e126b5d06392e12ee20fae258232');
         $package->setSourceUrl('https://example.com/4f934d928260e126b5d06392e12ee20fae258232.zip');
 
-        $converter = new PackageConverter($package);
+        $converter = PackageConverter::create($package);
         $this->assertEquals(
             'dev-master#4f934d928260e126b5d06392e12ee20fae258232',
             $converter->convertPackageVersion($package, true)

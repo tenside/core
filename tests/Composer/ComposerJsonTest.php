@@ -20,6 +20,7 @@
 
 namespace Tenside\Test\Composer;
 
+use Composer\Package\CompletePackage;
 use Tenside\Composer\ComposerJson;
 use Tenside\Test\TestCase;
 
@@ -89,5 +90,363 @@ EOF;
         $this->assertNull($composer->getRequireDev('require-dev-vendor/require-dev-package-not'));
         $this->assertNull($composer->getReplace('replace-vendor/replace-package-not'));
         $this->assertNull($composer->getProvide('provide-vendor/provide-package-not'));
+    }
+
+    /**
+     * Test that the locking of packages works.
+     *
+     * @return void
+     */
+    public function testLocking()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "~1.0"
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->lockPackage($package));
+        $this->assertTrue($composer->isLocked('vendor/package'));
+
+        $this->assertEquals('~1.0', $composer->get('extra/tenside/version-locks/vendor\/package'));
+        $this->assertEquals('1.0.0.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testLockingDependency()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->lockPackage($package));
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertEquals(false, $composer->get('extra/tenside/version-locks/vendor\/package'));
+        $this->assertEquals('1.0.0.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of already locked packages works.
+     *
+     * @return void
+     */
+    public function testLockingOfAlreadyLockedKeepsLock()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": "~1.0"
+      }
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->lockPackage($package));
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertEquals('~1.0', $composer->get('extra/tenside/version-locks/vendor\/package'));
+        $this->assertEquals('1.0.0.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testLockingOfAlreadyLockedDependencyKeepsLock()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": false
+      }
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->lockPackage($package));
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertEquals(false, $composer->get('extra/tenside/version-locks/vendor\/package'));
+        $this->assertEquals('1.0.0.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the unlocking of packages works.
+     *
+     * @return void
+     */
+    public function testUnlocking()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": "~1.0"
+      }
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->unlockPackage($package));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+
+        $this->assertFalse($composer->has('extra/tenside'));
+        $this->assertEquals('~1.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testUnlockingDependency()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": false
+      }
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->unlockPackage($package));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertFalse($composer->has('extra/tenside'));
+        $this->assertFalse($composer->has('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of already locked packages works.
+     *
+     * @return void
+     */
+    public function testUnlockingOfAlreadyUnLockedKeepsLockRemoved()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "~1.0"
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->unlockPackage($package));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertFalse($composer->has('extra/tenside'));
+        $this->assertEquals('~1.0', $composer->get('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testUnlockingOfAlreadyUnlockedDependencyKeepsLockRemoved()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core"
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->unlockPackage($package));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertFalse($composer->has('extra/tenside'));
+        $this->assertFalse($composer->has('require/vendor\/package'));
+    }
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testUnlockingDependencyPreservesOtherKeys()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": false
+      },
+      "yet-another-key": false,
+      "even-more": false
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->unlockPackage($package));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertFalse($composer->has('require/vendor\/package'));
+        $this->assertTrue($composer->has('extra/tenside/yet-another-key'));
+        $this->assertTrue($composer->has('extra/tenside/even-more'));
+    }
+
+    /**
+     * Test that a call to testLock with true calls lockPackage()
+     *
+     * @return void
+     */
+    public function testSetLockCallsLockPackage()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "~1.0"
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertFalse($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->setLock($package, true));
+        $this->assertTrue($composer->isLocked('vendor/package'));
+    }
+
+    /**
+     * Test that a call to testLock with false calls unlockPackage()
+     *
+     * @return void
+     */
+    public function testSetLockCallsUnlockPackage()
+    {
+        $content = <<<EOF
+{
+  "name": "tenside/core",
+  "require": {
+    "vendor/package": "1.0.0.0"
+  },
+  "extra": {
+    "tenside": {
+      "version-locks": {
+        "vendor/package": "~1.0"
+      }
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+        $package  = new CompletePackage('vendor/package', '1.0.0.0', '1.0.0.0');
+
+        $this->assertTrue($composer->isLocked('vendor/package'));
+        $this->assertSame($composer, $composer->setLock($package, false));
+        $this->assertFalse($composer->isLocked('vendor/package'));
+    }
+
+
+    /**
+     * Test that the locking of dependency packages works.
+     *
+     * @return void
+     */
+    public function testCleanArray()
+    {
+        $content = <<<EOF
+{
+  "extra": {
+    "tenside": {
+      "version-locks": {
+      },
+      "yet-another-key": false,
+      "even-more": false
+    }
+  }
+}
+EOF;
+
+        $composer = new ComposerJson($this->createFixture('composer.json', $content));
+
+        $reflection = new \ReflectionMethod($composer, 'cleanEmptyArraysInPath');
+        $reflection->setAccessible(true);
+
+        $reflection->invoke($composer, 'extra/tenside');
+
+        $this->assertFalse($composer->has('extra/tenside/version-locks'));
+        $this->assertTrue($composer->has('extra/tenside/yet-another-key'));
+        $this->assertTrue($composer->has('extra/tenside/even-more'));
     }
 }

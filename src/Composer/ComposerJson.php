@@ -20,6 +20,7 @@
 
 namespace Tenside\Composer;
 
+use Composer\Package\PackageInterface;
 use Tenside\Util\JsonFile;
 
 /**
@@ -223,5 +224,119 @@ class ComposerJson extends JsonFile
     private function getLink($type, $name)
     {
         return $this->get($type . '/' . $this->escape($name));
+    }
+
+    /**
+     * Check if a package is locked.
+     *
+     * @param string $packageName The name of the package to test.
+     *
+     * @return bool
+     */
+    public function isLocked($packageName)
+    {
+        return $this->has('extra/tenside/version-locks/' . $this->escape($packageName));
+    }
+
+    /**
+     * Unlock a locked package version.
+     *
+     * @param PackageInterface $package The repository holding the packages to convert.
+     *
+     * @return ComposerJson
+     */
+    public function lockPackage(PackageInterface $package)
+    {
+        $name = $package->getPrettyName();
+        $lock = 'extra/tenside/version-locks/' . $this->escape($name);
+
+        // Nothing to do?
+        if ($this->has($lock)) {
+            return $this;
+        }
+
+        if ($this->isRequiring($name)) {
+            $this->set($lock, $this->getRequire($name));
+        } else {
+            $this->set($lock, false);
+        }
+
+        $this->requirePackage(
+            $package->getPrettyName(),
+            PackageConverter::convertPackageVersion($package, true)
+        );
+
+        return $this;
+    }
+
+    /**
+     * Unlock a locked package version.
+     *
+     * @param PackageInterface $package The repository holding the packages to convert.
+     *
+     * @return ComposerJson
+     */
+    public function unlockPackage(PackageInterface $package)
+    {
+        $name = $package->getPrettyName();
+        $lock = 'extra/tenside/version-locks/' . $this->escape($name);
+
+        // Nothing to do?
+        if (!$this->has($lock)) {
+            return $this;
+        }
+
+        if (false === ($constraint = $this->get($lock))) {
+            $this->remove($lock);
+            $this->requirePackage($name, null);
+            $this->cleanEmptyArraysInPath('extra/tenside');
+
+            return $this;
+        }
+
+        $this->requirePackage($name, $constraint);
+        $this->remove($lock);
+        $this->cleanEmptyArraysInPath('extra/tenside');
+
+        return $this;
+    }
+
+    /**
+     * Set the locking state for the passed package.
+     *
+     * @param PackageInterface $package The package to lock.
+     *
+     * @param bool             $state   The desired state.
+     *
+     * @return ComposerJson
+     */
+    public function setLock(PackageInterface $package, $state)
+    {
+        if ((bool) $state) {
+            return $this->lockPackage($package);
+        }
+
+        return $this->unlockPackage($package);
+    }
+
+    /**
+     * Cleanup the array section at the given path by removing empty sub arrays.
+     *
+     * @param string $path The base path to remove empty elements from.
+     *
+     * @return void
+     */
+    private function cleanEmptyArraysInPath($path)
+    {
+        $subs = $this->getEntries($path);
+        if ($subs) {
+            foreach ($subs as $subPath) {
+                $this->cleanEmptyArraysInPath($subPath);
+            }
+        }
+
+        if ([] === $this->get($path)) {
+            $this->remove($path);
+        }
     }
 }
