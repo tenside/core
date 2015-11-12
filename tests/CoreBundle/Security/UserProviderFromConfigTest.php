@@ -77,4 +77,20 @@ class UserProviderFromConfigTest extends TestCase
         $provider->removeUser($refreshed);
         $this->assertFalse($config->has('auth-password/tester'));
     }
+
+    /**
+     * Test that an unsupported user instance raises an exception.
+     *
+     * @return void
+     *
+     * @expectedException \Symfony\Component\Security\Core\Exception\UnsupportedUserException
+     */
+    public function testUnknownUserClassThrowsException()
+    {
+        $provider = new UserProviderFromConfig(new SourceJson($this->getTempFile('tenside.json')));
+
+        $provider->refreshUser(
+            $this->getMockForAbstractClass('Tenside\\CoreBundle\\Security\\UserInformationInterface')
+        );
+    }
 }
