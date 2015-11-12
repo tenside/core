@@ -46,7 +46,7 @@ class ExceptionListener
         $response  = null;
         switch ($class) {
             case 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException':
-                $response = $this->createNotFoundResponse($event->getRequest());
+                $response = $this->createNotFoundResponse($event->getRequest(), $exception);
                 break;
             case 'Symfony\\Component\\HttpKernel\\Exception\\AccessDeniedHttpException':
             case 'Symfony\\Component\\HttpKernel\\Exception\\UnauthorizedHttpException':
@@ -71,18 +71,25 @@ class ExceptionListener
     /**
      * Create a 404 response.
      *
-     * @param Request $request The http request.
+     * @param Request    $request   The http request.
+     *
+     * @param \Exception $exception The exception.
      *
      * @return JsonResponse
      *
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function createNotFoundResponse($request)
+    private function createNotFoundResponse($request, $exception)
     {
+        $message = $exception->getMessage();
+        if (empty($message)) {
+            $message = 'Uri ' . $request->getRequestUri() . ' could not be found';
+        }
+
         return new JsonResponse(
             [
                 'status'  => 'ERROR',
-                'message' => 'Uri ' . $request->getRequestUri() . ' could not be found'
+                'message' => $message
             ],
             JsonResponse::HTTP_NOT_FOUND
         );
