@@ -20,7 +20,6 @@
 
 namespace Tenside\Task;
 
-use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Tenside\Task\WrappedCommand\RemoveCommand;
 use Tenside\Util\RuntimeHelper;
@@ -69,15 +68,7 @@ class RemovePackageTask extends AbstractComposerCommandTask
         // composer instance.
         RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
 
-        $command = new RemoveCommand();
-        $that    = $this;
-        $command->setComposerFactory(
-            function () use ($that) {
-                return Factory::create($that->getIO());
-            }
-        );
-
-        return $command;
+        return $this->attachComposerFactory(new RemoveCommand());
     }
 
     /**

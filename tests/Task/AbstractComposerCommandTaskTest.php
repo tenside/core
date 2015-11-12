@@ -20,18 +20,12 @@
 
 namespace Tenside\Test\Task;
 
-use Composer\Command\Command;
-use Composer\Composer;
-use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Tenside\Task\AbstractComposerCommandTask;
 use Tenside\Task\Task;
+use Tenside\Test\Task\WrappedCommand\WrappedTestCommand;
 use Tenside\Test\TestCase;
 use Tenside\Util\JsonArray;
-use Tenside\Util\RuntimeHelper;
 
 /**
  * This class tests the abstract composer command task.
@@ -125,5 +119,54 @@ class AbstractComposerCommandTaskTest extends TestCase
 
         /** @var AbstractComposerCommandTask $task */
         $task->perform($this->getTempFile('task.log'));
+    }
+
+    /**
+     * Test setting the composer factory on valid commands works.
+     *
+     * @return void
+     */
+    public function testSetComposerFactoryOnValidCommandWorks()
+    {
+        $task = $this
+            ->getMockForAbstractClass(
+                'Tenside\\Task\\AbstractComposerCommandTask',
+                [new JsonArray(['status' => Task::STATE_PENDING])]
+            );
+
+        $command    = new WrappedTestCommand('testcommand');
+        $reflection = new \ReflectionMethod($task, 'attachComposerFactory');
+        $reflection->setAccessible(true);
+        $reflection->invoke($task, $command);
+
+        $reflection = new \ReflectionMethod($command, 'getComposer');
+        $this->assertInstanceOf('Composer\\Composer', $reflection->invoke($command, true));
+    }
+
+    /**
+     * Test setting the composer factory on invalid commands raises an exception.
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetComposerFactoryOnInvalidCommandThrowsException()
+    {
+        $task = $this
+            ->getMockForAbstractClass(
+                'Tenside\\Task\\AbstractComposerCommandTask',
+                [new JsonArray(['status' => Task::STATE_PENDING])]
+            );
+
+        $command = $this
+            ->getMockBuilder('Composer\\Command\\Command')
+            ->setConstructorArgs(['testcommand'])
+            ->setMethods([])
+            ->getMockForAbstractClass();
+
+        $reflection = new \ReflectionMethod($task, 'attachComposerFactory');
+        $reflection->setAccessible(true);
+
+        $reflection->invoke($task, $command);
     }
 }

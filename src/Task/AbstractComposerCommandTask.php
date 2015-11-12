@@ -21,9 +21,11 @@
 namespace Tenside\Task;
 
 use Composer\Command\Command;
+use Composer\Factory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tenside\Task\WrappedCommand\WrappedCommandTrait;
 
 /**
  * This task provides the basic framework for building tasks that perform composer commands.
@@ -65,6 +67,31 @@ abstract class AbstractComposerCommandTask extends Task
                 )
             );
         }
+    }
+
+    /**
+     * Attach the composer factory to the command.
+     *
+     * @param Command $command The command to patch.
+     *
+     * @return Command
+     *
+     * @throws \InvalidArgumentException When no setComposerFactory method is declared.
+     */
+    protected function attachComposerFactory(Command $command)
+    {
+        if (!method_exists($command, 'setComposerFactory')) {
+            throw new \InvalidArgumentException('The passed command does not implement method setComposerFactory()');
+        }
+
+        /** @var WrappedCommandTrait $command */
+        $command->setComposerFactory(
+            function () {
+                return Factory::create($this->getIO());
+            }
+        );
+
+        return $command;
     }
 
     /**
