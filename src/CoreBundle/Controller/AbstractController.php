@@ -27,7 +27,6 @@ use Composer\IO\IOInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Tenside\CoreBundle\TensideJsonConfig;
 use Tenside\Task\TaskList;
-use Tenside\Tenside;
 use Tenside\Util\RuntimeHelper;
 
 /**
@@ -85,18 +84,6 @@ abstract class AbstractController extends Controller
         RuntimeHelper::setupHome($this->getTensideHome());
 
         return ComposerFactory::create($inputOutput);
-    }
-
-    /**
-     * Retrieve the tenside instance.
-     *
-     * @return Tenside
-     *
-     * @deprecated The tenside class will get phased out to be a simple version constant container.
-     */
-    public function getTenside()
-    {
-        return $this->container->get('tenside');
     }
 
     /**
