@@ -20,6 +20,7 @@
 
 namespace Tenside\Test\CoreBundle\Security;
 
+use Symfony\Component\Security\Core\Role\Role;
 use Tenside\CoreBundle\Security\JavascriptWebToken;
 use Tenside\Test\TestCase;
 
@@ -44,5 +45,65 @@ class JavascriptWebTokenTest extends TestCase
         $this->assertFalse($token->isAuthenticated());
         $token->eraseCredentials();
         $this->assertNull($token->getCredentials());
+    }
+
+    /**
+     * Test creation with an empty provider key raises an exception.
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreateWithEmptyProviderKeyBails()
+    {
+        new JavascriptWebToken('CREDENTIALS', '');
+    }
+
+    /**
+     * Test creation with all values.
+     *
+     * @return void
+     */
+    public function testCreateWithRolesIsAuthenticated()
+    {
+        $token = new JavascriptWebToken('CREDENTIALS', 'PROVIDER', 'username', ['ROLE_1', 'ROLE_2']);
+
+        $this->assertEquals('CREDENTIALS', $token->getCredentials());
+        $this->assertEquals('PROVIDER', $token->getProviderKey());
+        $this->assertEquals('username', $token->getUsername());
+        /** @var Role[] $roles */
+        $roles = $token->getRoles();
+        $this->assertEquals(2, count($roles));
+        $this->assertInstanceOf('Symfony\Component\Security\Core\Role\Role', $roles[0]);
+        $this->assertEquals('ROLE_1', $roles[0]->getRole());
+        $this->assertInstanceOf('Symfony\Component\Security\Core\Role\Role', $roles[1]);
+        $this->assertEquals('ROLE_2', $roles[1]->getRole());
+        $this->assertTrue($token->isAuthenticated());
+    }
+
+    /**
+     * Test serialization and un-serialization.
+     *
+     * @return void
+     */
+    public function testSerializationAndUnSerialization()
+    {
+        $token      = new JavascriptWebToken('CREDENTIALS', 'PROVIDER', 'username', ['ROLE_1', 'ROLE_2']);
+        $serialized = $token->serialize();
+
+        $token = new JavascriptWebToken('TMP', 'TMP');
+        $token->unserialize($serialized);
+
+        $this->assertEquals('CREDENTIALS', $token->getCredentials());
+        $this->assertEquals('PROVIDER', $token->getProviderKey());
+        $this->assertEquals('username', $token->getUsername());
+        /** @var Role[] $roles */
+        $roles = $token->getRoles();
+        $this->assertEquals(2, count($roles));
+        $this->assertInstanceOf('Symfony\Component\Security\Core\Role\Role', $roles[0]);
+        $this->assertEquals('ROLE_1', $roles[0]->getRole());
+        $this->assertInstanceOf('Symfony\Component\Security\Core\Role\Role', $roles[1]);
+        $this->assertEquals('ROLE_2', $roles[1]->getRole());
+        $this->assertTrue($token->isAuthenticated());
     }
 }
