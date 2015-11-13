@@ -25,6 +25,8 @@ use Tenside\CoreBundle\HomePathDeterminator;
 
 /**
  * This class creates a lock instance to be used when trying to run a task.
+ *
+ * @internal
  */
 class TaskRunLockHandlerFactory
 {
