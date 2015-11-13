@@ -27,7 +27,7 @@ use Symfony\Component\HttpKernel\Kernel;
 /**
  * This class creates a logger instance.
  */
-class Loggerfactory
+class LoggerFactory
 {
     /**
      * Create the logger service.

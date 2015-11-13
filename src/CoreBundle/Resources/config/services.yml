@@ -67,6 +67,6 @@ services:
 
     tenside.logger:
         class:          Monolog\Handler\RotatingFileHandler
-        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\Loggerfactory
+        factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\LoggerFactory
         factory_method: create
         arguments:     ["@kernel", "%kernel.environment%.log", 10, 'debug']
