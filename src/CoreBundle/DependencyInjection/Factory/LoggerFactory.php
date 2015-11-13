@@ -26,6 +26,8 @@ use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * This class creates a logger instance.
+ *
+ * @internal
  */
 class LoggerFactory
 {

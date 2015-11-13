@@ -22,6 +22,7 @@
     "ext-openssl": "*",
     "composer/composer": "~1.0@dev",
     "firebase/php-jwt": "~2.0",
+    "monolog/monolog": "~1.8",
     "symfony/config": "~2.7",
     "symfony/console": "~2.7",
     "symfony/dependency-injection": "~2.8",
