@@ -138,18 +138,18 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
             throw new \LogicException('Config does not contain a secret.');
         }
 
-        if ($token->getCredentials() === null) {
-            throw new AuthenticationException(sprintf('Invalid token.'));
+        if ((null === ($credentials = $token->getCredentials())) || !is_object($credentials)) {
+            throw new AuthenticationException(sprintf('Invalid token - no or invalid credentials.'));
         }
 
         // Get the user for the injected UserProvider
-        $user = $userProvider->loadUserByUsername($token->getCredentials()->username);
+        $user = $userProvider->loadUserByUsername($credentials->username);
 
         if (!$user) {
-            throw new AuthenticationException(sprintf('Invalid token.'));
+            throw new AuthenticationException(sprintf('Invalid token - could not derive user from credentials.'));
         }
 
-        return new JavascriptWebToken($token->getCredentials(), $providerKey, $user, $user->getRoles());
+        return new JavascriptWebToken($credentials, $providerKey, $user, $user->getRoles());
     }
 
     /**
@@ -195,8 +195,10 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
     {
         // Decode the token.
         $decodedToken = \JWT::decode($jwt, $this->secret, ['HS256']);
+
         // Validate that this JWT was made for us.
-        if ($this->localId && ($decodedToken->aud != $this->localId)) {
+        $aud = property_exists($decodedToken, 'aud') ? $decodedToken->aud : null;
+        if ($aud !== $this->localId) {
             throw new \UnexpectedValueException('This token is not intended for us.');
         }
 
