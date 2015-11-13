@@ -114,4 +114,52 @@ class UserInformationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('string', $user->asString());
     }
+
+    /**
+     * Test the getSalt() method.
+     *
+     * @return void
+     */
+    public function testEmptyUserHasSalt()
+    {
+        $user = new UserInformation();
+        $this->assertNotNull($user->getSalt());
+    }
+
+    /**
+     * Test the getPassword() method.
+     *
+     * @return void
+     */
+    public function testGetPassword()
+    {
+        $user = new UserInformation(['password' => 'secure-hash']);
+        $this->assertEquals('secure-hash', $user->getPassword());
+    }
+
+    /**
+     * Test the getPassword() method.
+     *
+     * @return void
+     */
+    public function testSetPassword()
+    {
+        $user = new UserInformation(['password' => 'secure-hash']);
+        $this->assertSame($user, $user->setPassword('new-secure-hash'));
+        $this->assertEquals('new-secure-hash', $user->getPassword());
+    }
+
+    /**
+     * Test the eraseCredentials() method.
+     *
+     * @return void
+     */
+    public function testEraseCredentials()
+    {
+        $user = new UserInformation(['password' => 'secure-hash']);
+        $user->eraseCredentials();
+
+        $this->assertNull($user->getPassword());
+        $this->assertNull($user->getSalt());
+    }
 }
