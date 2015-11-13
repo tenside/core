@@ -25,6 +25,8 @@ use Tenside\CoreBundle\TensideJsonConfig;
 
 /**
  * This class creates a config instance.
+ *
+ * @internal
  */
 class TensideJsonConfigFactory
 {
