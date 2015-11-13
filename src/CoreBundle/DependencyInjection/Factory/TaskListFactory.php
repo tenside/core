@@ -26,6 +26,8 @@ use Tenside\Task\TaskList;
 
 /**
  * This class creates a composerJson instance.
+ *
+ * @internal
  */
 class TaskListFactory
 {
