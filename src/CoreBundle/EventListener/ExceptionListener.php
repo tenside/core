@@ -23,7 +23,13 @@ namespace Tenside\CoreBundle\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
  * This class converts exceptions into proper responses.
@@ -42,19 +48,17 @@ class ExceptionListener
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
         $exception = $event->getException();
-        $class     = get_class($exception);
         $response  = null;
-        switch ($class) {
-            case 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException':
+        switch (true) {
+            case ($exception instanceof NotFoundHttpException):
                 $response = $this->createNotFoundResponse($event->getRequest(), $exception);
                 break;
-            case 'Symfony\\Component\\HttpKernel\\Exception\\AccessDeniedHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\UnauthorizedHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\InternalServerErrorHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\BadRequestHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\ServiceUnavailableHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\NotAcceptableHttpException':
-            case 'Symfony\\Component\\HttpKernel\\Exception\\HttpException':
+            case ($exception instanceof AccessDeniedHttpException):
+            case ($exception instanceof UnauthorizedHttpException):
+            case ($exception instanceof BadRequestHttpException):
+            case ($exception instanceof ServiceUnavailableHttpException):
+            case ($exception instanceof NotAcceptableHttpException):
+            case ($exception instanceof HttpException):
                 /** @var HttpException $exception */
                 $response = $this->createHttpExceptionResponse($exception);
                 break;
