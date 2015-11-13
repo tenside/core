@@ -25,6 +25,8 @@ use Tenside\CoreBundle\HomePathDeterminator;
 
 /**
  * This class creates a composerJson instance.
+ *
+ * @internal
  */
 class ComposerJsonFactory
 {
