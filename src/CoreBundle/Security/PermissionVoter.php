@@ -22,7 +22,7 @@ namespace Tenside\CoreBundle\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
@@ -34,7 +34,7 @@ class PermissionVoter implements VoterInterface
     /**
      * The router.
      *
-     * @var Router
+     * @var RouterInterface
      */
     private $router;
 
@@ -48,11 +48,11 @@ class PermissionVoter implements VoterInterface
     /**
      * Create a new instance.
      *
-     * @param Router       $router       The router component.
+     * @param RouterInterface $router       The router component.
      *
-     * @param RequestStack $requestStack The request stack.
+     * @param RequestStack    $requestStack The request stack.
      */
-    public function __construct(Router $router, RequestStack $requestStack)
+    public function __construct(RouterInterface $router, RequestStack $requestStack)
     {
         $this->router       = $router;
         $this->requestStack = $requestStack;
