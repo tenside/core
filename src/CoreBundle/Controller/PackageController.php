@@ -55,7 +55,8 @@ class PackageController extends AbstractController
         if ($request->query->has('solve')) {
             $upgrades = $this->fullSolvePass();
         } else {
-            $upgrades = $this->quickSolvePass();
+            //$upgrades = $this->quickSolvePass();
+            $upgrades = null;
         }
 
         $packages = $converter->convertRepositoryToArray(
@@ -78,21 +79,20 @@ class PackageController extends AbstractController
      * @param string $package The name of the package.
      *
      * @return JsonResponse
+     *
+     * @throws NotFoundHttpException When the package has not been found.
      */
     public function getPackageAction($vendor, $package)
     {
         $packageName = $vendor . '/' . $package;
+        $composer    = $this->getComposer();
 
-        $composer  = $this->getComposer();
-        $converter = new PackageConverter($composer->getPackage());
-
-        foreach ($composer->getRepositoryManager()->getLocalRepository()->getPackages() as $package) {
-            if ($package->getPrettyName() === $packageName) {
-                return new JsonResponse($converter->convertPackageToArray($package), 200);
-            }
+        if ($package   = $this->findPackage($packageName, $composer->getRepositoryManager()->getLocalRepository())) {
+            $converter = new PackageConverter($composer->getPackage());
+            return new JsonResponse($converter->convertPackageToArray($package), 200);
         }
 
-        return new Response('Not found', Response::HTTP_NOT_FOUND);
+        throw new NotFoundHttpException('Package ' . $packageName . ' not found.');
     }
 
     /**
@@ -120,7 +120,7 @@ class PackageController extends AbstractController
         }
 
         if ($name !== $packageName) {
-            throw new NotAcceptableHttpException('Invalid package information.');
+            throw new NotAcceptableHttpException('Package name mismatch ' . $packageName . ' vs. ' . $name . '.');
         }
 
         $composer = $this->getComposer();
@@ -129,7 +129,7 @@ class PackageController extends AbstractController
         $package = $this->findPackage($name, $composer->getRepositoryManager()->getLocalRepository());
 
         if (null === $package) {
-            throw new NotFoundHttpException('Package not found.');
+            throw new NotFoundHttpException('Package ' . $packageName . ' not found.');
         }
 
         $json->setLock($package, $info->get('locked'));

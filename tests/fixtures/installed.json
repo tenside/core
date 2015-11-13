@@ -1,0 +1,37 @@
+[
+    {
+        "name": "vendor/dependency-name",
+        "license": [
+            "MIT"
+        ],
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "dist": {
+            "type": "zip",
+            "url": "file:///dev/null/test-repository/vendor-dependency-name-1.0.0.zip",
+            "reference": "master",
+            "shasum": null
+        },
+        "type": "library",
+        "installation-source": "dist"
+    },
+    {
+        "name": "vendor/unstable-dependency",
+        "version": "dev-master",
+        "dist": {
+            "type": "vcs",
+            "url": "file:///dev/null/test-repository/unstable-dependency-123456789.zip",
+            "reference": "123456789",
+            "shasum": "123456789"
+        },
+        "type": "library",
+        "license": [
+            "MIT"
+        ],
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.0.x-dev"
+            }
+        }
+    }
+]

@@ -3,6 +3,6 @@
     "description": "Some description",
     "license": "MIT",
     "require": {
-        "somevendor/somepackage": "~1.0"
+        "vendor/dependency-name": "~1.0"
     }
 }
