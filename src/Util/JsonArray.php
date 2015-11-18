@@ -99,7 +99,7 @@ class JsonArray implements \JsonSerializable
         $data = json_decode($data, true);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new \RuntimeException('Error: json decode failed. ' . $this->jsonErrorMessage(), 1);
+            throw new \RuntimeException('Error: json decode failed. ' . json_last_error_msg(), 1);
         }
 
         $this->setData($data);
@@ -348,42 +348,5 @@ class JsonArray implements \JsonSerializable
     public function jsonSerialize()
     {
         return (object) $this->data;
-    }
-
-    /**
-     * Transform the json error to a message.
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    private function jsonErrorMessage()
-    {
-        if (function_exists('json_last_error_msg')) {
-            return json_last_error_msg();
-        }
-        // We can safely ignore these error constants here, as they came available with json_last_error_msg():
-        // - JSON_ERROR_RECURSION
-        // - JSON_ERROR_INF_OR_NAN
-        // - JSON_ERROR_UNSUPPORTED_TYPE
-        switch (json_last_error()) {
-            case JSON_ERROR_DEPTH:
-                return 'Maximum stack depth exceeded.';
-
-            case JSON_ERROR_STATE_MISMATCH:
-                return 'Underflow or the modes mismatch.';
-
-            case JSON_ERROR_CTRL_CHAR:
-                return 'Unexpected control character, possibly incorrectly encoded.';
-
-            case JSON_ERROR_SYNTAX:
-                return 'Syntax error, malformed JSON.';
-
-            case JSON_ERROR_UTF8:
-                return 'Malformed UTF-8 characters, possibly incorrectly encoded.';
-
-            default:
-                return 'Unknown error.';
-        }
     }
 }
