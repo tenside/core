@@ -18,7 +18,11 @@
   </testsuites>
   <filter>
     <whitelist>
-      <directory>./src/</directory>
+      <directory suffix=".php">./src/</directory>
+      <exclude>
+        <!-- uses ini parameters which can not be set from phpunit.xml -->
+        <file>src/Util/FunctionAvailabilityCheck.php</file>
+      </exclude>
     </whitelist>
   </filter>
 </phpunit>
