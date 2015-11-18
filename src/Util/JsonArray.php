@@ -113,10 +113,21 @@ class JsonArray implements \JsonSerializable
      * @param string $path The path to split.
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException When the path is invalid.
      */
     protected function splitPath($path)
     {
-        return array_map([$this, 'unescape'], preg_split('#(?<!\\\)\/#', ltrim($path, '/')));
+        $chunks = array_map(
+            [$this, 'unescape'],
+            preg_split('#(?<!\\\)\/#', ltrim($path, '/'))
+        );
+
+        if (empty($chunks) || (array_filter($chunks) !== $chunks)) {
+            throw new \InvalidArgumentException('Invalid path provided:' . $path);
+        }
+
+        return $chunks;
     }
 
     /**
@@ -162,10 +173,6 @@ class JsonArray implements \JsonSerializable
         $chunks = $this->splitPath($path);
         $scope  = $this->data;
 
-        if (empty($chunks)) {
-            return null;
-        }
-
         while (null !== ($sub = array_shift($chunks))) {
             if (isset($scope[$sub])) {
                 if ($forceArray) {
@@ -205,10 +212,6 @@ class JsonArray implements \JsonSerializable
         $scope  = &$this->data;
         $count  = count($chunks);
 
-        if (empty($chunks)) {
-            return $this;
-        }
-
         while ($count > 1) {
             $sub   = array_shift($chunks);
             $count = count($chunks);
@@ -244,10 +247,6 @@ class JsonArray implements \JsonSerializable
     {
         $chunks = $this->splitPath($path);
         $scope  = $this->data;
-
-        if (empty($chunks)) {
-            return false;
-        }
 
         while (null !== ($sub = array_shift($chunks))) {
             if (isset($scope[$sub])) {

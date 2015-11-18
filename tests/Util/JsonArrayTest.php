@@ -264,4 +264,40 @@ class JsonArrayTest extends \PHPUnit_Framework_TestCase
     {
         new JsonArray('{"foo": "bar",}');
     }
+
+    /**
+     * Provide invalid paths.
+     *
+     * @return array
+     */
+    public function invalidPathProvider()
+    {
+        return [
+            [''],
+            ['//'],
+            ['/foo//'],
+            ['/foo//bar'],
+        ];
+    }
+
+    /**
+     * Test that an exception is thrown for invalid paths.
+     *
+     * @param string $path The path.
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @dataProvider invalidPathProvider
+     */
+    public function testBailsWithInvalidPaths($path)
+    {
+        $json = new JsonArray();
+
+        $reflection = new \ReflectionMethod($json, 'splitPath');
+        $reflection->setAccessible(true);
+
+        $reflection->invoke($json, $path);
+    }
 }
