@@ -35,8 +35,9 @@ class TensideJsonConfigFactoryTest extends TestCase
      */
     public function testCreate()
     {
-        $home = $this->getMock('Tenside\\CoreBundle\\HomePathDeterminator', ['homeDir']);
-        $home->method('homeDir')->willReturn($this->getTempDir());
+        $home = $this->getMock('Tenside\\CoreBundle\\HomePathDeterminator', ['tensideDataDir']);
+        $home->method('tensideDataDir')->willReturn($this->getTempDir());
+        /** @var \Tenside\CoreBundle\HomePathDeterminator $home */
 
         $tenside = TensideJsonConfigFactory::create($home);
 

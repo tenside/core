@@ -39,6 +39,6 @@ class TensideJsonConfigFactory
      */
     public static function create(HomePathDeterminator $home)
     {
-        return new TensideJsonConfig($home->homeDir());
+        return new TensideJsonConfig($home->tensideDataDir());
     }
 }

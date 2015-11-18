@@ -50,6 +50,7 @@ class InstallProjectController extends AbstractController
         $this->checkUninstalled();
 
         $installDir = $this->get('tenside.home')->homeDir();
+        $dataDir    = $this->get('tenside.home')->tensideDataDir();
         $inputData  = new JsonArray($request->getContent());
         $taskData   = new JsonArray();
 
@@ -83,18 +84,18 @@ class InstallProjectController extends AbstractController
         } catch (\Exception $e) {
             // Error starting the install task, roll back and output the error.
             $fileSystem = new Filesystem();
+            $fileSystem->remove($installDir . DIRECTORY_SEPARATOR . 'composer.json');
             $fileSystem->remove(
                 array_map(
-                    function ($file) use ($installDir) {
-                        return $installDir . DIRECTORY_SEPARATOR . $file;
+                    function ($file) use ($dataDir) {
+                        return $dataDir . DIRECTORY_SEPARATOR . $file;
                     },
                     [
                         'tenside.json',
                         'tenside.json~',
                         'tenside-tasks.json',
                         'tenside-task-' . $taskId . '.json',
-                        'tenside-task-' . $taskId . '.json~',
-                        'composer.json'
+                        'tenside-task-' . $taskId . '.json~'
                     ]
                 )
             );
