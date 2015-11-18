@@ -53,7 +53,7 @@ class HomePathDeterminator
      */
     public function tensideDataDir()
     {
-        return $this->homeDir() . '/tenside';
+        return $this->homeDir() . DIRECTORY_SEPARATOR . 'tenside';
     }
 
     /**
@@ -65,7 +65,7 @@ class HomePathDeterminator
      */
     private function detectHomeDirectory()
     {
-        // Environment variable COMPOSER points to the composer.json we should use. The tenside.json is alongside.
+        // Environment variable COMPOSER points to the composer.json we should use.
         if (false !== ($home = getenv('COMPOSER'))) {
             return dirname($home);
         }
@@ -77,7 +77,7 @@ class HomePathDeterminator
             $home = getcwd();
         }
 
-        if ((PHP_SAPI !== 'cli') && (substr($home, -4) !== '/web')) {
+        if ((PHP_SAPI !== 'cli') && (substr($home, -4) !== DIRECTORY_SEPARATOR . 'web')) {
             throw new \RuntimeException(
                 'Tenside is intended to be run from within the web directory but it appears you are running it from ' .
                 basename($home)
