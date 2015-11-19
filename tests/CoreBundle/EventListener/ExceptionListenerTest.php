@@ -20,6 +20,7 @@
 
 namespace Tenside\Test\CoreBundle\EventListener;
 
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -55,7 +56,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -83,7 +84,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -112,7 +113,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -141,7 +142,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -170,7 +171,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -199,7 +200,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -228,7 +229,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -262,7 +263,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 
@@ -292,7 +293,7 @@ class ExceptionListenerTest extends TestCase
 
         /** @var GetResponseForExceptionEvent $event */
 
-        $listener = new ExceptionListener();
+        $listener = new ExceptionListener(new NullLogger());
         $listener->onKernelException($event);
         $response = $event->getResponse();
 

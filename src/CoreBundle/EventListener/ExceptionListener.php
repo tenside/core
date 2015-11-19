@@ -20,6 +20,7 @@
 
 namespace Tenside\CoreBundle\EventListener;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -36,6 +37,23 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
  */
 class ExceptionListener
 {
+    /**
+     * The exception logger.
+     *
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * Create a new instance.
+     *
+     * @param LoggerInterface $logger The logger.
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Maps known exceptions to HTTP exceptions.
      *
@@ -66,7 +84,7 @@ class ExceptionListener
         }
 
         if (null === $response) {
-            $response = $this->createInternalServerError();
+            $response = $this->createInternalServerError($exception);
         }
 
         $event->setResponse($response);
@@ -121,10 +139,22 @@ class ExceptionListener
     /**
      * Create a 500 response.
      *
+     * @param \Exception $exception The exception to log.
+     *
      * @return JsonResponse
      */
-    private function createInternalServerError()
+    private function createInternalServerError(\Exception $exception)
     {
+        $message = sprintf(
+            '%s: %s (uncaught exception) at %s line %s',
+            get_class($exception),
+            $exception->getMessage(),
+            $exception->getFile(),
+            $exception->getLine()
+        );
+
+        $this->logger->error($message, array('exception' => $exception));
+
         return new JsonResponse(
             [
                 'status'  => 'ERROR',
