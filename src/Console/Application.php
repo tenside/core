@@ -23,6 +23,7 @@ namespace Tenside\Console;
 use Composer\Command as ComposerCommand;
 use Composer\Command\ScriptAliasCommand;
 use Composer\IO\IOInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Composer\IO\ConsoleIO;
@@ -322,6 +323,7 @@ class Application extends SymfonyApplication
 
         // ... but pass to logger as well.
         if ($container = $this->kernel->getContainer()) {
+            /** @var LoggerInterface $logger */
             $logger = $container->get('logger');
 
             // We want stack traces, therefore be very verbose.
