@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Process;
+use Tenside\CoreBundle\TensideJsonConfig;
 use Tenside\Task\Task;
 use Tenside\Util\JsonArray;
 
@@ -203,31 +204,17 @@ class TaskRunnerController extends AbstractController
      */
     private function spawn(Task $task)
     {
-        $phpCli = 'php';
         $config = $this->getTensideConfig();
-        // If defined, override the php-cli interpreter.
-        if ($config->has('php-cli')) {
-            $phpCli = $config->get('php-cli');
-        }
-
-        // If defined, add the php-cli interpreter arguments.
-        if ($config->has('php-cli-arguments')) {
-            $arguments = [];
-            foreach ($config->get('php-cli-arguments') as $argument) {
-                $arguments[] = $argument;
-            }
-            $arguments = implode(' ', array_map('escapeshellarg', $arguments));
-        }
-
-        $cmd = sprintf(
-            '%s %s %s tenside:runtask %s',
-            escapeshellcmd($phpCli),
-            isset($arguments) ? $arguments : '',
+        $home   = $this->get('tenside.home')->homeDir();
+        $cmd    = sprintf(
+            '%s %s %s tenside:runtask %s -v',
+            escapeshellcmd($this->getInterpreter($config)),
+            $this->getArguments($config),
             escapeshellarg($this->get('tenside.cli_script')->cliExecutable()),
             escapeshellarg($task->getId())
         );
 
-        $commandline = new Process($cmd, $this->get('tenside.home')->homeDir(), null, null, null);
+        $commandline = new Process($cmd, $home, $this->getEnvironment($config), null, null);
 
         $commandline->start();
         if (!$commandline->isRunning()) {
@@ -249,5 +236,63 @@ class TaskRunnerController extends AbstractController
                 );
             }
         }
+    }
+
+    /**
+     * Get the interpreter to use.
+     *
+     * @param TensideJsonConfig $config The config.
+     *
+     * @return string
+     */
+    private function getInterpreter(TensideJsonConfig $config)
+    {
+        // If defined, override the php-cli interpreter.
+        if ($config->has('php-cli')) {
+            return $config->get('php-cli');
+        }
+        return 'php';
+    }
+
+    /**
+     * Retrieve the command line arguments to use.
+     *
+     * @param TensideJsonConfig $config The config to obtain the arguments from.
+     *
+     * @return string
+     */
+    private function getArguments(TensideJsonConfig $config)
+    {
+        if (!$config->has('php-cli-arguments')) {
+            return '';
+        }
+
+        $arguments = [];
+        foreach ($config->get('php-cli-arguments') as $argument) {
+            $arguments[] = $argument;
+        }
+
+        return implode(' ', array_map('escapeshellarg', $arguments));
+    }
+
+    /**
+     * Retrieve the command line environment variables to use.
+     *
+     * @param TensideJsonConfig $config The config to obtain the arguments from.
+     *
+     * @return array
+     */
+    private function getEnvironment(TensideJsonConfig $config)
+    {
+        if (!$config->has('php-cli-environment')) {
+            return '';
+        }
+
+        $variables = [];
+        foreach ($config->get('php-cli-environment') as $name => $value) {
+            $variables[$name] = escapeshellarg($value);
+        }
+
+        return $variables;
     }
 }
