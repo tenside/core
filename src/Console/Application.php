@@ -24,7 +24,6 @@ use Composer\Command as ComposerCommand;
 use Composer\Command\ScriptAliasCommand;
 use Composer\IO\IOInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Console\Shell;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Composer\IO\ConsoleIO;
 use Symfony\Component\Console\Command\Command;
@@ -179,14 +178,6 @@ class Application extends SymfonyApplication
         }
 
         $this->setDispatcher($container->get('event_dispatcher'));
-
-        if (true === $input->hasParameterOption('--shell')) {
-            $shell = new Shell($this);
-            $shell->setProcessIsolation($input->hasParameterOption(['--process-isolation']));
-            $shell->run();
-
-            return 0;
-        }
 
         RuntimeHelper::setupHome($container->get('tenside.home')->homeDir());
 
