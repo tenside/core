@@ -139,12 +139,13 @@ class RepositorySearch extends AbstractSearch
         $packages = [];
         foreach ($packageNames as $packageName) {
             if (count($package = $this->repository->findPackages($packageName)) > 0) {
-                $packages[$packageName] = current($package);
+                foreach ($filters as $filter) {
+                    $package = array_filter($package, $filter);
+                }
+                if ($package = current($package)) {
+                    $packages[$packageName] = $package;
+                }
             }
-        }
-
-        foreach ($filters as $filter) {
-            $packages = array_filter($packages, $filter);
         }
 
         return array_map(
