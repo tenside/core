@@ -20,12 +20,6 @@
 
 namespace Tenside;
 
-use Composer\Composer;
-use Composer\Factory as ComposerFactory;
-use Composer\IO\BufferIO;
-use Tenside\CoreBundle\HomePathDeterminator;
-use Tenside\Util\RuntimeHelper;
-
 /**
  * The main tenside instance.
  */
