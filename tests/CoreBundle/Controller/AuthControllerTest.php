@@ -106,4 +106,19 @@ class AuthControllerTest extends TestCase
         $this->assertEquals('ok', $result['status']);
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    /**
+     * Test that an invalid user object raises an exception.
+     *
+     * @return void
+     *
+     * @expectedException \RuntimeException
+     */
+    public function testBailOnInvalidUser()
+    {
+        $controller = $this->getMock('Tenside\\CoreBundle\\Controller\\AuthController', ['getUser']);
+        $controller->method('getUser')->willReturn(new \stdClass());
+
+        $controller->checkAuthAction();
+    }
 }
