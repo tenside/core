@@ -55,7 +55,7 @@ class CompositeSearch extends AbstractSearch
         foreach ($this->getSearchers() as $searcher) {
             $results = array_merge(
                 $results,
-                $searcher->search($keywords)
+                $searcher->search($keywords, $filters)
             );
 
             if (count($results) >= $this->getSatisfactionThreshold()) {
