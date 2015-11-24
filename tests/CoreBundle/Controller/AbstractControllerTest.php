@@ -47,7 +47,7 @@ class AbstractControllerTest extends TestCase
     }
 
     /**
-     * Test the getTenside() method.
+     * Test the getOutput() method.
      *
      * @return void
      */
@@ -68,6 +68,25 @@ class AbstractControllerTest extends TestCase
         $value = $reflection->invoke($controller);
         $this->assertEquals('MOOH!', $value);
         $this->assertSame($value, $reflection->invoke($controller));
+    }
+
+    /**
+     * Test the getOutput() method returns null when no output handler has been set yet.
+     *
+     * @return void
+     */
+    public function testGetOutputWithoutOutputInstance()
+    {
+        /** @var AbstractController $controller */
+        $controller = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\Controller\\AbstractController')
+            ->setMethods(null)
+            ->getMockForAbstractClass();
+
+        $reflection = new \ReflectionMethod($controller, 'getOutput');
+        $reflection->setAccessible(true);
+
+        $this->assertNull($reflection->invoke($controller));
     }
 
     /**
