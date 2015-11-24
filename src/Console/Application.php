@@ -212,6 +212,7 @@ class Application extends SymfonyApplication
         // FIXME: we should check if the command needs the composer instance.
         if ($command instanceof \Composer\Command\Command) {
             $command->setComposer(ComposerFactory::create($this->inputOutput));
+            $command->setIO(new ConsoleIO($input, $output, $this->getHelperSet()));
         }
 
         return parent::doRunCommand($command, $input, $output);
