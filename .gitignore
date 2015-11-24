@@ -18,6 +18,7 @@ vendor/
 build/
 build.properties
 tenside.phar
+phpunit.xml
 
 # vendor files
 /vendor/
