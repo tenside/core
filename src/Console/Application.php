@@ -36,7 +36,6 @@ use Symfony\Component\Console\Formatter\OutputFormatter;
 use Composer\Factory as ComposerFactory;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tenside\Composer\ComposerJson;
 use Tenside\Tenside;
@@ -101,17 +100,7 @@ class Application extends SymfonyApplication
 
         $this->kernel = $kernel;
 
-        parent::__construct(
-            'Tenside',
-            sprintf(
-                '%s using symfony %s - %s/%s',
-                Tenside::VERSION,
-                Kernel::VERSION,
-                $kernel->getName(),
-                $kernel->getEnvironment(),
-                ($kernel->isDebug() ? '/debug' : '')
-            )
-        );
+        parent::__construct(Tenside::DISTRIBUTION, Tenside::VERSION);
 
         $definition = $this->getDefinition();
         $definition->addOption(new InputOption('--shell', null, InputOption::VALUE_NONE, 'Launch the shell.'));
@@ -345,16 +334,6 @@ class Application extends SymfonyApplication
      */
     public function getLongVersion()
     {
-        if (Tenside::BRANCH_ALIAS_VERSION) {
-            return sprintf(
-                '<info>%s</info> version <comment>%s (%s)</comment> %s',
-                $this->getName(),
-                Tenside::BRANCH_ALIAS_VERSION,
-                $this->getVersion(),
-                Tenside::RELEASE_DATE
-            );
-        }
-
         return parent::getLongVersion() . ' ' . Tenside::RELEASE_DATE;
     }
 
@@ -371,7 +350,7 @@ class Application extends SymfonyApplication
      */
     protected function isUpdateNeeded(InputInterface $input, OutputInterface $output)
     {
-        if (defined('TENSIDE_DEV_WARNING_TIME')) {
+        if ('@warning_time@' !== Tenside::WARNING_TIME) {
             $commandName = '';
             if ($name = $this->getCommandName($input)) {
                 try {
@@ -381,10 +360,10 @@ class Application extends SymfonyApplication
                 }
             }
             if ($commandName !== 'self-update' && $commandName !== 'selfupdate') {
-                if (time() > TENSIDE_DEV_WARNING_TIME) {
+                if (time() > Tenside::WARNING_TIME) {
                     $output->writeln(
                         sprintf(
-                            '<warning>Warning: This development build of tenside is over 30 days old. ' .
+                            '<warning>Warning: This development build is over 30 days old. ' .
                             'It is recommended to update it by running "%s self-update" to get the latest version.' .
                             '</warning>',
                             $_SERVER['PHP_SELF']

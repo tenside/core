@@ -31,12 +31,17 @@ class Tenside
     const VERSION = '@package_version@';
 
     /**
-     * The branch alias from the composer.json.
+     * The name of the distribution.
      */
-    const BRANCH_ALIAS_VERSION = '@package_branch_alias_version@';
+    const DISTRIBUTION = '@tenside_distribution@';
 
     /**
      * The release date.
      */
     const RELEASE_DATE = '@release_date@';
+
+    /**
+     * The warning time after which to call for self-update.
+     */
+    const WARNING_TIME = '@warning_time@';
 }

@@ -61,9 +61,6 @@ if (!function_exists('curl_init')) {
 Phar::mapPhar('tenside.phar');
 // @codingStandardsIgnoreStart
 
-// Compiler generated warning time:
-// @@TENSIDE_DEV_WARNING_TIME@@
-
 if (PHP_SAPI == 'cli') {
     require 'phar://tenside.phar/app/console';
 } else {
