@@ -31,6 +31,7 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 /**
  * This class converts exceptions into proper responses.
@@ -67,6 +68,7 @@ class ExceptionListener
     {
         $exception = $event->getException();
         $response  = null;
+
         switch (true) {
             case ($exception instanceof NotFoundHttpException):
                 $response = $this->createNotFoundResponse($event->getRequest(), $exception);
@@ -80,6 +82,8 @@ class ExceptionListener
                 /** @var HttpException $exception */
                 $response = $this->createHttpExceptionResponse($exception);
                 break;
+            case ($exception instanceof AuthenticationCredentialsNotFoundException):
+                $response = $this->createUnauthenticatedResponse($exception);
             default:
         }
 
@@ -133,6 +137,24 @@ class ExceptionListener
             ],
             $exception->getStatusCode(),
             $exception->getHeaders()
+        );
+    }
+
+    /**
+     * Create a http response.
+     *
+     * @param AuthenticationCredentialsNotFoundException $exception The exception to create a response for.
+     *
+     * @return JsonResponse
+     */
+    private function createUnauthenticatedResponse(AuthenticationCredentialsNotFoundException $exception)
+    {
+        return new JsonResponse(
+            [
+                'status'  => 'ERROR',
+                'message' => $exception->getMessageKey()
+            ],
+            JsonResponse::HTTP_UNAUTHORIZED
         );
     }
 
