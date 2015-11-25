@@ -34,7 +34,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function __construct($directory)
     {
-        parent::__construct($directory . '/tenside.json');
+        parent::__construct($directory . DIRECTORY_SEPARATOR . 'tenside.json');
     }
 
     /**

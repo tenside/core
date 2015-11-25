@@ -42,7 +42,7 @@ class RuntimeHelper
 
         // FIXME: check that this really works correctly in CLI mode, maybe the chdir is already enough?
         if (false === getenv('COMPOSER')) {
-            putenv('COMPOSER=' . $home . '/composer.json');
+            putenv('COMPOSER=' . $home . DIRECTORY_SEPARATOR . 'composer.json');
         }
         chdir($home);
 
