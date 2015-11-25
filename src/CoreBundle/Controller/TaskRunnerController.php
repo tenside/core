@@ -189,7 +189,8 @@ class TaskRunnerController extends AbstractController
             [
                 'status' => 'OK',
                 'task'   => $task->getId()
-            ]
+            ],
+            JsonResponse::HTTP_PROCESSING
         );
     }
 
