@@ -84,6 +84,7 @@ class ExceptionListener
                 break;
             case ($exception instanceof AuthenticationCredentialsNotFoundException):
                 $response = $this->createUnauthenticatedResponse($exception);
+                break;
             default:
         }
 

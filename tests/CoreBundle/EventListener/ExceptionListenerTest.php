@@ -31,6 +31,7 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Tenside\CoreBundle\EventListener\ExceptionListener;
 use Tenside\Test\TestCase;
 
@@ -302,5 +303,34 @@ class ExceptionListenerTest extends TestCase
         $content = json_decode($response->getContent(), true);
         $this->assertEquals('ERROR', $content['status']);
         $this->assertEquals(JsonResponse::$statusTexts[JsonResponse::HTTP_INTERNAL_SERVER_ERROR], $content['message']);
+    }
+
+    /**
+     * Test that a AuthenticationCredentialsNotFoundException is rendered as unauthenticated.
+     *
+     * @return void
+     */
+    public function testOnKernelExceptionAuthenticationCredentialsNotFoundException()
+    {
+        $exception = new AuthenticationCredentialsNotFoundException('This will be ignored.');
+
+        $event = $this
+            ->getMockBuilder('Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent')
+            ->setMethods(['getRequest', 'getException'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->method('getException')->willReturn($exception);
+
+        /** @var GetResponseForExceptionEvent $event */
+
+        $listener = new ExceptionListener(new NullLogger());
+        $listener->onKernelException($event);
+        $response = $event->getResponse();
+
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+        $this->assertEquals(JsonResponse::HTTP_UNAUTHORIZED, $response->getStatusCode());
+        $content = json_decode($response->getContent(), true);
+        $this->assertEquals('ERROR', $content['status']);
+        $this->assertEquals($exception->getMessageKey(), $content['message']);
     }
 }
