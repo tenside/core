@@ -114,8 +114,8 @@ class AppKernelController extends AbstractController
     {
         $phpCli = 'php';
         $config = $this->getTensideConfig();
-        if ($config->has('php-cli')) {
-            $phpCli = $config->get('php-cli');
+        if ($config->has('php_cli')) {
+            $phpCli = $config->get('php_cli');
         }
 
         $process = new Process(escapeshellcmd($phpCli) . ' -l');
