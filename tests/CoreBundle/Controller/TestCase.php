@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Tenside\CoreBundle\DependencyInjection\Factory\ComposerJsonFactory;
 use Tenside\CoreBundle\DependencyInjection\Factory\TaskListFactory;
 use Tenside\CoreBundle\DependencyInjection\Factory\TensideJsonConfigFactory;
-use Tenside\Tenside;
+use Tenside\CoreBundle\InstallationStatusDeterminator;
 use Tenside\Test\TestCase as BaseTestCase;
 
 /**
@@ -73,9 +73,9 @@ class TestCase extends BaseTestCase
             $container->set('tenside.composer_json', ComposerJsonFactory::create($container->get('tenside.home')));
         }
 
-        if (!$container->has('tenside')) {
-            $tenside = new Tenside($container->get('tenside.home'));
-            $container->set('tenside', $tenside);
+        if (!$container->has('tenside.status')) {
+            $tenside = new InstallationStatusDeterminator($container->get('tenside.home'));
+            $container->set('tenside.status', $tenside);
         }
 
         return $container;

@@ -3,6 +3,11 @@ services:
         class:  Tenside\CoreBundle\HomePathDeterminator
         public: true
 
+    tenside.status:
+        class:     Tenside\CoreBundle\InstallationStatusDeterminator
+        arguments: ["@tenside.home"]
+        public: true
+
     tenside.cli_script:
         class:     Tenside\CoreBundle\CliScriptDeterminator
         # I really hope this works out as intended, if not inject the kernel.

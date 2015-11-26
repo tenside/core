@@ -47,7 +47,12 @@ class InstallProjectController extends AbstractController
      */
     public function createProjectAction(Request $request)
     {
+        // FIXME: We definately should split this here up into config method and installation method which is already
+        // auth'ed.
         $this->checkUninstalled();
+        $status = $this->get('tenside.status');
+        $result = [];
+        $header = [];
 
         $installDir = $this->get('tenside.home')->homeDir();
         $dataDir    = $this->get('tenside.home')->tensideDataDir();
@@ -60,65 +65,70 @@ class InstallProjectController extends AbstractController
             $taskData->set(InstallTask::SETTING_VERSION, $version);
         }
 
-        // Add tenside configuration.
-        $tensideConfig = $this->get('tenside.config');
-        $tensideConfig->set('secret', $inputData->get('credentials/secret'));
+        if (!$status->isTensideConfigured()) {
+            // Add tenside configuration.
+            $tensideConfig = $this->get('tenside.config');
+            $tensideConfig->set('secret', $inputData->get('credentials/secret'));
 
-        // Add the user now.
-        $user = new UserInformation([
-            'username' => $inputData->get('credentials/username'),
-            'acl'      => UserInformationInterface::ROLE_ALL
-        ]);
+            // Add the user now.
+            $user = new UserInformation([
+                'username' => $inputData->get('credentials/username'),
+                'acl'      => UserInformationInterface::ROLE_ALL
+            ]);
 
-        $user->set(
-            'password',
-            $this->get('security.password_encoder')->encodePassword($user, $inputData->get('credentials/password'))
-        );
+            $user->set(
+                'password',
+                $this->get('security.password_encoder')->encodePassword($user, $inputData->get('credentials/password'))
+            );
 
-        $user = $this->get('tenside.user_provider')->addUser($user)->refreshUser($user);
+            $user            = $this->get('tenside.user_provider')->addUser($user)->refreshUser($user);
+            $result['token'] = $this->get('tenside.jwt_authenticator')->getTokenForData($user);
+        }
 
-        $taskId = $this->getTensideTasks()->queue('install', $taskData);
+        if (!$status->isProjectPresent() && !$status->isProjectInstalled()) {
+            $taskId             = $this->getTensideTasks()->queue('install', $taskData);
+            $result['task']     = $taskId;
+            $header['Location'] = $this->generateUrl(
+                'task_get',
+                ['taskId' => $taskId],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
 
-        try {
-            $this->runInstaller($taskId);
-        } catch (\Exception $e) {
-            // Error starting the install task, roll back and output the error.
-            $fileSystem = new Filesystem();
-            $fileSystem->remove($installDir . DIRECTORY_SEPARATOR . 'composer.json');
-            $fileSystem->remove(
-                array_map(
-                    function ($file) use ($dataDir) {
-                        return $dataDir . DIRECTORY_SEPARATOR . $file;
-                    },
+            try {
+                $this->runInstaller($taskId);
+            } catch (\Exception $e) {
+                // Error starting the install task, roll back and output the error.
+                $fileSystem = new Filesystem();
+                $fileSystem->remove($installDir . DIRECTORY_SEPARATOR . 'composer.json');
+                $fileSystem->remove(
+                    array_map(
+                        function ($file) use ($dataDir) {
+                            return $dataDir . DIRECTORY_SEPARATOR . $file;
+                        },
+                        [
+                            'tenside.json',
+                            'tenside.json~',
+                            'tenside-tasks.json',
+                            'tenside-task-' . $taskId . '.json',
+                            'tenside-task-' . $taskId . '.json~'
+                        ]
+                    )
+                );
+
+                return new JsonResponse(
                     [
-                        'tenside.json',
-                        'tenside.json~',
-                        'tenside-tasks.json',
-                        'tenside-task-' . $taskId . '.json',
-                        'tenside-task-' . $taskId . '.json~'
-                    ]
-                )
-            );
-
-            return new JsonResponse(
-                [
-                    'status'  => 'ERROR',
-                    'message' => 'The install task could not be started.'
-                ],
-                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+                        'status'  => 'ERROR',
+                        'message' => 'The install task could not be started.'
+                    ],
+                    JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
         }
 
         return new JsonResponse(
-            [
-                'status' => 'OK',
-                'task'   => $taskId,
-                'token'  => $this->get('tenside.jwt_authenticator')->getTokenForData($user)
-            ],
+            $result,
             JsonResponse::HTTP_CREATED,
-            [
-                'Location' => $this->generateUrl('task_get', ['taskId' => $taskId], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]
+            $header
         );
     }
 
@@ -180,20 +190,16 @@ class InstallProjectController extends AbstractController
      */
     public function getInstallationStateAction()
     {
-        $state = 'FRESH';
-
-        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'tenside.json')) {
-            $state = 'PARTIAL';
-        }
-
-        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'composer.json')) {
-            $state = 'COMPLETE';
-        }
+        $status = $this->get('tenside.status');
 
         return new JsonResponse(
             [
-                'status' => 'OK',
-                'installation' => $state
+                'state'  => [
+                    'tenside_configured' => $status->isTensideConfigured(),
+                    'project_created'    => $status->isProjectPresent(),
+                    'project_installed'  => $status->isProjectInstalled(),
+                ],
+                'status' => 'OK'
             ]
         );
     }
@@ -207,8 +213,7 @@ class InstallProjectController extends AbstractController
      */
     private function checkUninstalled()
     {
-        // FIXME: need to determine this somehow better. Can not check for tenside also as we need the secret and user.
-        if (file_exists($this->get('tenside.home')->homeDir() . DIRECTORY_SEPARATOR . 'composer.json')) {
+        if ($this->get('tenside.status')->isComplete()) {
             throw new NotAcceptableHttpException('Already installed in ' . $this->get('tenside.home')->homeDir());
         }
     }

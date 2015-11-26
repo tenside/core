@@ -40,7 +40,8 @@ class InstallProjectControllerTest extends TestCase
     public function testAlreadyInstalledException()
     {
         $this->provideFixture('composer.json');
-        $this->provideFixture('tenside.json');
+        $this->provideFixture('tenside.json', 'tenside' . DIRECTORY_SEPARATOR . 'tenside.json');
+        mkdir($this->getTempDir() . DIRECTORY_SEPARATOR . 'vendor');
         $controller = new InstallProjectController();
         $controller->setContainer($this->createDefaultContainer());
 
@@ -111,7 +112,6 @@ class InstallProjectControllerTest extends TestCase
         $response = $controller->createProjectAction($request);
         $data     = json_decode($response->getContent(), true);
 
-        $this->assertEquals('OK', $data['status']);
         $this->assertEquals('token-value', $data['token']);
         $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
         $this->assertEquals('$taskId$', $data['task']);
