@@ -20,6 +20,7 @@
 
 namespace Tenside\CoreBundle;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Tenside\CoreBundle\DependencyInjection\TensideCoreExtension;
 
@@ -34,5 +35,25 @@ class TensideCoreBundle extends Bundle
     public function getContainerExtension()
     {
         return new TensideCoreExtension();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function boot()
+    {
+        parent::boot();
+
+        // Load our annotation if it get's mentioned, Doctrine does not try to autoload it via plain PHP.
+        AnnotationRegistry::registerLoader(
+            function ($class) {
+                if (0 === strcmp('Tenside\CoreBundle\Annotation\ApiDescription', $class)) {
+                    class_exists('Tenside\CoreBundle\Annotation\ApiDescription');
+                    return true;
+                }
+
+                return false;
+            }
+        );
     }
 }

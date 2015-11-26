@@ -38,6 +38,9 @@
   "require-dev": {
     "phpcq/all-tasks": "~1.1"
   },
+  "suggest": {
+    "nelmio/api-doc-bundle": "To benefit from the API documentation annotation"
+  },
   "autoload": {
     "psr-4": {
       "Tenside\\": "src"

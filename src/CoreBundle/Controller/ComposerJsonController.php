@@ -22,9 +22,11 @@ namespace Tenside\CoreBundle\Controller;
 
 use Composer\IO\BufferIO;
 use Composer\Util\ConfigValidator;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 
 /**
  * Controller for manipulating the composer.json file.
@@ -35,6 +37,13 @@ class ComposerJsonController extends AbstractController
      * Retrieve the composer.json.
      *
      * @return Response
+     *
+     * @ApiDoc(
+     *   section="files",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
      */
     public function getComposerJsonAction()
     {
@@ -44,9 +53,36 @@ class ComposerJsonController extends AbstractController
     /**
      * Update the composer.json with the given data if it is valid.
      *
+     * The whole submitted data is used as file.
+     *
      * @param Request $request The request to process.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="files",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "Either OK or ERROR"
+     *     },
+     *     "error" = {
+     *       "description" = "List of contained errors",
+     *       "subType" = "string",
+     *       "actualType" = "collection"
+     *     },
+     *     "warning" = {
+     *       "description" = "List of contained warnings",
+     *       "subType" = "string",
+     *       "actualType" = "collection"
+     *     }
+     *   }
+     * )
      */
     public function putComposerJsonAction(Request $request)
     {

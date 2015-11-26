@@ -20,7 +20,9 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 use Tenside\SelfTest\Cli\SelfTestCanSpawnProcesses;
 use Tenside\SelfTest\Cli\SelfTestCliArguments;
 use Tenside\SelfTest\Cli\SelfTestCliRuntime;
@@ -36,9 +38,41 @@ use Tenside\SelfTest\SelfTest;
 class SelfTestController extends AbstractController
 {
     /**
-     * Retrieve the URLs to all tests.
+     * Retrieve the results of all tests.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="selftest"
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "results" = {
+     *       "actualType" = "collection",
+     *       "subType" = "object",
+     *       "description" = "The test results.",
+     *       "children" = {
+     *         "name" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the test"
+     *         },
+     *         "state" = {
+     *           "dataType" = "choice",
+     *           "description" = "The test result state.",
+     *           "format" = "[FAIL|SKIPPED|SUCCESS|WARNING]"
+     *         },
+     *         "message" = {
+     *           "dataType" = "string",
+     *           "description" = "The detailed message of the test result."
+     *         },
+     *         "explain" = {
+     *           "dataType" = "string",
+     *           "description" = "Optional description that could hint any problems and/or explain the error further."
+     *         }
+     *       }
+     *     }
+     *   }
+     * )
      */
     public function getAllTestsAction()
     {
@@ -60,7 +94,25 @@ class SelfTestController extends AbstractController
     /**
      * Retrieve the automatic generated tenside configuration.
      *
+     * The automatic configuration consists of several values.
+     *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="selftest"
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "php_cli" = {
+     *       "dataType" = "string",
+     *       "description" = "The PHP interpreter to run on command line."
+     *     },
+     *     "php_cli_arguments" = {
+     *       "dataType" = "string",
+     *       "description" = "Command line arguments to add."
+     *     }
+     *   }
+     * )
      */
     public function getAutoConfigAction()
     {

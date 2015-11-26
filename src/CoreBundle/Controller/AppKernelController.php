@@ -20,10 +20,12 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 
 /**
  * Controller for manipulating the AppKernel file.
@@ -31,9 +33,16 @@ use Symfony\Component\Process\Process;
 class AppKernelController extends AbstractController
 {
     /**
-     * Retrieve the composer.json.
+     * Retrieve the AppKernel.php.
      *
      * @return Response
+     *
+     * @ApiDoc(
+     *   section="files",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
      */
     public function getAppKernelAction()
     {
@@ -41,11 +50,43 @@ class AppKernelController extends AbstractController
     }
 
     /**
-     * Update the AppKernel with the given data if it is valid.
+     * Update the AppKernel.php with the given data if it is valid.
+     *
+     * The whole submitted data is used as file.
      *
      * @param Request $request The request to process.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="files",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "Either OK or ERROR"
+     *     },
+     *     "error" = {
+     *       "description" = "Only present when the data contains parse errors",
+     *       "children" = {
+     *         "line" = {
+     *           "dataType" = "string",
+     *           "description" = "The line number containing the error",
+     *           "required" = true
+     *         },
+     *         "msg" = {
+     *           "dataType" = "string",
+     *           "description" = "The PHP parse error message",
+     *           "required" = true
+     *         }
+     *       }
+     *     }
+     *   }
+     * )
      */
     public function putAppKernelAction(Request $request)
     {
@@ -101,7 +142,7 @@ class AppKernelController extends AbstractController
             ];
         }
 
-        return ['error' => []];
+        return [];
     }
 
     /**

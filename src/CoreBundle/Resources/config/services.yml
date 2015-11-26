@@ -77,3 +77,9 @@ services:
         factory_class:  Tenside\CoreBundle\DependencyInjection\Factory\LoggerFactory
         factory_method: create
         arguments:     ["@kernel", "%kernel.environment%.log", 10, 'debug']
+
+    tenside.apidoc_parser:
+        class:          Tenside\CoreBundle\TensideApiDocHandler
+        tags:
+          - { name: nelmio_api_doc.extractor.handler }
+        public: false

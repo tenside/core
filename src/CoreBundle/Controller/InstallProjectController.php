@@ -23,11 +23,13 @@
 namespace Tenside\CoreBundle\Controller;
 
 use Composer\Util\RemoteFilesystem;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 use Tenside\CoreBundle\Security\UserInformation;
 use Tenside\CoreBundle\Security\UserInformationInterface;
 use Tenside\Task\InstallTask;
@@ -44,6 +46,62 @@ class InstallProjectController extends AbstractController
      * @param Request $request The request.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   statusCodes = {
+     *     201 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   request={
+     *     "project" = {
+     *       "description" = "The name of the project to install.",
+     *       "children" = {
+     *         "name" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the project to install.",
+     *           "required" = true
+     *         },
+     *         "version" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the project to install.",
+     *           "required" = false
+     *         }
+     *       }
+     *     },
+     *     "credentials" = {
+     *       "description" = "The name of the project to install.",
+     *       "children" = {
+     *         "secret" = {
+     *           "dataType" = "string",
+     *           "description" = "The secret to use for encryption and signing.",
+     *           "required" = true
+     *         },
+     *         "username" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the admin user.",
+     *           "required" = true
+     *         },
+     *         "password" = {
+     *           "dataType" = "string",
+     *           "description" = "The password to use for the admin.",
+     *           "required" = false
+     *         }
+     *       }
+     *     }
+     *   },
+     *   response={
+     *     "token" = {
+     *       "dataType" = "string",
+     *       "description" = "The API token for the created user"
+     *     },
+     *     "task" = {
+     *       "dataType" = "string",
+     *       "description" = "The id of the created install task"
+     *     }
+     *   }
+     * )
      */
     public function createProjectAction(Request $request)
     {
@@ -135,7 +193,43 @@ class InstallProjectController extends AbstractController
     /**
      * This is a gateway to the self test controller available only at install time.
      *
+     * This is just here as the other route is protected with login.
+     * This method is inaccessible as soon as the installation is complete.
+     *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   description="Install time - self test."
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "results" = {
+     *       "actualType" = "collection",
+     *       "subType" = "object",
+     *       "description" = "The test results.",
+     *       "children" = {
+     *         "name" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the test"
+     *         },
+     *         "state" = {
+     *           "dataType" = "choice",
+     *           "description" = "The test result state.",
+     *           "format" = "[FAIL|SKIPPED|SUCCESS|WARNING]"
+     *         },
+     *         "message" = {
+     *           "dataType" = "string",
+     *           "description" = "The detailed message of the test result."
+     *         },
+     *         "explain" = {
+     *           "dataType" = "string",
+     *           "description" = "Optional description that could hint any problems and/or explain the error further."
+     *         }
+     *       }
+     *     }
+     *   }
+     * )
      */
     public function getSelfTestAction()
     {
@@ -145,9 +239,29 @@ class InstallProjectController extends AbstractController
     }
 
     /**
-     * This is a gateway to the auto config controller available only at install time.
+     * Install time gateway to the auto config.
+     *
+     * This is just here as the other route is protected with login.
+     * This method is inaccessible as soon as the installation is complete.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   description="Install time - auto config."
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "php_cli" = {
+     *       "dataType" = "string",
+     *       "description" = "The PHP interpreter to run on command line."
+     *     },
+     *     "php_cli_arguments" = {
+     *       "dataType" = "string",
+     *       "description" = "Command line arguments to add."
+     *     }
+     *   }
+     * )
      */
     public function getAutoConfigAction()
     {
@@ -157,13 +271,47 @@ class InstallProjectController extends AbstractController
     }
 
     /**
-     * Create a project.
+     * Retrieve the available versions of a package.
      *
      * @param string $vendor  The vendor name of the package.
      *
      * @param string $project The name of the package.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "versions" = {
+     *       "actualType" = "collection",
+     *       "subType" = "object",
+     *       "description" = "The list of versions",
+     *       "children" = {
+     *         "name" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the package"
+     *         },
+     *         "version" = {
+     *           "dataType" = "string",
+     *           "description" = "The version of the package"
+     *         },
+     *         "version_normalized" = {
+     *           "dataType" = "string",
+     *           "description" = "The normalized version of the package"
+     *         },
+     *         "reference" = {
+     *           "dataType" = "string",
+     *           "description" = "The optional reference"
+     *         }
+     *       }
+     *     }
+     *   }
+     * )
      */
     public function getProjectVersionsAction($vendor, $project)
     {
@@ -175,10 +323,35 @@ class InstallProjectController extends AbstractController
         $results = $rfs->getContents($url, $url);
         $data    = new JsonArray($results);
 
+        $versions = [];
+
+        foreach ($data->get('package/versions') as $information) {
+            $version = [
+                'name'               => $information['name'],
+                'version'            => $information['version'],
+                'version_normalized' => $information['version_normalized'],
+            ];
+
+            $normalized = $information['version'];
+            if ('dev-' === substr($normalized, 0, 4)) {
+                if (isset($information['extra']['branch-alias'][$normalized])) {
+                    $version['version_normalized'] = $information['extra']['branch-alias'][$normalized];
+                }
+            }
+
+            if (isset($information['source']['reference'])) {
+                $version['reference'] = $information['source']['reference'];
+            } elseif (isset($information['dist']['reference'])) {
+                $version['reference'] = $information['dist']['reference'];
+            }
+
+            $versions[] = $version;
+        }
+
         return new JsonResponse(
             [
                 'status' => 'OK',
-                'versions' => $data->get('package/versions')
+                'versions' => $versions
             ]
         );
     }
@@ -187,6 +360,43 @@ class InstallProjectController extends AbstractController
      * Check if installation is new, partial or complete.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   description="This method provides information about the installation.",
+     *   authentication=false,
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   }
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "state" = {
+     *       "children" = {
+     *         "tenside_configured" = {
+     *           "dataType" = "bool",
+     *           "description" = "Flag if tenside has been completely configured."
+     *         },
+     *         "project_created" = {
+     *           "dataType" = "bool",
+     *           "description" = "Flag determining if a composer.json is present."
+     *         },
+     *         "project_installed" = {
+     *           "dataType" = "bool",
+     *           "description" = "Flag determining if the composer project has been installed (vendor present)."
+     *         }
+     *       }
+     *     },
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "Either OK or ERROR"
+     *     },
+     *     "message" = {
+     *       "dataType" = "string",
+     *       "description" = "The API error message if any (only present when status is ERROR)"
+     *     }
+     *   }
+     * )
      */
     public function getInstallationStateAction()
     {
