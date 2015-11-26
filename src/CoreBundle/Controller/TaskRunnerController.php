@@ -249,8 +249,8 @@ class TaskRunnerController extends AbstractController
     private function getInterpreter(TensideJsonConfig $config)
     {
         // If defined, override the php-cli interpreter.
-        if ($config->has('php-cli')) {
-            return $config->get('php-cli');
+        if ($config->has('php_cli')) {
+            return $config->get('php_cli');
         }
         return 'php';
     }
@@ -264,12 +264,12 @@ class TaskRunnerController extends AbstractController
      */
     private function getArguments(TensideJsonConfig $config)
     {
-        if (!$config->has('php-cli-arguments')) {
+        if (!$config->has('php_cli_arguments')) {
             return '';
         }
 
         $arguments = [];
-        foreach ($config->get('php-cli-arguments') as $argument) {
+        foreach ($config->get('php_cli_arguments') as $argument) {
             $arguments[] = $argument;
         }
 
@@ -285,12 +285,12 @@ class TaskRunnerController extends AbstractController
      */
     private function getEnvironment(TensideJsonConfig $config)
     {
-        if (!$config->has('php-cli-environment')) {
+        if (!$config->has('php_cli_environment')) {
             return '';
         }
 
         $variables = [];
-        foreach ($config->get('php-cli-environment') as $name => $value) {
+        foreach ($config->get('php_cli_environment') as $name => $value) {
             $variables[$name] = escapeshellarg($value);
         }
 

@@ -44,9 +44,10 @@ class SelfTestController extends AbstractController
     {
         $tester = $this->prepareTests();
 
-        $data = [];
+        $data = ['results' => []];
         foreach ($tester->perform() as $result) {
-            $data[$this->testClassToSlug($result->getTestClass())] = [
+            $data['results'][] = [
+                'name'    => $this->testClassToSlug($result->getTestClass()),
                 'state'   => $result->getState(),
                 'message' => $result->getMessage(),
                 'explain' => $result->getExplain(),
@@ -70,10 +71,10 @@ class SelfTestController extends AbstractController
         $result = [];
 
         if ($phpCli = $config->getPhpInterpreter()) {
-            $result['php-cli'] = $phpCli;
+            $result['php_cli'] = $phpCli;
         }
         if ($phpArguments = $config->getCommandLineArguments()) {
-            $result['php-cli-arguments'] = $phpArguments;
+            $result['php_cli_arguments'] = $phpArguments;
         }
 
         return JsonResponse::create($result);
