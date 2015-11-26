@@ -43,8 +43,8 @@ package_get:
     defaults: { _controller: TensideCoreBundle:Package:getPackage }
     methods:  [GET]
     requirements:
-        vendor: "[\-\_a-zA-Z0-9]+"
-        package: "[\-\_a-zA-Z0-9]+"
+        vendor: "[\\-\\_a-zA-Z0-9]+"
+        package: "[\\-\\_a-zA-Z0-9]+"
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
@@ -53,8 +53,8 @@ package_put:
     defaults: { _controller: TensideCoreBundle:Package:putPackage }
     methods:  [PUT]
     requirements:
-        vendor: "[\-\_a-zA-Z0-9]+"
-        package: "[\-\_a-zA-Z0-9]+"
+        vendor: "[\\-\\_a-zA-Z0-9]+"
+        package: "[\\-\\_a-zA-Z0-9]+"
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
@@ -124,8 +124,8 @@ install_search_project:
     defaults: { _controller: TensideCoreBundle:InstallProject:getProjectVersions }
     methods:  [GET]
     requirements:
-        vendor: "[\-\_a-zA-Z0-9]+"
-        project: "[\-\_a-zA-Z0-9]+"
+        vendor: "[\\-\\_a-zA-Z0-9]+"
+        project: "[\\-\\_a-zA-Z0-9]+"
 
 install_get_state:
     path:     /v1/install/get_state.json
