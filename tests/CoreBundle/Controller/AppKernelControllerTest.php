@@ -88,7 +88,7 @@ class AppKernelControllerTest extends TestCase
 
         $result = json_decode($response->getContent(), true);
 
-        $this->assertEmpty($result['error']);
+        $this->assertArrayNotHasKey('error', $result);
         $this->assertEquals('OK', $result['status']);
     }
 
@@ -123,6 +123,7 @@ EOF;
         $response = $this->handlePostData($content, 'invalid-path-to-php-cli');
 
         $result = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('error', $result);
         $this->assertNotEmpty($result['error']);
         $this->assertEquals('ERROR', $result['status']);
         $this->assertEquals('0', $result['error']['line']);
