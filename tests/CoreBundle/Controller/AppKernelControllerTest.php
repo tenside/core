@@ -69,7 +69,7 @@ class AppKernelControllerTest extends TestCase
 
         if ('' !== $phpCli) {
             // Override tenside configuration.
-            $controller->getTensideConfig()->set('php-cli', $phpCli);
+            $controller->getTensideConfig()->set('php_cli', $phpCli);
         }
 
         $request = new Request([], [], [], [], [], [], $data);
