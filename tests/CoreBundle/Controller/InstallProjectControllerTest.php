@@ -21,15 +21,126 @@
 
 namespace Tenside\Test\CoreBundle\Controller;
 
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tenside\CoreBundle\Controller\InstallProjectController;
+use Tenside\CoreBundle\TensideJsonConfig;
+use Tenside\Task\InstallTask;
 
 /**
  * Test the create-project command of composers
  */
 class InstallProjectControllerTest extends TestCase
 {
+    /**
+     * Tests the create project when already installed.
+     *
+     * @return void
+     *
+     * @expectedException \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+     */
+    public function testAlreadyConfiguredException()
+    {
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(true);
+        $container->set('tenside.status', $status);
+
+        $controller = new InstallProjectController();
+        $controller->setContainer($container);
+
+        $controller->configureAction(new Request());
+    }
+
+    /**
+     * Test that the configure action works.
+     *
+     * @return void
+     */
+    public function testConfigureAction()
+    {
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(false);
+        $container->set('tenside.status', $status);
+
+        $config = new TensideJsonConfig($this->getTempDir());
+        $container->set('tenside.config', $config);
+
+        $encoder = $this
+            ->getMockBuilder('Symfony\\Component\\Security\\Core\\Encoder\\UserPasswordEncoderInterface')
+            ->setMethods(['encodePassword'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $encoder->method('encodePassword')->willReturnCallback(function () {
+            return 'encoded-' . func_get_arg(1);
+        });
+        $container->set('security.password_encoder', $encoder);
+
+        $userProvider = $this
+            ->getMockBuilder('Symfony\\Component\\Security\\Core\\User\\UserProviderInterface')
+            ->setMethods(['addUser', 'refreshUser'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $userProvider->expects($this->once())->method('addUser')->willReturn($userProvider);
+        $userProvider->expects($this->once())->method('refreshUser')->willReturnArgument(0);
+        $container->set('tenside.user_provider', $userProvider);
+
+        $authenticator = $this
+            ->getMockBuilder('stdClass')
+            ->setMethods(['getTokenForData'])
+            ->getMock();
+        $authenticator->expects($this->once())->method('getTokenForData')->willReturn('token-value');
+
+        $container->set('tenside.jwt_authenticator', $authenticator);
+
+        $controller = new InstallProjectController();
+        $controller->setContainer($container);
+
+        $request = Request::create(
+            '/v1/install/configure',
+            'GET',
+            [],
+            [],
+            [],
+            [],
+            json_encode(
+                [
+                    'credentials' => [
+                        'secret'   => 's3cret',
+                        'username' => 'john.doe',
+                        'password' => 'p4ssword'
+                    ],
+                    'configuration' => [
+                        'php_cli'           => '/path/to/php',
+                        'php_cli_arguments' => ['arg1', 'arg2']
+                    ]
+                ]
+            )
+        );
+
+        $response = $controller->configureAction($request);
+        $data     = json_decode($response->getContent(), true);
+        $this->assertEquals('token-value', $data['token']);
+        $this->assertEquals('OK', $data['status']);
+
+        // Check that the config values got set.
+        $this->assertEquals('s3cret', $config->get('secret'));
+        $this->assertEquals('/path/to/php', $config->get('php_cli'));
+        $this->assertEquals(['arg1', 'arg2'], $config->get('php_cli_arguments'));
+    }
+
     /**
      * Tests the create project when already installed.
      *
@@ -55,30 +166,36 @@ class InstallProjectControllerTest extends TestCase
      */
     public function testInstalledProject()
     {
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(true);
+        $status->method('isProjectPresent')->willReturn(false);
+        $status->method('isProjectInstalled')->willReturn(false);
+        $container->set('tenside.status', $status);
+
+        $taskFile = null;
+
         $taskList = $this
             ->getMockBuilder('stdClass')
             ->setMethods(['queue'])
             ->getMock();
-        $taskList->expects($this->once())->method('queue')->willReturn('$taskId$');
+        $taskList->expects($this->once())->method('queue')->willReturnCallback(function () use (&$taskFile) {
+            $taskFile = func_get_arg(1);
+            return '$taskId$';
+        });
+        $container->set('tenside.tasks', $taskList);
 
-        $passwordEncoder = $this
-            ->getMockForAbstractClass('Symfony\\Component\\Security\\Core\\Encoder\\UserPasswordEncoderInterface');
-        $passwordEncoder->method('encodePassword')->willReturn('s3cret');
-        $passwordEncoder->method('isPasswordValid')->willReturn(true);
-
-        $userProvider = $this
-            ->getMock(
-                'Tenside\\CoreBundle\\Security\\UserProviderFromConfig',
-                [],
-                [$this->getMockForAbstractClass('Tenside\\Config\\SourceInterface')]
-            );
-        $userProvider->expects($this->once())->method('addUser')->willReturn($userProvider);
-
-        $authenticator = $this
-            ->getMockBuilder('stdClass')
-            ->setMethods(['getTokenForData'])
+        $home = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\HomePathDeterminator')
+            ->setMethods(['homeDir'])
             ->getMock();
-        $authenticator->expects($this->once())->method('getTokenForData')->willReturn('token-value');
+        $home->method('homeDir')->willReturn($this->getTempDir());
+        $container->set('tenside.home', $home);
 
         $controller = $this->getMock(
             'Tenside\\CoreBundle\\Controller\\InstallProjectController',
@@ -93,14 +210,7 @@ class InstallProjectControllerTest extends TestCase
 
         /** @var $controller InstallProjectController */
 
-        $controller->setContainer(
-            $this->createDefaultContainer([
-                'security.password_encoder' => $passwordEncoder,
-                'tenside.tasks'             => $taskList,
-                'tenside.user_provider'     => $userProvider,
-                'tenside.jwt_authenticator' => $authenticator
-            ])
-        );
+        $controller->setContainer($container);
 
         $request = new Request([], [], [], [], [], [], json_encode(['project' =>
             [
@@ -112,8 +222,13 @@ class InstallProjectControllerTest extends TestCase
         $response = $controller->createProjectAction($request);
         $data     = json_decode($response->getContent(), true);
 
-        $this->assertEquals('token-value', $data['token']);
         $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
         $this->assertEquals('$taskId$', $data['task']);
+
+        $this->assertEquals($this->getTempDir(), $taskFile->get(InstallTask::SETTING_DESTINATION_DIR));
+        $this->assertEquals('contao/standard-edition', $taskFile->get(InstallTask::SETTING_PACKAGE));
+        $this->assertEquals('4.0.0', $taskFile->get(InstallTask::SETTING_VERSION));
     }
+
+
 }

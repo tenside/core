@@ -41,11 +41,113 @@ use Tenside\Util\JsonArray;
 class InstallProjectController extends AbstractController
 {
     /**
+     * Configure tenside.
+     *
+     * @param Request $request The request.
+     *
+     * @return JsonResponse
+     *
+     * @throws NotAcceptableHttpException When the configuration is already complete.
+     *
+     * @ApiDoc(
+     *   section="install",
+     *   statusCodes = {
+     *     201 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   request={
+     *     "credentials" = {
+     *       "description" = "The credentials of the admin user.",
+     *       "children" = {
+     *         "secret" = {
+     *           "dataType" = "string",
+     *           "description" = "The secret to use for encryption and signing.",
+     *           "required" = true
+     *         },
+     *         "username" = {
+     *           "dataType" = "string",
+     *           "description" = "The name of the admin user.",
+     *           "required" = true
+     *         },
+     *         "password" = {
+     *           "dataType" = "string",
+     *           "description" = "The password to use for the admin.",
+     *           "required" = false
+     *         }
+     *       }
+     *     },
+     *     "configuration" = {
+     *       "description" = "The credentials of the admin user.",
+     *       "children" = {
+     *         "php_cli" = {
+     *           "dataType" = "string",
+     *           "description" = "The PHP interpreter to run on command line."
+     *         },
+     *         "php_cli_arguments" = {
+     *           "dataType" = "string",
+     *           "description" = "Command line arguments to add."
+     *         }
+     *       }
+     *     }
+     *   },
+     *   response={
+     *     "token" = {
+     *       "dataType" = "string",
+     *       "description" = "The API token for the created user"
+     *     }
+     *   }
+     * )
+     */
+    public function configureAction(Request $request)
+    {
+        if ($this->get('tenside.status')->isTensideConfigured()) {
+            throw new NotAcceptableHttpException('Already configured.');
+        }
+        $inputData = new JsonArray($request->getContent());
+
+        // Add tenside configuration.
+        $tensideConfig = $this->get('tenside.config');
+        $tensideConfig->set('secret', $inputData->get('credentials/secret'));
+
+        if ($inputData->has('configuration/php_cli')) {
+            $tensideConfig->set('php_cli', $inputData->get('configuration/php_cli'));
+        }
+
+        if ($inputData->has('configuration/php_cli_arguments')) {
+            $tensideConfig->set('php_cli_arguments', $inputData->get('configuration/php_cli_arguments'));
+        }
+
+        // Add the user now.
+        $user = new UserInformation([
+            'username' => $inputData->get('credentials/username'),
+            'acl'      => UserInformationInterface::ROLE_ALL
+        ]);
+
+        $user->set(
+            'password',
+            $this->get('security.password_encoder')->encodePassword($user, $inputData->get('credentials/password'))
+        );
+
+        $user = $this->get('tenside.user_provider')->addUser($user)->refreshUser($user);
+
+        return new JsonResponse(
+            [
+                'status' => 'OK',
+                'token'  => $this->get('tenside.jwt_authenticator')->getTokenForData($user)
+            ],
+            JsonResponse::HTTP_CREATED
+        );
+    }
+
+    /**
      * Create a project.
      *
      * @param Request $request The request.
      *
      * @return JsonResponse
+     *
+     * @throws NotAcceptableHttpException When the installation is already complete.
      *
      * @ApiDoc(
      *   section="install",
@@ -69,33 +171,9 @@ class InstallProjectController extends AbstractController
      *           "required" = false
      *         }
      *       }
-     *     },
-     *     "credentials" = {
-     *       "description" = "The name of the project to install.",
-     *       "children" = {
-     *         "secret" = {
-     *           "dataType" = "string",
-     *           "description" = "The secret to use for encryption and signing.",
-     *           "required" = true
-     *         },
-     *         "username" = {
-     *           "dataType" = "string",
-     *           "description" = "The name of the admin user.",
-     *           "required" = true
-     *         },
-     *         "password" = {
-     *           "dataType" = "string",
-     *           "description" = "The password to use for the admin.",
-     *           "required" = false
-     *         }
-     *       }
      *     }
      *   },
      *   response={
-     *     "token" = {
-     *       "dataType" = "string",
-     *       "description" = "The API token for the created user"
-     *     },
      *     "task" = {
      *       "dataType" = "string",
      *       "description" = "The id of the created install task"
@@ -105,10 +183,12 @@ class InstallProjectController extends AbstractController
      */
     public function createProjectAction(Request $request)
     {
-        // FIXME: We definately should split this here up into config method and installation method which is already
-        // auth'ed.
-        $this->checkUninstalled();
         $status = $this->get('tenside.status');
+        if ($status->isProjectPresent() || $status->isProjectInstalled()) {
+            throw new NotAcceptableHttpException('Already configured.');
+        }
+
+        $this->checkUninstalled();
         $result = [];
         $header = [];
 
@@ -123,68 +203,49 @@ class InstallProjectController extends AbstractController
             $taskData->set(InstallTask::SETTING_VERSION, $version);
         }
 
-        if (!$status->isTensideConfigured()) {
-            // Add tenside configuration.
-            $tensideConfig = $this->get('tenside.config');
-            $tensideConfig->set('secret', $inputData->get('credentials/secret'));
+        $taskId             = $this->getTensideTasks()->queue('install', $taskData);
+        $result['task']     = $taskId;
+        $header['Location'] = $this->generateUrl(
+            'task_get',
+            ['taskId' => $taskId],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
-            // Add the user now.
-            $user = new UserInformation([
-                'username' => $inputData->get('credentials/username'),
-                'acl'      => UserInformationInterface::ROLE_ALL
-            ]);
-
-            $user->set(
-                'password',
-                $this->get('security.password_encoder')->encodePassword($user, $inputData->get('credentials/password'))
-            );
-
-            $user            = $this->get('tenside.user_provider')->addUser($user)->refreshUser($user);
-            $result['token'] = $this->get('tenside.jwt_authenticator')->getTokenForData($user);
-        }
-
-        if (!$status->isProjectPresent() && !$status->isProjectInstalled()) {
-            $taskId             = $this->getTensideTasks()->queue('install', $taskData);
-            $result['task']     = $taskId;
-            $header['Location'] = $this->generateUrl(
-                'task_get',
-                ['taskId' => $taskId],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-
-            try {
-                $this->runInstaller($taskId);
-            } catch (\Exception $e) {
-                // Error starting the install task, roll back and output the error.
-                $fileSystem = new Filesystem();
-                $fileSystem->remove($installDir . DIRECTORY_SEPARATOR . 'composer.json');
-                $fileSystem->remove(
-                    array_map(
-                        function ($file) use ($dataDir) {
-                            return $dataDir . DIRECTORY_SEPARATOR . $file;
-                        },
-                        [
-                            'tenside.json',
-                            'tenside.json~',
-                            'tenside-tasks.json',
-                            'tenside-task-' . $taskId . '.json',
-                            'tenside-task-' . $taskId . '.json~'
-                        ]
-                    )
-                );
-
-                return new JsonResponse(
+        try {
+            $this->runInstaller($taskId);
+        } catch (\Exception $e) {
+            // Error starting the install task, roll back and output the error.
+            $fileSystem = new Filesystem();
+            $fileSystem->remove($installDir . DIRECTORY_SEPARATOR . 'composer.json');
+            $fileSystem->remove(
+                array_map(
+                    function ($file) use ($dataDir) {
+                        return $dataDir . DIRECTORY_SEPARATOR . $file;
+                    },
                     [
-                        'status'  => 'ERROR',
-                        'message' => 'The install task could not be started.'
-                    ],
-                    JsonResponse::HTTP_INTERNAL_SERVER_ERROR
-                );
-            }
+                        'tenside.json',
+                        'tenside.json~',
+                        'tenside-tasks.json',
+                        'tenside-task-' . $taskId . '.json',
+                        'tenside-task-' . $taskId . '.json~'
+                    ]
+                )
+            );
+
+            return new JsonResponse(
+                [
+                    'status'  => 'ERROR',
+                    'message' => 'The install task could not be started.'
+                ],
+                JsonResponse::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         return new JsonResponse(
-            $result,
+            [
+                'status' => 'OK',
+                'task'   => $taskId
+            ],
             JsonResponse::HTTP_CREATED,
             $header
         );
