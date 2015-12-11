@@ -1,7 +1,7 @@
 auth:
     path:     /v1/auth
     defaults: { _controller: TensideCoreBundle:Auth:checkAuth }
-    methods:  [GET]
+    methods:  [GET, POST]
 
 composer_json_get:
     path:     /v1/composer.json
@@ -104,23 +104,28 @@ task_delete:
     options:
         required_role: ROLE_MANIPULATE_REQUIREMENTS
 
+install_configure:
+    path:     /v1/install/configure
+    defaults: { _controller: TensideCoreBundle:InstallProject:configure }
+    methods:  [POST]
+
 install_create_project:
-    path:     /v1/install/create-project.json
+    path:     /v1/install/create-project
     defaults: { _controller: TensideCoreBundle:InstallProject:createProject }
-    methods:  [PUT]
+    methods:  [POST]
 
 install_selftest:
-    path:     /v1/install/selftest.json
+    path:     /v1/install/selftest
     defaults: { _controller: TensideCoreBundle:InstallProject:getSelfTest }
     methods:  [GET]
 
 install_autoconfig:
-    path:     /v1/install/autoconfig.json
+    path:     /v1/install/autoconfig
     defaults: { _controller: TensideCoreBundle:InstallProject:getAutoConfig }
     methods:  [GET]
 
 install_search_project:
-    path:     /v1/install/search-project/{vendor}/{project}.json
+    path:     /v1/install/search-project/{vendor}/{project}
     defaults: { _controller: TensideCoreBundle:InstallProject:getProjectVersions }
     methods:  [GET]
     requirements:
@@ -128,16 +133,16 @@ install_search_project:
         project: "[\\-\\_a-zA-Z0-9]+"
 
 install_get_state:
-    path:     /v1/install/get_state.json
+    path:     /v1/install/get_state
     defaults: { _controller: TensideCoreBundle:InstallProject:getInstallationState }
     methods:  [GET]
 
 selftest_alltests:
-    path:     /v1/selftest.json
+    path:     /v1/selftest
     defaults: { _controller: TensideCoreBundle:SelfTest:getAllTests }
     methods:  [GET]
 
 selftest_autoconfig:
-    path:     /v1/autoconfig.json
+    path:     /v1/autoconfig
     defaults: { _controller: TensideCoreBundle:SelfTest:getAutoConfig }
     methods:  [GET]
