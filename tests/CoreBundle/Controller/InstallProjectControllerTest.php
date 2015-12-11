@@ -225,10 +225,188 @@ class InstallProjectControllerTest extends TestCase
         $this->assertEquals('http://url/to/task', $response->headers->get('Location'));
         $this->assertEquals('$taskId$', $data['task']);
 
+        $this->assertInstanceOf('Tenside\\Util\\JsonArray', $taskFile);
         $this->assertEquals($this->getTempDir(), $taskFile->get(InstallTask::SETTING_DESTINATION_DIR));
         $this->assertEquals('contao/standard-edition', $taskFile->get(InstallTask::SETTING_PACKAGE));
         $this->assertEquals('4.0.0', $taskFile->get(InstallTask::SETTING_VERSION));
     }
 
+    /**
+     * Test that the self test forwards to the self test controller.
+     *
+     * @return void
+     */
+    public function testGetSelfTestAction()
+    {
+        $controller = $this->getMock(
+            'Tenside\\CoreBundle\\Controller\\InstallProjectController',
+            ['forward']
+        );
+        $controller
+            ->expects($this->once())
+            ->method('forward')
+            ->with('TensideCoreBundle:SelfTest:getAllTests');
 
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(false);
+        $status->method('isProjectPresent')->willReturn(false);
+        $status->method('isProjectInstalled')->willReturn(false);
+        $container->set('tenside.status', $status);
+
+        /** @var $controller InstallProjectController */
+        $controller->setContainer($container);
+
+        $controller->getSelfTestAction();
+    }
+
+    /**
+     * Test that the self test does not forward to the self test controller when the installation is complete.
+     *
+     * @return void
+     *
+     * @expectedException \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+     */
+    public function testGetSelfTestActionBailsOnCompleteInstallation()
+    {
+        $controller = $this->getMock(
+            'Tenside\\CoreBundle\\Controller\\InstallProjectController',
+            ['forward']
+        );
+
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(true);
+        $status->method('isProjectPresent')->willReturn(true);
+        $status->method('isProjectInstalled')->willReturn(true);
+        $container->set('tenside.status', $status);
+
+        $home = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\HomePathDeterminator')
+            ->setMethods(['homeDir'])
+            ->getMock();
+        $home->method('homeDir')->willReturn($this->getTempDir());
+        $container->set('tenside.home', $home);
+
+        /** @var $controller InstallProjectController */
+        $controller->setContainer($container);
+
+        $controller->getSelfTestAction();
+    }
+
+    /**
+     * Test that the auto config forwards to the self test controller.
+     *
+     * @return void
+     */
+    public function testAutoConfigAction()
+    {
+        $controller = $this->getMock(
+            'Tenside\\CoreBundle\\Controller\\InstallProjectController',
+            ['forward']
+        );
+        $controller
+            ->expects($this->once())
+            ->method('forward')
+            ->with('TensideCoreBundle:SelfTest:getAutoConfig');
+
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(false);
+        $status->method('isProjectPresent')->willReturn(false);
+        $status->method('isProjectInstalled')->willReturn(false);
+        $container->set('tenside.status', $status);
+
+        /** @var $controller InstallProjectController */
+        $controller->setContainer($container);
+
+        $controller->getAutoConfigAction();
+    }
+
+    /**
+     * Test that the auto config does not forward to the self test controller when the installation is complete.
+     *
+     * @return void
+     *
+     * @expectedException \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+     */
+    public function testAutoConfigActionBailsOnCompleteInstallation()
+    {
+        $controller = $this->getMock(
+            'Tenside\\CoreBundle\\Controller\\InstallProjectController',
+            ['forward']
+        );
+
+        $container = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(true);
+        $status->method('isProjectPresent')->willReturn(true);
+        $status->method('isProjectInstalled')->willReturn(true);
+        $container->set('tenside.status', $status);
+
+        $home = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\HomePathDeterminator')
+            ->setMethods(['homeDir'])
+            ->getMock();
+        $home->method('homeDir')->willReturn($this->getTempDir());
+        $container->set('tenside.home', $home);
+
+        /** @var $controller InstallProjectController */
+        $controller->setContainer($container);
+
+        $controller->getAutoConfigAction();
+    }
+
+    /**
+     * Test that the auto config forwards to the self test controller.
+     *
+     * @return void
+     */
+    public function testGetInstallationStateAction()
+    {
+        $controller = new InstallProjectController();
+        $container  = new Container();
+
+        $status = $this
+            ->getMockBuilder('Tenside\\CoreBundle\\InstallationStatusDeterminator')
+            ->setMethods(['isTensideConfigured', 'isProjectPresent', 'isProjectInstalled'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $status->method('isTensideConfigured')->willReturn(false);
+        $status->method('isProjectPresent')->willReturn(false);
+        $status->method('isProjectInstalled')->willReturn(false);
+        $container->set('tenside.status', $status);
+
+        /** @var $controller InstallProjectController */
+        $controller->setContainer($container);
+
+        $response = $controller->getInstallationStateAction();
+
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertFalse($data['state']['tenside_configured']);
+        $this->assertFalse($data['state']['project_created']);
+        $this->assertFalse($data['state']['project_installed']);
+        $this->assertEquals('OK', $data['status']);
+    }
 }
