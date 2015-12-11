@@ -223,8 +223,6 @@ class InstallProjectController extends AbstractController
                         return $dataDir . DIRECTORY_SEPARATOR . $file;
                     },
                     [
-                        'tenside.json',
-                        'tenside.json~',
                         'tenside-tasks.json',
                         'tenside-task-' . $taskId . '.json',
                         'tenside-task-' . $taskId . '.json~'
