@@ -286,7 +286,7 @@ class TaskRunnerController extends AbstractController
     private function getEnvironment(TensideJsonConfig $config)
     {
         if (!$config->has('php_cli_environment')) {
-            return '';
+            return [];
         }
 
         $variables = [];
