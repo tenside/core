@@ -58,7 +58,7 @@ class AuthController extends AbstractController
      *    "acl" = {
      *      "actualType" = "collection",
      *      "subType" = "string",
-     *      "description" = "The type of package to search (optional, default: all).",
+     *      "description" = "The roles of the authenticated user.",
      *    }
      *   },
      * )
