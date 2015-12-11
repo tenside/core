@@ -20,7 +20,9 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 use Tenside\CoreBundle\Security\UserInformationInterface;
 
 /**
@@ -34,6 +36,32 @@ class AuthController extends AbstractController
      * @return JsonResponse
      *
      * @throws \RuntimeException For invalid user classes.
+     *
+     * @ApiDoc(
+     *   section="auth",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok",
+     *     401 = "When the request was unauthorized."
+     *   }
+     * )
+     * @ApiDescription(
+     *   response={
+     *    "status" = {
+     *      "dataType" = "choice",
+     *      "description" = "ok or unauthorized",
+     *      "format" = "['ok', 'unauthorized']",
+     *    },
+     *    "token" = {
+     *      "dataType" = "string",
+     *      "description" = "The JWT (only if status ok).",
+     *    },
+     *    "acl" = {
+     *      "actualType" = "collection",
+     *      "subType" = "string",
+     *      "description" = "The type of package to search (optional, default: all).",
+     *    }
+     *   },
+     * )
      */
     public function checkAuthAction()
     {
