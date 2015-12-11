@@ -36,7 +36,8 @@
     "symfony/yaml": "~2.8"
   },
   "require-dev": {
-    "phpcq/all-tasks": "~1.1"
+    "phpcq/all-tasks": "~1.1",
+    "nelmio/api-doc-bundle": "~2.10"
   },
   "suggest": {
     "nelmio/api-doc-bundle": "To benefit from the API documentation annotation"
