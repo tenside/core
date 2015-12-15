@@ -84,8 +84,6 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
      * @param string  $providerKey The provider key.
      *
      * @return JavascriptWebToken
-     *
-     * @throws AuthenticationException For any invalid token.
      */
     public function createToken(Request $request, $providerKey)
     {
@@ -97,7 +95,7 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
         $authorizationHeader = $request->headers->get('Authorization');
 
         if ($authorizationHeader === null) {
-            throw new AuthenticationException('No authorization header provided');
+            return null;
         }
 
         if (substr($authorizationHeader, 0, 6) !== 'Bearer') {
@@ -111,7 +109,7 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
             // decode and validate the JWT - will throw exceptions for various conditions.
             $token = $this->decodeToken($authToken);
         } catch (\Exception $exception) {
-            throw new AuthenticationException($exception->getMessage(), 0, $exception);
+            return null;
         }
 
         return new JavascriptWebToken($token, $providerKey);

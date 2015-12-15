@@ -254,16 +254,14 @@ class JWTAuthenticatorTest extends TestCase
      * Test token creation without header.
      *
      * @return void
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
-    public function testCreateTokenThrowsExceptionWithoutHeader()
+    public function testCreateTokenReturnsNullWithoutHeader()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
 
         $auth = new JWTAuthenticator($config);
-        $auth->createToken(Request::create('https://example.com/'), 'provider-key');
+        $this->assertNull($auth->createToken(Request::create('https://example.com/'), 'provider-key'));
     }
 
     /**
@@ -271,7 +269,7 @@ class JWTAuthenticatorTest extends TestCase
      *
      * @return void
      */
-    public function testCreateTokenThrowsExceptionWithUnknownHeaderContent()
+    public function testCreateTokenReturnsNullWithUnknownHeaderContent()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
@@ -287,10 +285,8 @@ class JWTAuthenticatorTest extends TestCase
      * Test token creation with un-decode-able token.
      *
      * @return void
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
      */
-    public function testCreateTokenThrowsExceptionWhenTokenCanNotBeDecoded()
+    public function testCreateTokenReturnsNullWhenTokenCanNotBeDecoded()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
@@ -299,19 +295,15 @@ class JWTAuthenticatorTest extends TestCase
         $request->headers->set('Authorization', 'Bearer -broken-token-');
 
         $auth = new JWTAuthenticator($config);
-        $auth->createToken($request, 'provider-key');
+        $this->assertNull($auth->createToken($request, 'provider-key'));
     }
 
     /**
      * Test token creation with token from another issuer.
      *
      * @return void
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
-     *
-     * @expectedExceptionMessage This token is not intended for us.
      */
-    public function testCreateTokenThrowsExceptionWhenTokenIsNotFromUs()
+    public function testCreateTokenReturnsNullWhenTokenIsNotFromUs()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
@@ -323,19 +315,15 @@ class JWTAuthenticatorTest extends TestCase
         $request->headers->set('Authorization', 'Bearer ' . $tokenFromThem);
 
         $auth = new JWTAuthenticator($config);
-        $auth->createToken($request, 'provider-key');
+        $this->assertNull($auth->createToken($request, 'provider-key'));
     }
 
     /**
      * Test token creation with token from undefined issuer.
      *
      * @return void
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
-     *
-     * @expectedExceptionMessage This token is not intended for us.
      */
-    public function testCreateTokenThrowsExceptionWhenTokenIsNotFromUsButAnonymous()
+    public function testCreateTokenReturnsNullWhenTokenIsNotFromUsButAnonymous()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
@@ -347,19 +335,15 @@ class JWTAuthenticatorTest extends TestCase
         $request->headers->set('Authorization', 'Bearer ' . $tokenFromThem);
 
         $auth = new JWTAuthenticator($config);
-        $auth->createToken($request, 'provider-key');
+        $this->assertNull($auth->createToken($request, 'provider-key'));
     }
 
     /**
      * Test token creation with token from another issuer when we do not restrict.
      *
      * @return void
-     *
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
-     *
-     * @expectedExceptionMessage This token is not intended for us.
      */
-    public function testCreateTokenThrowsExceptionWhenTokenIsNotAnonymousButWeDontRestrict()
+    public function testCreateTokenReturnsNullWhenTokenIsNotAnonymousButWeDontRestrict()
     {
         $config = new TensideJsonConfig($this->getTempDir());
         $config->set('secret', 'very-secret-secret');
@@ -370,7 +354,7 @@ class JWTAuthenticatorTest extends TestCase
         $request->headers->set('Authorization', 'Bearer ' . $tokenFromThem);
 
         $auth = new JWTAuthenticator($config);
-        $auth->createToken($request, 'provider-key');
+        $this->assertNull($auth->createToken($request, 'provider-key'));
     }
 
     /**
