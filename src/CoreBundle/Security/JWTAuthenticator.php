@@ -98,12 +98,12 @@ class JWTAuthenticator implements SimplePreAuthenticatorInterface, Authenticatio
             return null;
         }
 
-        if (substr($authorizationHeader, 0, 6) !== 'Bearer') {
+        if (0 !== stripos($authorizationHeader, 'Bearer ')) {
             return null;
         }
 
         // extract the JWT
-        $authToken = str_replace('Bearer ', '', $authorizationHeader);
+        $authToken = substr($authorizationHeader, 7);
 
         try {
             // decode and validate the JWT - will throw exceptions for various conditions.

@@ -237,6 +237,38 @@ class JWTAuthenticatorTest extends TestCase
     }
 
     /**
+     * Test successful token creation.
+     *
+     * @return void
+     */
+    public function testCreateTokenIgnoresHeaderCase()
+    {
+        $config = new TensideJsonConfig($this->getTempDir());
+        $config->set('secret', 'very-secret-secret');
+
+        $user = $this
+            ->getMockBuilder('Tenside\CoreBundle\Security\UserInformationInterface')
+            ->setMethods(['values'])
+            ->getMockForAbstractClass();
+
+        $auth  = new JWTAuthenticator($config);
+        $token = $auth->getTokenForData($user, 10);
+
+        $request = Request::create('https://example.com/');
+        $request->headers->set('Authorization', 'BeArEr ' . $token);
+
+        $this->assertInstanceOf(
+            'Tenside\CoreBundle\Security\JavascriptWebToken',
+            $tokenObject = $auth->createToken($request, 'provider-key')
+        );
+
+        $this->assertEquals('provider-key', $tokenObject->getProviderKey());
+        $this->assertTrue(property_exists($tokenObject->getCredentials(), 'jti'));
+        $this->assertTrue(property_exists($tokenObject->getCredentials(), 'iat'));
+        $this->assertTrue(property_exists($tokenObject->getCredentials(), 'exp'));
+    }
+
+    /**
      * Test token creation without secret.
      *
      * @return void
