@@ -22,6 +22,8 @@
       <exclude>
         <!-- uses ini parameters which can not be set from phpunit.xml -->
         <file>src/Util/FunctionAvailabilityCheck.php</file>
+        <!-- Can not be tested in non phar mode -->
+        <file>src/stub.php</file>
       </exclude>
     </whitelist>
   </filter>
