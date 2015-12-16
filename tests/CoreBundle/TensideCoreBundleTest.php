@@ -20,6 +20,7 @@
 
 namespace Tenside\Test\CoreBundle;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Tenside\CoreBundle\TensideCoreBundle;
 use Tenside\Test\TestCase;
 
@@ -48,5 +49,26 @@ class TensideCoreBundleTest extends TestCase
         );
 
         $this->assertNotSame($first, $second);
+    }
+
+    /**
+     * Test that calling boot() registers our annotation in the AnnotationRegistry.
+     *
+     * @return void
+     */
+    public function testBootRegistersAnnotationInLoader()
+    {
+        $bundle = new TensideCoreBundle();
+
+        $this->assertFalse(AnnotationRegistry::loadAnnotationClass('Tenside\CoreBundle\Annotation\ApiDescription'));
+        $this->assertFalse(class_exists('Tenside\CoreBundle\Annotation\ApiDescription', false));
+
+        $bundle->boot();
+        $this->assertFalse(AnnotationRegistry::loadAnnotationClass('NonExistant\\Annotation'));
+        // Ensure the class does not get loaded by requiring anoter annotation.
+        $this->assertFalse(class_exists('Tenside\CoreBundle\Annotation\ApiDescription', false));
+
+        $this->assertTrue(AnnotationRegistry::loadAnnotationClass('Tenside\CoreBundle\Annotation\ApiDescription'));
+        $this->assertTrue(class_exists('Tenside\CoreBundle\Annotation\ApiDescription', false));
     }
 }
