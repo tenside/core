@@ -20,12 +20,14 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Process\Process;
+use Tenside\CoreBundle\Annotation\ApiDescription;
 use Tenside\CoreBundle\TensideJsonConfig;
 use Tenside\Task\Task;
 use Tenside\Util\JsonArray;
@@ -39,6 +41,29 @@ class TaskRunnerController extends AbstractController
      * Retrieve the task list.
      *
      * @return JsonResponse
+     *
+     * @ApiDoc(
+     *   section="tasks",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "<task-id>[]" = {
+     *       "children" = {
+     *         "id" = {
+     *           "dataType" = "string",
+     *           "description" = "The task id."
+     *         },
+     *         "type" = {
+     *           "dataType" = "string",
+     *           "description" = "The type of the task."
+     *         }
+     *       }
+     *     }
+     *   }
+     * )
      */
     public function getTasksAction()
     {
@@ -65,6 +90,25 @@ class TaskRunnerController extends AbstractController
      * @return JsonResponse
      *
      * @throws NotFoundHttpException When the task could not be found.
+     *
+     * @ApiDoc(
+     *   section="tasks",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "The task status."
+     *     },
+     *     "output" = {
+     *       "dataType" = "string",
+     *       "description" = "The command line output of the task."
+     *     }
+     *   }
+     * )
      */
     public function getTaskAction($taskId, Request $request)
     {
@@ -89,13 +133,32 @@ class TaskRunnerController extends AbstractController
     }
 
     /**
-     * Queue an task to the list.
+     * Queue a task in the list.
      *
      * @param Request $request The request.
      *
      * @return JsonResponse
      *
      * @throws NotAcceptableHttpException When the payload is invalid.
+     *
+     * @ApiDoc(
+     *   section="tasks",
+     *   statusCodes = {
+     *     201 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "OK on success"
+     *     },
+     *     "task" = {
+     *       "dataType" = "string",
+     *       "description" = "The id of the created task."
+     *     }
+     *   }
+     * )
      */
     public function addTaskAction(Request $request)
     {
@@ -133,6 +196,21 @@ class TaskRunnerController extends AbstractController
      *
      * @throws NotFoundHttpException      When the given task could not be found.
      * @throws NotAcceptableHttpException When trying to delete a running task.
+     *
+     * @ApiDoc(
+     *   section="tasks",
+     *   statusCodes = {
+     *     200 = "When everything worked out ok"
+     *   },
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "OK on success"
+     *     }
+     *   }
+     * )
      */
     public function deleteTaskAction($taskId)
     {
@@ -164,6 +242,27 @@ class TaskRunnerController extends AbstractController
      *
      * @throws NotFoundHttpException      When no task could be found.
      * @throws NotAcceptableHttpException When a task is already running and holds the lock.
+     *
+     * @ApiDoc(
+     *   section="tasks",
+     *   statusCodes = {
+     *     201 = "When everything worked out ok",
+     *     404 = "When no pending task has been found",
+     *     406 = "When another task is still running"
+     *   },
+     * )
+     * @ApiDescription(
+     *   response={
+     *     "status" = {
+     *       "dataType" = "string",
+     *       "description" = "OK on success"
+     *     },
+     *     "task" = {
+     *       "dataType" = "string",
+     *       "description" = "The id of the started task."
+     *     }
+     *   }
+     * )
      */
     public function runAction()
     {
