@@ -64,7 +64,15 @@ class SelfTestCliRuntime extends AbstractSelfTest
      */
     private function checkInPath()
     {
-        $paths = array_map('trim', explode(PATH_SEPARATOR, getenv('PATH')));
+        $paths = array_filter(array_map('trim', explode(PATH_SEPARATOR, getenv('PATH'))));
+        if (empty($paths)) {
+            // FIXME: Check for Windows here.
+            $paths = [
+                '/usr/local/bin',
+                '/usr/bin',
+                '/bin',
+            ];
+        }
 
         return $this->testBinaries($this->findBinaries($paths));
     }
@@ -139,7 +147,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
         $foundBinaries = [];
         foreach ($finder as $file) {
             /** @var \SplFileInfo $file */
-            $foundBinaries[] = $file->getPathName();
+            $foundBinaries[] = $file->getPathname();
         }
 
         return $foundBinaries;
