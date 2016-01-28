@@ -74,6 +74,7 @@ class RunTaskCommand extends ContainerAwareCommand
                 if ($locked = $lock->lock()) {
                     break;
                 }
+                $retry--;
             }
             if (!$locked) {
                 $logger->error('Could not acquire lock file.');
