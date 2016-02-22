@@ -56,9 +56,9 @@ class SearchPackageController extends AbstractController
      * )
      * @ApiDescription(
      *   request={
-     *    "name" = {
+     *    "keywords" = {
      *      "dataType" = "string",
-     *      "description" = "The name of the project to search.",
+     *      "description" = "The name of the project to search or any other keyword.",
      *      "required" = true
      *    },
      *    "version" = {
