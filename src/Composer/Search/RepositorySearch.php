@@ -195,7 +195,11 @@ class RepositorySearch extends AbstractSearch
         $rfs        = new RemoteFilesystem(new BufferIO());
         $requestUrl = sprintf('http://packagist.org/packages/%1$s.json', $package->getName());
         $jsonData   = $rfs->getContents($requestUrl, $requestUrl);
-        $data       = new JsonArray($jsonData);
+        try {
+            $data       = new JsonArray($jsonData);
+        } catch (\RuntimeException $exception) {
+            return  $package;
+        }
 
         $metaPaths = [
             'downloads' => 'package/downloads/total',
