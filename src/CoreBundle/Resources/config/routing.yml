@@ -136,13 +136,19 @@ install_get_state:
     path:     /v1/install/get_state
     defaults: { _controller: TensideCoreBundle:InstallProject:getInstallationState }
     methods:  [GET]
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 selftest_alltests:
     path:     /v1/selftest
     defaults: { _controller: TensideCoreBundle:SelfTest:getAllTests }
     methods:  [GET]
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
 
 selftest_autoconfig:
     path:     /v1/autoconfig
     defaults: { _controller: TensideCoreBundle:SelfTest:getAutoConfig }
     methods:  [GET]
+    options:
+        required_role: ROLE_MANIPULATE_REQUIREMENTS
