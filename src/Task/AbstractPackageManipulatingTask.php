@@ -40,11 +40,11 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     /**
      * Retrieve the names of the packages to upgrade or null if none.
      *
-     * @return string
+     * @return array
      */
     public function getPackage()
     {
-        return $this->file->get(self::SETTING_PACKAGE);
+        return (array) $this->file->get(self::SETTING_PACKAGE);
     }
 
     /**
