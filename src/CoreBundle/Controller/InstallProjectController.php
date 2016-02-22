@@ -78,7 +78,7 @@ class InstallProjectController extends AbstractController
      *       }
      *     },
      *     "configuration" = {
-     *       "description" = "The credentials of the admin user.",
+     *       "description" = "The application configuration.",
      *       "children" = {
      *         "php_cli" = {
      *           "dataType" = "string",
@@ -158,7 +158,7 @@ class InstallProjectController extends AbstractController
      * @ApiDescription(
      *   request={
      *     "project" = {
-     *       "description" = "The name of the project to install.",
+     *       "description" = "The project to install.",
      *       "children" = {
      *         "name" = {
      *           "dataType" = "string",
@@ -167,7 +167,7 @@ class InstallProjectController extends AbstractController
      *         },
      *         "version" = {
      *           "dataType" = "string",
-     *           "description" = "The name of the project to install.",
+     *           "description" = "The version of the project to install (optional).",
      *           "required" = false
      *         }
      *       }

@@ -57,7 +57,7 @@ class SearchPackageController extends AbstractController
      *   request={
      *    "name" = {
      *      "dataType" = "string",
-     *      "description" = "The name of the project to install.",
+     *      "description" = "The name of the project to search.",
      *      "required" = true
      *    },
      *    "version" = {
