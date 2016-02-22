@@ -279,6 +279,16 @@ class TaskRunnerController extends AbstractController
             throw new NotFoundHttpException('Task not found');
         }
 
+        if ($task::STATE_PENDING !== $task->getStatus()) {
+            return JsonResponse::create(
+                [
+                    'status' => $task->getStatus(),
+                    'task'   => $task->getId()
+                ],
+                JsonResponse::HTTP_OK
+            );
+        }
+
         // Now spawn a runner.
         $this->spawn($task);
         // TODO: Should we rather release the lock prior? What about when we can not run in background?
