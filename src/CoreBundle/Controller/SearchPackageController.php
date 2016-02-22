@@ -209,12 +209,13 @@ class SearchPackageController extends AbstractController
      */
     public function searchAction(Request $request)
     {
+        $composer        = $this->getComposer();
         $data            = new JsonArray($request->getContent());
-        $localRepository = $this->getComposer()->getRepositoryManager()->getLocalRepository();
-        $searcher        = $this->getRepositorySearch($data);
+        $localRepository = $composer->getRepositoryManager()->getLocalRepository();
+        $searcher        = $this->getRepositorySearch($data, $composer);
         $results         = $searcher->searchAndDecorate($data->get('keywords'), $this->getFilters($data));
         $responseData    = [];
-        $rootPackage     = $this->getComposer()->getPackage();
+        $rootPackage     = $composer->getPackage();
         $converter       = new PackageConverter($rootPackage);
 
         foreach ($results as $versionedResult) {
@@ -281,13 +282,14 @@ class SearchPackageController extends AbstractController
     /**
      * Create a repository search instance.
      *
-     * @param JsonArray $data The search data.
+     * @param JsonArray $data     The search data.
+     *
+     * @param Composer  $composer The composer instance.
      *
      * @return CompositeSearch
      */
-    private function getRepositorySearch($data)
+    private function getRepositorySearch($data, Composer $composer)
     {
-        $composer          = $this->getComposer();
         $repositoryManager = $composer->getRepositoryManager();
         $localRepository   = $repositoryManager->getLocalRepository();
 
