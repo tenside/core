@@ -246,7 +246,7 @@ class TaskRunnerController extends AbstractController
      * @ApiDoc(
      *   section="tasks",
      *   statusCodes = {
-     *     201 = "When everything worked out ok",
+     *     200 = "When everything worked out ok",
      *     404 = "When no pending task has been found",
      *     406 = "When another task is still running"
      *   },
@@ -289,7 +289,7 @@ class TaskRunnerController extends AbstractController
                 'status' => 'OK',
                 'task'   => $task->getId()
             ],
-            JsonResponse::HTTP_PROCESSING
+            JsonResponse::HTTP_OK
         );
     }
 
