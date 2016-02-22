@@ -21,6 +21,7 @@
 
 namespace Tenside\CoreBundle\Controller;
 
+use Composer\Composer;
 use Composer\Package\PackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\PlatformRepository;
@@ -211,9 +212,11 @@ class SearchPackageController extends AbstractController
     {
         $composer        = $this->getComposer();
         $data            = new JsonArray($request->getContent());
+        $keywords        = $data->get('keywords');
+        $type            = $data->get('type');
         $localRepository = $composer->getRepositoryManager()->getLocalRepository();
-        $searcher        = $this->getRepositorySearch($data, $composer);
-        $results         = $searcher->searchAndDecorate($data->get('keywords'), $this->getFilters($data));
+        $searcher        = $this->getRepositorySearch($keywords, $type, $composer);
+        $results         = $searcher->searchAndDecorate($keywords, $this->getFilters($data));
         $responseData    = [];
         $rootPackage     = $composer->getPackage();
         $converter       = new PackageConverter($rootPackage);
@@ -242,14 +245,14 @@ class SearchPackageController extends AbstractController
     /**
      * Get the array of filter closures.
      *
-     * @param JsonArray $data The search data.
+     * @param string $type The desired search type (contao, installed or empty).
      *
      * @return \Closure[]
      */
-    private function getFilters($data)
+    private function getFilters($type)
     {
         $filters = [];
-        if ('contao' === $data->get('type')) {
+        if ('contao' === $type) {
             $filters[] =
                 function ($package) {
                     /** @var PackageInterface $package */
@@ -282,13 +285,15 @@ class SearchPackageController extends AbstractController
     /**
      * Create a repository search instance.
      *
-     * @param JsonArray $data     The search data.
+     * @param string    $keywords The search keywords.
+     *
+     * @param string    $type     The desired search type.
      *
      * @param Composer  $composer The composer instance.
      *
      * @return CompositeSearch
      */
-    private function getRepositorySearch($data, Composer $composer)
+    private function getRepositorySearch($keywords, $type, Composer $composer)
     {
         $repositoryManager = $composer->getRepositoryManager();
         $localRepository   = $repositoryManager->getLocalRepository();
@@ -301,13 +306,20 @@ class SearchPackageController extends AbstractController
         );
 
         // If we do not search locally, add the other repositories now.
-        if ('installed' !== $data->get('type')) {
+        if ('installed' !== $type) {
             $repositories->addRepository(new CompositeRepository($repositoryManager->getRepositories()));
+        }
+
+        $repositorySearch = new RepositorySearch($repositories);
+        if (false !== strpos($keywords, '/')) {
+            $repositorySearch->disableSearchType(RepositoryInterface::SEARCH_FULLTEXT);
+        } else {
+            $repositorySearch->disableSearchType(RepositoryInterface::SEARCH_NAME);
         }
 
         $searcher = new CompositeSearch(
             [
-                new RepositorySearch($repositories)
+                $repositorySearch
             ]
         );
 
