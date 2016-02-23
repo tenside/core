@@ -33,12 +33,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Tenside\\": "src"
+      "Tenside\\Core\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tenside\\Test\\": "tests"
+      "Tenside\\Core\\Test\\": "tests"
     }
   },
   "extra": {
