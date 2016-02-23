@@ -28,12 +28,12 @@ use Composer\DependencyResolver\Request;
 use Composer\DependencyResolver\Solver;
 use Composer\DependencyResolver\SolverProblemsException;
 use Composer\Package\Link;
-use Composer\Package\LinkConstraint\VersionConstraint;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
 use Composer\Repository\CompositeRepository;
 use Composer\Repository\InstalledArrayRepository;
 use Composer\Repository\PlatformRepository;
+use Composer\Semver\Constraint\Constraint;
 
 /**
  * This class is resolving dependencies.
@@ -117,7 +117,7 @@ class SolverRunner
     {
         $request = new Request($this->pool);
 
-        $constraint = new VersionConstraint('=', $this->package->getVersion());
+        $constraint = new Constraint('=', $this->package->getVersion());
         $constraint->setPrettyString($this->package->getPrettyVersion());
         $request->install($this->package->getName(), $constraint);
 
@@ -129,7 +129,7 @@ class SolverRunner
         $provided = $this->package->getProvides();
         /** @var PackageInterface $package */
         foreach ($fixedPackages as $package) {
-            $constraint = new VersionConstraint('=', $package->getVersion());
+            $constraint = new Constraint('=', $package->getVersion());
             $constraint->setPrettyString($package->getPrettyVersion());
 
             // skip platform packages that are provided by the root package
