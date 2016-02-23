@@ -203,7 +203,7 @@ class RepositorySearch extends AbstractSearch
 
         $metaPaths = [
             'downloads' => 'package/downloads/total',
-            'favers'    => 'favers'
+            'favers'    => 'package/favers'
         ];
 
         foreach ($metaPaths as $metaKey => $metaPath) {
