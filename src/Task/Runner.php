@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 /**
  * This class runs a task.

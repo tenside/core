@@ -18,13 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 use Composer\Command\UpdateCommand;
-use Composer\Composer;
 use Composer\Factory;
 use Symfony\Component\Console\Input\ArrayInput;
-use Tenside\Util\RuntimeHelper;
+use Tenside\Core\Util\RuntimeHelper;
 
 /**
  * This class holds the information for an upgrade of some or all packages.

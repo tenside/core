@@ -18,12 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
-use Tenside\Task\InstallTask;
-use Tenside\Task\RemovePackageTask;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Task\InstallTask;
+use Tenside\Core\Task\RemovePackageTask;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the remove package task.

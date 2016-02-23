@@ -21,8 +21,9 @@
 namespace Tenside\Test\Composer;
 
 use Composer\Package\PackageInterface;
-use Tenside\Composer\Package\VersionedPackage;
-use Tenside\Test\TestCase;
+use Composer\Repository\RepositoryInterface;
+use Tenside\Core\Composer\Package\VersionedPackage;
+use Tenside\Core\Test\TestCase;
 
 /**
  * This tests the VersionedPackage class.
@@ -73,7 +74,7 @@ class VersionedPackageTest extends TestCase
             ['getAutoload'],
             ['getDevAutoload'],
             ['getIncludePaths'],
-            ['setRepository', [$this->getMockForAbstractClass('Composer\Repository\RepositoryInterface')]],
+            ['setRepository', [$this->getMockForAbstractClass(RepositoryInterface::class)]],
             ['getRepository'],
             ['getBinaries'],
             ['getUniqueName'],
@@ -98,7 +99,7 @@ class VersionedPackageTest extends TestCase
      */
     public function testAllMethodsAreDelegated($method, $arguments = [])
     {
-        $package = $this->getMockForAbstractClass('Composer\Package\PackageInterface');
+        $package = $this->getMockForAbstractClass(PackageInterface::class);
         $package->expects($this->once())->method($method);
 
         /** @var PackageInterface $package */
@@ -118,7 +119,7 @@ class VersionedPackageTest extends TestCase
      */
     private function mockVersion($versionString, $releaseDate)
     {
-        $version = $this->getMockForAbstractClass('Composer\Package\PackageInterface');
+        $version = $this->getMockForAbstractClass(PackageInterface::class);
         /** @var \PHPUnit_Framework_MockObject_MockObject $version */
         $version->method('getVersion')->willReturn($versionString);
         $version->method('getReleaseDate')->willReturn(new \DateTime($releaseDate));

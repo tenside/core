@@ -18,14 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tenside\CoreBundle\Events\CreateTaskEvent;
-use Tenside\Task\Task;
-use Tenside\Task\TaskList;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Events\CreateTaskEvent;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Task\TaskList;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the task list.
@@ -47,7 +47,7 @@ class TaskListTest extends TestCase
             }
 
             $task = $this
-                ->getMockBuilder('Tenside\Task\Task')
+                ->getMockBuilder(Task::class)
                 ->setConstructorArgs([$event->getMetaData()])
                 ->setMethods(['getType', 'perform'])
                 ->getMockForAbstractClass();
@@ -94,8 +94,8 @@ class TaskListTest extends TestCase
         $taskId = $list->queue('upgrade');
 
         $this->assertContains($taskId, $list->getIds());
-        $this->assertInstanceOf('Tenside\Task\Task', $list->getTask($taskId));
-        $this->assertInstanceOf('Tenside\Task\Task', $list->getNext());
+        $this->assertInstanceOf(Task::class, $list->getTask($taskId));
+        $this->assertInstanceOf(Task::class, $list->getNext());
     }
 
     /**
@@ -113,7 +113,7 @@ class TaskListTest extends TestCase
 
         // Now ensure the list is unchanged.
         $this->assertContains($taskId, $list->getIds());
-        $this->assertInstanceOf('Tenside\Task\Task', $list->getTask($taskId));
+        $this->assertInstanceOf(Task::class, $list->getTask($taskId));
     }
 
     /**
@@ -142,10 +142,10 @@ class TaskListTest extends TestCase
         $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
 
         $task = $list->dequeue();
-        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertInstanceOf(Task::class, $task);
         $this->assertEquals($first, $task->getId());
         $task = $list->dequeue();
-        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertInstanceOf(Task::class, $task);
         $this->assertEquals($second, $task->getId());
 
         $this->assertEmpty($list->getIds());
@@ -164,15 +164,15 @@ class TaskListTest extends TestCase
         $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
 
         $task = $list->getNext();
-        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertInstanceOf(Task::class, $task);
         $this->assertEquals($first, $task->getId());
         $task = $list->getNext();
-        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertInstanceOf(Task::class, $task);
         $this->assertEquals($first, $task->getId());
         $list->remove($first);
 
         $task = $list->getNext();
-        $this->assertInstanceOf('Tenside\Task\Task', $task);
+        $this->assertInstanceOf(Task::class, $task);
         $this->assertEquals($second, $task->getId());
 
         $list->remove($second);

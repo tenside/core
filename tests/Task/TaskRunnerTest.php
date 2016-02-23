@@ -18,13 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
-use Tenside\Task\Runner;
-use Tenside\Task\Task;
-use Tenside\Task\TaskOutput;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Task\Runner;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the task runner.
@@ -39,7 +38,7 @@ class TaskRunnerTest extends TestCase
     public function testReturnsTrueOnSuccess()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setMethods(['perform', 'getStatus'])
             ->setConstructorArgs([new JsonArray([])])
             ->getMockForAbstractClass();
@@ -59,7 +58,7 @@ class TaskRunnerTest extends TestCase
     public function testReturnsFalseOnError()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setMethods(['perform'])
             ->setConstructorArgs([new JsonArray()])
             ->getMockForAbstractClass();

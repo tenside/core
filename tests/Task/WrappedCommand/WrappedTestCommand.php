@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task\WrappedCommand;
+namespace Tenside\Core\Test\Task\WrappedCommand;
 
 use Composer\Command\Command;
-use Tenside\Task\WrappedCommand\WrappedCommandTrait;
+use Tenside\Core\Task\WrappedCommand\WrappedCommandTrait;
 
 /**
  * Simple test command for unit tests.

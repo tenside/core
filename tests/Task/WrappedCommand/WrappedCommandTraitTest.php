@@ -18,11 +18,11 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task\WrappedCommand;
+namespace Tenside\Core\Test\Task\WrappedCommand;
 
 use Composer\Composer;
-use Tenside\Task\WrappedCommand\WrappedCommandTrait;
-use Tenside\Test\TestCase;
+use Tenside\Core\Task\WrappedCommand\WrappedCommandTrait;
+use Tenside\Core\Test\TestCase;
 
 /**
  * This class tests the wrapped command trait.
@@ -36,7 +36,7 @@ class WrappedCommandTraitTest extends TestCase
      */
     public function testGetComposerWorks()
     {
-        $trait = $this->getMockForTrait('Tenside\\Task\\WrappedCommand\\WrappedCommandTrait');
+        $trait = $this->getMockForTrait(WrappedCommandTrait::class);
 
         /** @var WrappedCommandTrait $trait */
         $trait->setComposerFactory(
@@ -47,7 +47,7 @@ class WrappedCommandTraitTest extends TestCase
 
         $composer = $trait->getComposer();
 
-        $this->assertInstanceOf('Composer\\Composer', $composer);
+        $this->assertInstanceOf(Composer::class, $composer);
         $this->assertSame($composer, $trait->getComposer());
     }
 
@@ -58,14 +58,14 @@ class WrappedCommandTraitTest extends TestCase
      */
     public function testSetComposerWorks()
     {
-        $trait = $this->getMockForTrait('Tenside\\Task\\WrappedCommand\\WrappedCommandTrait');
+        $trait = $this->getMockForTrait(WrappedCommandTrait::class);
 
         /** @var WrappedCommandTrait $trait */
         $trait->setComposer(new Composer());
 
         $composer = $trait->getComposer();
 
-        $this->assertInstanceOf('Composer\\Composer', $composer);
+        $this->assertInstanceOf(Composer::class, $composer);
         $this->assertSame($composer, $trait->getComposer());
     }
 
@@ -78,7 +78,7 @@ class WrappedCommandTraitTest extends TestCase
      */
     public function testGetRequiredComposerFailsWithoutFactory()
     {
-        $trait = $this->getMockForTrait('Tenside\\Task\\WrappedCommand\\WrappedCommandTrait');
+        $trait = $this->getMockForTrait(WrappedCommandTrait::class);
 
         /** @var WrappedCommandTrait $trait */
         $trait->getComposer();
@@ -93,7 +93,7 @@ class WrappedCommandTraitTest extends TestCase
      */
     public function testGetNotRequiredComposerReturnsNullWithoutFactory()
     {
-        $trait = $this->getMockForTrait('Tenside\\Task\\WrappedCommand\\WrappedCommandTrait');
+        $trait = $this->getMockForTrait(WrappedCommandTrait::class);
 
         /** @var WrappedCommandTrait $trait */
         $this->assertNull($trait->getComposer());

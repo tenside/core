@@ -19,7 +19,7 @@
  * @filesource
  */
 
-namespace Tenside\Composer\Package;
+namespace Tenside\Core\Composer\Package;
 
 use Composer\Package\PackageInterface;
 use Composer\Package\Version\VersionParser;

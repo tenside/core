@@ -18,12 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Tenside\CoreBundle\Events\CreateTaskEvent;
-use Tenside\Util\JsonArray;
-use Tenside\Util\JsonFile;
+use Tenside\Core\Events\CreateTaskEvent;
+use Tenside\Core\Util\JsonArray;
+use Tenside\Core\Util\JsonFile;
 
 /**
  * This class is an implementation of the task list.

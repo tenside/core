@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Test\Util;
+namespace Tenside\Core\Test\Util;
 
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonFile;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonFile;
 
 /**
  * Test the JsonArray handler.
@@ -39,7 +39,7 @@ class JsonFileTest extends TestCase
 
         $json = new JsonFile($filename);
 
-        $this->assertInstanceOf('Tenside\Util\JsonFile', $json);
+        $this->assertInstanceOf('Tenside\\Core\\Util\\JsonFile', $json);
         $this->assertEquals($filename, $json->getFilename());
         $this->assertFileNotExists($filename);
         $this->assertFileNotExists($filename . '~');

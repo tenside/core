@@ -63,6 +63,7 @@ class TaskListener
             return;
         }
 
+        // FIXME: Refactor to tagged services and factory registry.
         $config = $event->getMetaData();
 
         switch ($config->get(Task::SETTING_TYPE)) {

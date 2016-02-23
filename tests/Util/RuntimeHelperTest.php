@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Test\Util;
+namespace Tenside\Core\Test\Util;
 
-use Tenside\Test\TestCase;
-use Tenside\Util\RuntimeHelper;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\RuntimeHelper;
 
 /**
  * Test the RuntimeHelper.

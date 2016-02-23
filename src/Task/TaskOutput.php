@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\Output;

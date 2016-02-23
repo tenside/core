@@ -18,37 +18,35 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task;
+namespace Tenside\Core\Test\Events;
 
+use Tenside\Core\Events\CreateTaskEvent;
 use Tenside\Core\Task\Task;
-use Tenside\Core\Task\TaskOutput;
 use Tenside\Core\Test\TestCase;
 use Tenside\Core\Util\JsonArray;
 
 /**
- * This class tests the task output.
+ * Test the application.
  */
-class TaskOutputTest extends TestCase
+class CreateTaskEventTest extends TestCase
 {
     /**
-     * Test that writing works.
+     * Test all methods.
      *
      * @return void
      */
-    public function testWriting()
+    public function testAll()
     {
-        $task = $this
-            ->getMockBuilder(Task::class)
-            ->setMethods(['getOutput', 'addOutput'])
-            ->setConstructorArgs([new JsonArray()])
-            ->getMockForAbstractClass();
-        $task->expects($this->once())->method('addOutput')->with("Test\n");
-        $task->expects($this->once())->method('getOutput')->willReturn("Test\n");
+        $event = new CreateTaskEvent($metaData = new JsonArray());
 
-        /** @var Task $task */
-        $taskOutput = new TaskOutput($task);
-
-        $taskOutput->writeln('Test');
-        $this->assertEquals("Test\n", $taskOutput->fetch());
+        $this->assertSame($metaData, $event->getMetaData());
+        $this->assertNull($event->getTask());
+        $this->assertFalse($event->hasTask());
+        $this->assertSame(
+            $event,
+            $event->setTask($task = $this->getMockForAbstractClass(Task::class, [$metaData]))
+        );
+        $this->assertSame($task, $event->getTask());
+        $this->assertTrue($event->hasTask());
     }
 }

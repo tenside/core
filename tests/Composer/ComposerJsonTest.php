@@ -18,11 +18,11 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\Core\Test\Composer;
 
 use Composer\Package\CompletePackage;
-use Tenside\Composer\ComposerJson;
-use Tenside\Test\TestCase;
+use Tenside\Core\Composer\ComposerJson;
+use Tenside\Core\Test\TestCase;
 
 /**
  * This class tests the composer json handling.

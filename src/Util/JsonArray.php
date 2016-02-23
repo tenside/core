@@ -19,7 +19,7 @@
  * @filesource
  */
 
-namespace Tenside\Util;
+namespace Tenside\Core\Util;
 
 /**
  * Generic path following json file handler.

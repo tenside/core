@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Task\WrappedCommand;
+namespace Tenside\Core\Task\WrappedCommand;
 
 use Composer\Command\RemoveCommand as BaseRemoveCommand;
 

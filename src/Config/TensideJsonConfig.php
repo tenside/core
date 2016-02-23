@@ -20,53 +20,38 @@
 
 namespace Tenside\Core\Config;
 
-use Tenside\Core\Util\JsonFile;
-
 /**
- * JSON based config.
+ * Main tenside configuration (abstraction over tenside.json).
  */
-class SourceJson implements SourceInterface
+class TensideJsonConfig extends SourceJson
 {
-    /**
-     * The JsonFile.
-     *
-     * @var JsonFile
-     */
-    protected $jsonFile;
-
     /**
      * Create a new instance.
      *
-     * @param string $filename The filename.
+     * @param string $directory The directory where the tenside.json shall be placed.
      */
-    public function __construct($filename)
+    public function __construct($directory)
     {
-        $this->jsonFile = new JsonFile($filename);
+        parent::__construct($directory . DIRECTORY_SEPARATOR . 'tenside.json');
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieve the secret.
+     *
+     * @return string
      */
-    public function get($path, $forceArray = false)
+    public function getSecret()
     {
-        return $this->jsonFile->get($path, $forceArray);
+        return $this->has('secret') ? $this->get('secret') : null;
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieve the secret.
+     *
+     * @return string|null
      */
-    public function has($path)
+    public function getLocalDomain()
     {
-        return $this->jsonFile->has($path);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function set($path, $value)
-    {
-        $this->jsonFile->set($path, $value);
-
-        return $this;
+        return $this->has('domain') ? $this->get('domain') : null;
     }
 }

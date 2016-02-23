@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Config;
+namespace Tenside\Core\Config;
 
 /**
  * Abstract base class for configs.

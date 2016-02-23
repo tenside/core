@@ -18,9 +18,9 @@
  * @filesource
  */
 
-namespace Tenside\Test\Util;
+namespace Tenside\Core\Test\Util;
 
-use Tenside\Util\JsonArray;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * Test the JsonArray handler.

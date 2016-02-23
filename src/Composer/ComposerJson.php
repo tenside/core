@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Composer;
+namespace Tenside\Core\Composer;
 
 use Composer\Package\PackageInterface;
-use Tenside\Util\JsonFile;
+use Tenside\Core\Util\JsonFile;
 
 /**
  * This class abstracts the composer.json file manipulation.

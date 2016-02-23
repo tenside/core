@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Composer;
+namespace Tenside\Core\Composer;
 
 use Composer\Composer;
 use Composer\DependencyResolver\DefaultPolicy;

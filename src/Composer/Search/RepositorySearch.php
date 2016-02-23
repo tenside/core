@@ -19,14 +19,14 @@
  * @filesource
  */
 
-namespace Tenside\Composer\Search;
+namespace Tenside\Core\Composer\Search;
 
 use Composer\IO\BufferIO;
 use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
 use Composer\Util\RemoteFilesystem;
-use Tenside\Composer\Package\VersionedPackage;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Composer\Package\VersionedPackage;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * Class RepositorySearch

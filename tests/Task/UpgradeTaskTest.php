@@ -18,13 +18,13 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
-use Tenside\Task\InstallTask;
-use Tenside\Task\UpgradeTask;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
-use Tenside\Util\JsonFile;
+use Tenside\Core\Task\InstallTask;
+use Tenside\Core\Task\UpgradeTask;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
+use Tenside\Core\Util\JsonFile;
 
 /**
  * This class tests the install task.

@@ -18,11 +18,11 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
-use Tenside\Task\RequirePackageTask;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Task\RequirePackageTask;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the install task.

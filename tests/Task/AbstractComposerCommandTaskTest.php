@@ -18,14 +18,16 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
+use Composer\Command\Command;
+use Composer\Composer;
 use Symfony\Component\Console\Input\ArrayInput;
-use Tenside\Task\AbstractComposerCommandTask;
-use Tenside\Task\Task;
-use Tenside\Test\Task\WrappedCommand\WrappedTestCommand;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Task\AbstractComposerCommandTask;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Test\Task\WrappedCommand\WrappedTestCommand;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the abstract composer command task.
@@ -41,12 +43,12 @@ class AbstractComposerCommandTaskTest extends TestCase
     {
         $task = $this
             ->getMockForAbstractClass(
-                'Tenside\\Task\\AbstractComposerCommandTask',
+                AbstractComposerCommandTask::class,
                 [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
-            ->getMockBuilder('Composer\\Command\\Command')
+            ->getMockBuilder(Command::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -72,12 +74,12 @@ class AbstractComposerCommandTaskTest extends TestCase
     {
         $task = $this
             ->getMockForAbstractClass(
-                'Tenside\\Task\\AbstractComposerCommandTask',
+                AbstractComposerCommandTask::class,
                 [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
-            ->getMockBuilder('Composer\\Command\\Command')
+            ->getMockBuilder(Command::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -101,12 +103,12 @@ class AbstractComposerCommandTaskTest extends TestCase
     {
         $task = $this
             ->getMockForAbstractClass(
-                'Tenside\\Task\\AbstractComposerCommandTask',
+                AbstractComposerCommandTask::class,
                 [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
-            ->getMockBuilder('Composer\\Command\\Command')
+            ->getMockBuilder(Command::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -130,7 +132,7 @@ class AbstractComposerCommandTaskTest extends TestCase
     {
         $task = $this
             ->getMockForAbstractClass(
-                'Tenside\\Task\\AbstractComposerCommandTask',
+                AbstractComposerCommandTask::class,
                 [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
@@ -140,7 +142,7 @@ class AbstractComposerCommandTaskTest extends TestCase
         $reflection->invoke($task, $command);
 
         $reflection = new \ReflectionMethod($command, 'getComposer');
-        $this->assertInstanceOf('Composer\\Composer', $reflection->invoke($command, true));
+        $this->assertInstanceOf(Composer::class, $reflection->invoke($command, true));
     }
 
     /**
@@ -154,12 +156,12 @@ class AbstractComposerCommandTaskTest extends TestCase
     {
         $task = $this
             ->getMockForAbstractClass(
-                'Tenside\\Task\\AbstractComposerCommandTask',
+                AbstractComposerCommandTask::class,
                 [new JsonArray(['status' => Task::STATE_PENDING])]
             );
 
         $command = $this
-            ->getMockBuilder('Composer\\Command\\Command')
+            ->getMockBuilder(Command::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods([])
             ->getMockForAbstractClass();

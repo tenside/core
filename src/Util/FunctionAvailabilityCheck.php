@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Util;
+namespace Tenside\Core\Util;
 
 /**
  * This class provides methods to check if certain functions have been disabled in PHP or are callable.

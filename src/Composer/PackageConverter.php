@@ -18,14 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Composer;
+namespace Tenside\Core\Composer;
 
 use Composer\Package\CompletePackageInterface;
 use Composer\Package\Link;
 use Composer\Package\PackageInterface;
 use Composer\Package\RootPackageInterface;
 use Composer\Repository\RepositoryInterface;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * The main entry point.

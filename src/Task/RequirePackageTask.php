@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
-use Tenside\Task\WrappedCommand\RequireCommand;
-use Tenside\Util\RuntimeHelper;
+use Tenside\Core\Task\WrappedCommand\RequireCommand;
+use Tenside\Core\Util\RuntimeHelper;
 
 /**
  * This class holds the information for an installation request of a package.

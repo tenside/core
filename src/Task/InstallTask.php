@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 use Composer\Command\CreateProjectCommand;
 use Composer\IO\IOInterface;

@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside;
+namespace Tenside\Core;
 
 /**
  * The main tenside instance.

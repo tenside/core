@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Util;
+namespace Tenside\Core\Util;
 
 /**
  * Generic helper method collection for being able to provide an web entry point and an cli entry point.

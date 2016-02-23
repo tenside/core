@@ -18,11 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\Test\Task;
+namespace Tenside\Core\Test\Task;
 
-use Tenside\Task\Task;
-use Tenside\Test\TestCase;
-use Tenside\Util\JsonArray;
+use Composer\IO\IOInterface;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * This class tests the abstract class task.
@@ -40,7 +41,7 @@ class TaskTest extends TestCase
     {
         $test = $this;
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -60,7 +61,7 @@ class TaskTest extends TestCase
         $task->addOutput('Foo');
         $this->assertEquals('Foo', substr($task->getOutput(), -3));
 
-        $this->assertInstanceOf('Composer\IO\IOInterface', $task->getIO());
+        $this->assertInstanceOf(IOInterface::class, $task->getIO());
         $task->getIO()->write('Test');
         $this->assertEquals('FooTest' . "\n", substr($task->getOutput(), -8));
         $skip = strlen($task->getOutput());
@@ -83,7 +84,7 @@ class TaskTest extends TestCase
     public function testRunningTwiceRaisesException()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -103,7 +104,7 @@ class TaskTest extends TestCase
     public function testGetOutputFromNotStartedTaskReturnsEmptyString()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -121,7 +122,7 @@ class TaskTest extends TestCase
     public function testAddOutputToNotStartedTaskRaisesException()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -137,7 +138,7 @@ class TaskTest extends TestCase
     public function testErrorInExecutionWillAddErrorOutput()
     {
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -168,7 +169,7 @@ class TaskTest extends TestCase
     {
         $log  = $this->getTempFile('testlog');
         $task = $this
-            ->getMockBuilder('Tenside\Task\Task')
+            ->getMockBuilder(Task::class)
             ->setConstructorArgs(
                 [new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING, 'log' => $log])]
             )

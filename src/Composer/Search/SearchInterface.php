@@ -19,7 +19,7 @@
  * @filesource
  */
 
-namespace Tenside\Composer\Search;
+namespace Tenside\Core\Composer\Search;
 
 use Composer\Package\PackageInterface;
 

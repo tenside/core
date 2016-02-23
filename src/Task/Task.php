@@ -18,14 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Task;
+namespace Tenside\Core\Task;
 
 use Composer\IO\ConsoleIO;
 use Composer\IO\IOInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
-use Tenside\Util\JsonArray;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * Abstract base class for tasks.

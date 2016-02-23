@@ -18,15 +18,15 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\Core\Test\Composer;
 
 use Composer\Package\CompletePackage;
 use Composer\Package\Link;
 use Composer\Package\RootPackage;
 use Composer\Repository\ArrayRepository;
 use Composer\Semver\Constraint\Constraint;
-use Tenside\Composer\PackageConverter;
-use Tenside\Test\TestCase;
+use Tenside\Core\Composer\PackageConverter;
+use Tenside\Core\Test\TestCase;
 
 /**
  * Test the PackageConverter.

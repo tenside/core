@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Test;
+namespace Tenside\Core\Test;
 
 use Symfony\Component\Filesystem\Filesystem;
 
