@@ -21,26 +21,15 @@
     "ext-zip": "*",
     "ext-openssl": "*",
     "composer/composer": "~1.0@dev",
+    "composer/semver": "~1.2",
     "firebase/php-jwt": "~2.2",
-    "monolog/monolog": "~1.17",
-    "symfony/config": "~2.8",
     "symfony/console": "~2.8",
-    "symfony/dependency-injection": "~2.8",
-    "symfony/framework-bundle": "~2.8",
     "symfony/finder": "~2.8",
     "symfony/http-foundation": "~2.8",
-    "symfony/http-kernel": "~2.8",
-    "symfony/process": "~2.8",
-    "symfony/security": "~2.8",
-    "symfony/routing": "~2.8",
-    "symfony/yaml": "~2.8"
+    "symfony/process": "~2.8"
   },
   "require-dev": {
-    "phpcq/all-tasks": "~1.1",
-    "nelmio/api-doc-bundle": "~2.10"
-  },
-  "suggest": {
-    "nelmio/api-doc-bundle": "To benefit from the API documentation annotation"
+    "phpcq/all-tasks": "~1.1"
   },
   "autoload": {
     "psr-4": {
