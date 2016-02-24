@@ -18,14 +18,16 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task;
+namespace Tenside\Core\Task\Composer;
 
 use Composer\Command\Command;
 use Composer\Factory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tenside\Core\Task\WrappedCommand\WrappedCommandTrait;
+use Tenside\Core\Task\Composer\WrappedCommand\WrappedCommandTrait;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Task\TaskOutput;
 
 /**
  * This task provides the basic framework for building tasks that perform composer commands.

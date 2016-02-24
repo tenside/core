@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task\WrappedCommand;
+namespace Tenside\Core\Task\Composer\WrappedCommand;
 
 use Composer\Composer;
 

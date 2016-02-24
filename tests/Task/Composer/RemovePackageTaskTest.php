@@ -18,26 +18,47 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task;
+namespace Tenside\Core\Test\Task\Composer;
 
-use Tenside\Core\Task\InstallTask;
-use Tenside\Core\Task\UpgradeTask;
+use Tenside\Core\Task\Composer\InstallTask;
+use Tenside\Core\Task\Composer\RemovePackageTask;
 use Tenside\Core\Test\TestCase;
 use Tenside\Core\Util\JsonArray;
-use Tenside\Core\Util\JsonFile;
 
 /**
- * This class tests the install task.
+ * This class tests the remove package task.
  */
-class UpgradeTaskTest extends TestCase
+class RemovePackageTaskTest extends TestCase
 {
     /**
-     * Test that the base functionality works.
+     * Test that the getting of the type name returns the known value.
      *
      * @return void
      */
-    public function testAll()
+    public function testGetTypeIsCorrect()
     {
+        $task = new RemovePackageTask(
+            new JsonArray(
+                [
+                    RemovePackageTask::SETTING_TYPE    => 'remove-package',
+                    RemovePackageTask::SETTING_ID      => 'remove-task-id',
+                    RemovePackageTask::SETTING_PACKAGE => ['vendor/dependency-name', '1.0.0'],
+                    RemovePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                           => RemovePackageTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $this->assertEquals('remove-package', $task->getType());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
         // Redirect composer config and cache into the test temp dir.
         putenv('COMPOSER_HOME=' . $this->getTempDir() . DIRECTORY_SEPARATOR . '.composer');
         $this->createFixture(
@@ -68,7 +89,7 @@ class UpgradeTaskTest extends TestCase
 
         $this->provideFixture('test-repository' . DIRECTORY_SEPARATOR. 'vendor-package-name-1.0.0.zip');
         $this->provideFixture('test-repository' . DIRECTORY_SEPARATOR. 'vendor-dependency-name-1.0.0.zip');
-        $this->provideFixture($newZip = 'test-repository' . DIRECTORY_SEPARATOR. 'vendor-dependency-name-1.1.0.zip');
+        $this->provideFixture('test-repository' . DIRECTORY_SEPARATOR. 'vendor-dependency-name-1.1.0.zip');
 
         // First we need a proper installation.
         $task = new InstallTask(
@@ -79,44 +100,44 @@ class UpgradeTaskTest extends TestCase
                     InstallTask::SETTING_PACKAGE         => 'vendor/package-name',
                     InstallTask::SETTING_VERSION         => '1.0.0',
                     InstallTask::SETTING_DESTINATION_DIR => $this->getTempDir(),
-                    'status'                             => InstallTask::STATE_PENDING,
+                    'status'                             => InstallTask::STATE_PENDING
                 ]
             )
         );
         $task->perform($this->getTempFile('logs/install-task.log'));
 
         if ($task->getStatus() !== InstallTask::STATE_FINISHED) {
-            $this->markTestSkipped('Upgrade task can not be tested, test installation failed.');
+            $this->markTestSkipped('Remove package task can not be tested, test installation failed.');
             return;
         }
+    }
 
-        // Now the upgrade.
-        $file = new JsonFile($this->getTempDir() . DIRECTORY_SEPARATOR . 'composer.json');
-        $file->set('repositories', ['packagist' => false]);
-        $file->set('require/' . $file->escape('vendor/dependency-name'), '~1.0');
-        unset($file);
-
-        $task = new UpgradeTask(
+    /**
+     * Test that the base functionality works.
+     *
+     * @return void
+     */
+    public function testAll()
+    {
+        $task = new RemovePackageTask(
             new JsonArray(
                 [
-                    UpgradeTask::SETTING_TYPE            => 'upgrade',
-                    UpgradeTask::SETTING_ID              => 'upgrade-task-id',
-                    UpgradeTask::SETTING_HOME            => $this->getTempDir(),
-                    UpgradeTask::SETTING_PACKAGES        => ['vendor/dependency-name'],
-                    'status'                             => UpgradeTask::STATE_PENDING,
+                    RemovePackageTask::SETTING_TYPE    => 'remove-package',
+                    RemovePackageTask::SETTING_ID      => 'remove-task-id',
+                    RemovePackageTask::SETTING_PACKAGE => ['vendor/dependency-name'],
+                    RemovePackageTask::SETTING_HOME    => $this->getTempDir(),
+                    'status'                           => RemovePackageTask::STATE_PENDING
                 ]
             )
         );
 
-        $task->perform($this->getTempFile('logs/task.log'));
+        $task->perform($this->getTempFile('logs/remove-task.log'));
 
-        $this->assertEquals('upgrade-task-id', $task->getId());
-        $this->assertEquals(UpgradeTask::STATE_FINISHED, $task->getStatus());
+        $this->assertEquals(RemovePackageTask::STATE_FINISHED, $task->getStatus());
+        $this->assertContains('Removing vendor/dependency-name (1.0.0)', $task->getOutput());
 
-        $this->assertContains('Installing vendor/dependency-name (1.1.0)', $task->getOutput());
-
-        $this->assertZipHasBeenUnpackedTo(
-            $this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $newZip,
+        $this->assertFileNotExists(
+            $this->getTempDir() . DIRECTORY_SEPARATOR .
             'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
         );
     }

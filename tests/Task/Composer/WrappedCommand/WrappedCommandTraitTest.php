@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task\WrappedCommand;
+namespace Tenside\Core\Test\Task\Composer\WrappedCommand;
 
 use Composer\Composer;
-use Tenside\Core\Task\WrappedCommand\WrappedCommandTrait;
+use Tenside\Core\Task\Composer\WrappedCommand\WrappedCommandTrait;
 use Tenside\Core\Test\TestCase;
 
 /**

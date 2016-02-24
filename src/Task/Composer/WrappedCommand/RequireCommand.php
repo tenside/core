@@ -18,14 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task\WrappedCommand;
+namespace Tenside\Core\Task\Composer\WrappedCommand;
 
-use Composer\Command\RemoveCommand as BaseRemoveCommand;
+use Composer\Command\RequireCommand as BaseRequireCommand;
 
 /**
- * This class wraps the remove command to make it usable in tenside.
+ * This class wraps the require command to make it usable in tenside.
  */
-class RemoveCommand extends BaseRemoveCommand
+class RequireCommand extends BaseRequireCommand
 {
     use WrappedCommandTrait;
 }

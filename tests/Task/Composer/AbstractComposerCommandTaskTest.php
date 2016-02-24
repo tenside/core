@@ -18,14 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task;
+namespace Tenside\Core\Test\Task\Composer;
 
 use Composer\Command\Command;
 use Composer\Composer;
 use Symfony\Component\Console\Input\ArrayInput;
-use Tenside\Core\Task\AbstractComposerCommandTask;
+use Tenside\Core\Task\Composer\AbstractComposerCommandTask;
 use Tenside\Core\Task\Task;
-use Tenside\Core\Test\Task\WrappedCommand\WrappedTestCommand;
+use Tenside\Core\Test\Task\Composer\WrappedCommand\WrappedTestCommand;
 use Tenside\Core\Test\TestCase;
 use Tenside\Core\Util\JsonArray;
 

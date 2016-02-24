@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task;
+namespace Tenside\Core\Task\Composer;
 
 use Composer\Command\UpdateCommand;
 use Composer\Factory;

@@ -18,15 +18,15 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task;
+namespace Tenside\Core\Task\Composer;
 
-use Tenside\Core\Task\WrappedCommand\RequireCommand;
+use Tenside\Core\Task\Composer\WrappedCommand\RemoveCommand;
 use Tenside\Core\Util\RuntimeHelper;
 
 /**
  * This class holds the information for an installation request of a package.
  */
-class RequirePackageTask extends AbstractPackageManipulatingTask
+class RemovePackageTask extends AbstractPackageManipulatingTask
 {
     /**
      * Returns 'upgrade'.
@@ -35,7 +35,7 @@ class RequirePackageTask extends AbstractPackageManipulatingTask
      */
     public function getType()
     {
-        return 'require-package';
+        return 'remove-package';
     }
 
     /**
@@ -47,6 +47,6 @@ class RequirePackageTask extends AbstractPackageManipulatingTask
         // composer instance.
         RuntimeHelper::setupHome($this->getHome());
 
-        return $this->attachComposerFactory(new RequireCommand());
+        return $this->attachComposerFactory(new RemoveCommand());
     }
 }

@@ -18,14 +18,15 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task\WrappedCommand;
+namespace Tenside\Core\Test\Task\Composer\WrappedCommand;
 
-use Composer\Command\RequireCommand as BaseRequireCommand;
+use Composer\Command\Command;
+use Tenside\Core\Task\Composer\WrappedCommand\WrappedCommandTrait;
 
 /**
- * This class wraps the require command to make it usable in tenside.
+ * Simple test command for unit tests.
  */
-class RequireCommand extends BaseRequireCommand
+class WrappedTestCommand extends Command
 {
     use WrappedCommandTrait;
 }

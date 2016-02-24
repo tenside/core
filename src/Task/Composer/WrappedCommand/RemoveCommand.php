@@ -18,15 +18,14 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task\WrappedCommand;
+namespace Tenside\Core\Task\Composer\WrappedCommand;
 
-use Composer\Command\Command;
-use Tenside\Core\Task\WrappedCommand\WrappedCommandTrait;
+use Composer\Command\RemoveCommand as BaseRemoveCommand;
 
 /**
- * Simple test command for unit tests.
+ * This class wraps the remove command to make it usable in tenside.
  */
-class WrappedTestCommand extends Command
+class RemoveCommand extends BaseRemoveCommand
 {
     use WrappedCommandTrait;
 }

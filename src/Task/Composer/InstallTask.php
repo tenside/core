@@ -18,13 +18,15 @@
  * @filesource
  */
 
-namespace Tenside\Core\Task;
+namespace Tenside\Core\Task\Composer;
 
 use Composer\Command\CreateProjectCommand;
 use Composer\IO\IOInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Tenside\Core\Task\Task;
+use Tenside\Core\Task\TaskOutput;
 
 /**
  * This class holds the information for an upgrade of some or all packages.
