@@ -18,9 +18,9 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Task;
+namespace Tenside\Core\Test\Task\Composer;
 
-use Tenside\Core\Task\InstallTask;
+use Tenside\Core\Task\Composer\InstallTask;
 use Tenside\Core\Test\TestCase;
 use Tenside\Core\Util\JsonArray;
 
