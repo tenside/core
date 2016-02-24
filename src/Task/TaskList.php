@@ -20,8 +20,6 @@
 
 namespace Tenside\Core\Task;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Tenside\Core\Events\CreateTaskEvent;
 use Tenside\Core\Util\JsonArray;
 use Tenside\Core\Util\JsonFile;
 
@@ -38,23 +36,23 @@ class TaskList
     private $dataDir;
 
     /**
-     * The event dispatcher.
+     * The task factory to use.
      *
-     * @var EventDispatcherInterface
+     * @var TaskFactoryInterface
      */
-    private $dispatcher;
+    private $factory;
 
     /**
      * Create a new instance.
      *
-     * @param string                   $dataDir         The directory to keep the database in.
+     * @param string               $dataDir The directory to keep the database in.
      *
-     * @param EventDispatcherInterface $eventDispatcher The event dispatcher.
+     * @param TaskFactoryInterface $factory The task factory to use.
      */
-    public function __construct($dataDir, EventDispatcherInterface $eventDispatcher)
+    public function __construct($dataDir, TaskFactoryInterface $factory)
     {
-        $this->dataDir    = $dataDir;
-        $this->dispatcher = $eventDispatcher;
+        $this->dataDir = $dataDir;
+        $this->factory = $factory;
     }
 
     /**
@@ -200,10 +198,12 @@ class TaskList
      */
     private function createTaskFromMetaData(JsonArray $config)
     {
-        $event = new CreateTaskEvent($config);
-        $this->dispatcher->dispatch('tenside.create_task', $event);
+        $typeName = $config->get(Task::SETTING_TYPE);
+        if ($this->factory->isTypeSupported($typeName)) {
+            return $this->factory->createInstance($typeName, $config);
+        }
 
-        return $event->getTask();
+        return null;
     }
 
     /**

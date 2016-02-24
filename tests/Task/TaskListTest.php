@@ -20,9 +20,8 @@
 
 namespace Tenside\Core\Test\Task;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Tenside\Core\Events\CreateTaskEvent;
 use Tenside\Core\Task\Task;
+use Tenside\Core\Task\TaskFactoryInterface;
 use Tenside\Core\Task\TaskList;
 use Tenside\Core\Test\TestCase;
 use Tenside\Core\Util\JsonArray;
@@ -35,31 +34,38 @@ class TaskListTest extends TestCase
     /**
      * Create the event dispatcher with a mocked listener.
      *
-     * @return EventDispatcher
+     * @return TaskFactoryInterface
      */
-    private function getEventDispatcher()
+    private function getFactory()
     {
-        $unitTest   = $this;
-        $dispatcher = new EventDispatcher();
-        $listener   = function (CreateTaskEvent $event) use ($unitTest) {
-            if ('unknown-type' === $event->getMetaData()->get(Task::SETTING_TYPE)) {
-                return;
+        $factory = $this
+            ->getMockBuilder(TaskFactoryInterface::class)
+            ->getMockForAbstractClass();
+
+        $factory->method('isTypeSupported')->willReturnCallback(
+            function ($taskType) {
+                return $taskType !== 'unknown-type';
             }
+        );
 
-            $task = $this
-                ->getMockBuilder(Task::class)
-                ->setConstructorArgs([$event->getMetaData()])
-                ->setMethods(['getType', 'perform'])
-                ->getMockForAbstractClass();
+        $factory->method('createInstance')->willReturnCallback(
+            function ($taskType, JsonArray $metaData) {
+                if ($taskType === 'unknown-type') {
+                    throw new \InvalidArgumentException('UNSUPPORTED TYPE');
+                }
+                $task = $this
+                    ->getMockBuilder(Task::class)
+                    ->setConstructorArgs([$metaData])
+                    ->setMethods(['getType', 'perform'])
+                    ->getMockForAbstractClass();
 
-            $task->method('getType')->willReturn($event->getMetaData()->get(Task::SETTING_TYPE));
+                $task->method('getType')->willReturn($metaData->get(Task::SETTING_TYPE));
 
-            $event->setTask($task);
-        };
+                return $task;
+            }
+        );
 
-        $dispatcher->addListener('tenside.create_task', $listener);
-
-        return $dispatcher;
+        return $factory;
     }
 
     /**
@@ -77,7 +83,7 @@ class TaskListTest extends TestCase
      */
     public function testEmptyListDoesNotReturnTask()
     {
-        $list = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list = new TaskList($this->workDir, $this->getFactory());
 
         $this->assertNull($list->dequeue());
     }
@@ -89,7 +95,7 @@ class TaskListTest extends TestCase
      */
     public function testAddTask()
     {
-        $list = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list = new TaskList($this->workDir, $this->getFactory());
 
         $taskId = $list->queue('upgrade');
 
@@ -105,7 +111,7 @@ class TaskListTest extends TestCase
      */
     public function testUnknownIdReturnsNull()
     {
-        $list = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list = new TaskList($this->workDir, $this->getFactory());
 
         $taskId = $list->queue('upgrade');
         $this->assertNull($list->getTask($taskId . 'some-suffix-to-break-it'));
@@ -125,7 +131,7 @@ class TaskListTest extends TestCase
      */
     public function testUnknownTypeRaisesException()
     {
-        $list = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list = new TaskList($this->workDir, $this->getFactory());
 
         $list->queue('unknown-type');
     }
@@ -137,7 +143,7 @@ class TaskListTest extends TestCase
      */
     public function testListReturnsAsFifo()
     {
-        $list   = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list   = new TaskList($this->workDir, $this->getFactory());
         $first  = $list->queue('upgrade', new JsonArray(['test' => 'value1']));
         $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
 
@@ -159,7 +165,7 @@ class TaskListTest extends TestCase
      */
     public function testListGetNextReturnsCorrectTasksAndRemoveRemovesThem()
     {
-        $list   = new TaskList($this->workDir, $this->getEventDispatcher());
+        $list   = new TaskList($this->workDir, $this->getFactory());
         $first  = $list->queue('upgrade', new JsonArray(['test' => 'value1']));
         $second = $list->queue('upgrade', new JsonArray(['test' => 'value2']));
 
