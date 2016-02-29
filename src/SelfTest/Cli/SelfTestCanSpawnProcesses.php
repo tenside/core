@@ -21,7 +21,7 @@
 namespace Tenside\SelfTest\Cli;
 
 use Tenside\SelfTest\AbstractSelfTest;
-use Tenside\Util\FunctionAvailabilityCheck;
+use Tenside\Core\Util\FunctionAvailabilityCheck;
 
 /**
  * This class tests that proc_open is available.
