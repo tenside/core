@@ -20,7 +20,7 @@
 
 namespace Tenside\Core\Task\Composer;
 
-use Composer\Command\Command;
+use Composer\Command\BaseCommand;
 use Composer\Factory;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,7 +37,7 @@ abstract class AbstractComposerCommandTask extends Task
     /**
      * Prepare the Command instance to execute.
      *
-     * @return Command
+     * @return BaseCommand
      */
     abstract protected function prepareCommand();
 
@@ -51,11 +51,11 @@ abstract class AbstractComposerCommandTask extends Task
     /**
      * Add missing definition options to the command usually defined by the application.
      *
-     * @param Command $command The command to fix.
+     * @param BaseCommand $command The command to fix.
      *
      * @return void
      */
-    protected function fixCommandDefinition(Command $command)
+    protected function fixCommandDefinition(BaseCommand $command)
     {
         $definition = $command->getDefinition();
 
@@ -74,13 +74,13 @@ abstract class AbstractComposerCommandTask extends Task
     /**
      * Attach the composer factory to the command.
      *
-     * @param Command $command The command to patch.
+     * @param BaseCommand $command The command to patch.
      *
-     * @return Command
+     * @return BaseCommand
      *
      * @throws \InvalidArgumentException When no setComposerFactory method is declared.
      */
-    protected function attachComposerFactory(Command $command)
+    protected function attachComposerFactory(BaseCommand $command)
     {
         if (!method_exists($command, 'setComposerFactory')) {
             throw new \InvalidArgumentException('The passed command does not implement method setComposerFactory()');
@@ -99,7 +99,7 @@ abstract class AbstractComposerCommandTask extends Task
     /**
      * Execute the command and throw exceptions on errors.
      *
-     * @param Command         $command The command to execute.
+     * @param BaseCommand     $command The command to execute.
      *
      * @param InputInterface  $input   The input to use.
      *
@@ -109,7 +109,7 @@ abstract class AbstractComposerCommandTask extends Task
      *
      * @throws \RuntimeException On exceptions or when the command has an non zero exit code.
      */
-    protected function executeCommand(Command $command, InputInterface $input, OutputInterface $output)
+    protected function executeCommand(BaseCommand $command, InputInterface $input, OutputInterface $output)
     {
         try {
             if (0 !== ($statusCode = $command->run($input, $output))) {

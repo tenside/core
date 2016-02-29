@@ -20,7 +20,7 @@
 
 namespace Tenside\Core\Test\Task\Composer;
 
-use Composer\Command\Command;
+use Composer\Command\BaseCommand;
 use Composer\Composer;
 use Symfony\Component\Console\Input\ArrayInput;
 use Tenside\Core\Task\Composer\AbstractComposerCommandTask;
@@ -48,7 +48,7 @@ class AbstractComposerCommandTaskTest extends TestCase
             );
 
         $command = $this
-            ->getMockBuilder(Command::class)
+            ->getMockBuilder(BaseCommand::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -79,7 +79,7 @@ class AbstractComposerCommandTaskTest extends TestCase
             );
 
         $command = $this
-            ->getMockBuilder(Command::class)
+            ->getMockBuilder(BaseCommand::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -108,7 +108,7 @@ class AbstractComposerCommandTaskTest extends TestCase
             );
 
         $command = $this
-            ->getMockBuilder(Command::class)
+            ->getMockBuilder(BaseCommand::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods(['execute'])
             ->getMockForAbstractClass();
@@ -161,7 +161,7 @@ class AbstractComposerCommandTaskTest extends TestCase
             );
 
         $command = $this
-            ->getMockBuilder(Command::class)
+            ->getMockBuilder(BaseCommand::class)
             ->setConstructorArgs(['testcommand'])
             ->setMethods([])
             ->getMockForAbstractClass();

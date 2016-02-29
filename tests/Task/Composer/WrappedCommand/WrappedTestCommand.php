@@ -20,13 +20,13 @@
 
 namespace Tenside\Core\Test\Task\Composer\WrappedCommand;
 
-use Composer\Command\Command;
+use Composer\Command\BaseCommand;
 use Tenside\Core\Task\Composer\WrappedCommand\WrappedCommandTrait;
 
 /**
  * Simple test command for unit tests.
  */
-class WrappedTestCommand extends Command
+class WrappedTestCommand extends BaseCommand
 {
     use WrappedCommandTrait;
 }
