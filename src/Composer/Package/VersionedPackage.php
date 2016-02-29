@@ -38,7 +38,7 @@ class VersionedPackage implements PackageInterface
      * @var PackageInterface
      */
     protected $package;
-
+    
     /**
      * The version list.
      *

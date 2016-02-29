@@ -25,6 +25,8 @@ use Tenside\Core\Util\JsonFile;
 
 /**
  * This class abstracts the composer.json file manipulation.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ComposerJson extends JsonFile
 {

@@ -191,12 +191,11 @@ class RepositorySearch extends AbstractSearch
      */
     protected function decorateWithPackagistStats(VersionedPackage $package)
     {
-
         $rfs        = new RemoteFilesystem(new BufferIO());
         $requestUrl = sprintf('http://packagist.org/packages/%1$s.json', $package->getName());
         $jsonData   = $rfs->getContents($requestUrl, $requestUrl);
         try {
-            $data       = new JsonArray($jsonData);
+            $data = new JsonArray($jsonData);
         } catch (\RuntimeException $exception) {
             return  $package;
         }

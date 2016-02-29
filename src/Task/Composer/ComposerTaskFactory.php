@@ -55,6 +55,8 @@ class ComposerTaskFactory implements TaskFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException For unsupported task types.
      */
     public function createInstance($taskType, JsonArray $metaData)
     {
