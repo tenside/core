@@ -78,7 +78,6 @@ class CompositeTaskFactory implements TaskFactoryInterface
     public function createInstance($taskType, JsonArray $metaData)
     {
         if (!($factory = $this->getFactoryForType($taskType)) instanceof TaskFactoryInterface) {
-
             throw new \InvalidArgumentException('Do not know how to create task.');
         }
 
