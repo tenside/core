@@ -48,7 +48,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
 
         $this->log = new BufferedOutput();
 
-        if ($this->checkInPath()) {
+        if ($this->isBinaryAvailableInPath()) {
             return;
         }
 
@@ -62,7 +62,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
      *
      * @return bool
      */
-    private function checkInPath()
+    private function isBinaryAvailableInPath()
     {
         $paths = array_filter(array_map('trim', explode(PATH_SEPARATOR, getenv('PATH'))));
         if (empty($paths)) {
@@ -74,7 +74,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
             ];
         }
 
-        return $this->testBinaries($this->findBinaries($paths));
+        return $this->isAnyBinaryValid($this->findBinaries($paths));
     }
 
     /**
@@ -84,7 +84,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
      *
      * @return bool
      */
-    private function testBinaries($binaries)
+    private function isAnyBinaryValid($binaries)
     {
         foreach ($binaries as $binary) {
             if ($version = $this->testCliRuntime($binary)) {
