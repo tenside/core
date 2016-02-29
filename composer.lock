@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "fa572f345252ca533b4fc530ca8e5bc13d35b08f"
+                "reference": "cc14bb3ba99eaf2b1ee45bf292962551b4f1436d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/fa572f345252ca533b4fc530ca8e5bc13d35b08f",
-                "reference": "fa572f345252ca533b4fc530ca8e5bc13d35b08f",
+                "url": "https://api.github.com/repos/composer/composer/zipball/cc14bb3ba99eaf2b1ee45bf292962551b4f1436d",
+                "reference": "cc14bb3ba99eaf2b1ee45bf292962551b4f1436d",
                 "shasum": ""
             },
             "require": {
@@ -80,7 +80,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2016-02-23 16:04:12"
+            "time": "2016-02-29 19:10:08"
         },
         {
             "name": "composer/semver",
@@ -88,12 +88,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3"
+                "reference": "df4463baa9f44fe6cf0a6da4fde2934d4c0a2747"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3",
-                "reference": "0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3",
+                "url": "https://api.github.com/repos/composer/semver/zipball/df4463baa9f44fe6cf0a6da4fde2934d4c0a2747",
+                "reference": "df4463baa9f44fe6cf0a6da4fde2934d4c0a2747",
                 "shasum": ""
             },
             "require": {
@@ -142,7 +142,7 @@
                 "validation",
                 "versioning"
             ],
-            "time": "2015-11-10 11:17:42"
+            "time": "2016-02-25 22:23:39"
         },
         {
             "name": "composer/spdx-licenses",
@@ -297,12 +297,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "37810e922eed92b0d6a6abc745761c6a0b0a9cd7"
+                "reference": "5a49ebd966390d757f74b55e4731d509e38ea1eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/37810e922eed92b0d6a6abc745761c6a0b0a9cd7",
-                "reference": "37810e922eed92b0d6a6abc745761c6a0b0a9cd7",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/5a49ebd966390d757f74b55e4731d509e38ea1eb",
+                "reference": "5a49ebd966390d757f74b55e4731d509e38ea1eb",
                 "shasum": ""
             },
             "require": {
@@ -355,7 +355,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2016-02-17 15:37:01"
+            "time": "2016-02-29 21:23:18"
         },
         {
             "name": "seld/cli-prompt",
@@ -501,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "fa1df6d8b7dea4a86b5297ba68fbbbb67343d2cc"
+                "reference": "56cc5caf051189720b8de974e4746090aaa10d44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/fa1df6d8b7dea4a86b5297ba68fbbbb67343d2cc",
-                "reference": "fa1df6d8b7dea4a86b5297ba68fbbbb67343d2cc",
+                "url": "https://api.github.com/repos/symfony/console/zipball/56cc5caf051189720b8de974e4746090aaa10d44",
+                "reference": "56cc5caf051189720b8de974e4746090aaa10d44",
                 "shasum": ""
             },
             "require": {
@@ -553,7 +553,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-22 15:02:30"
+            "time": "2016-02-28 16:20:50"
         },
         {
             "name": "symfony/filesystem",
@@ -659,12 +659,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "8bbbecd79ae14cb9f597b7343f312aa6b9ce7200"
+                "reference": "6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/8bbbecd79ae14cb9f597b7343f312aa6b9ce7200",
-                "reference": "8bbbecd79ae14cb9f597b7343f312aa6b9ce7200",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b",
+                "reference": "6f4e41c41e7d352ed9adf71ff6f2ec1756490a1b",
                 "shasum": ""
             },
             "require": {
@@ -705,7 +705,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-22 16:12:45"
+            "time": "2016-02-28 16:20:50"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -772,12 +772,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php54.git",
-                "reference": "74663d5a2ff3c530c1bc0571500e0feec9094054"
+                "reference": "9ba741ca01c77282ecf5796c2c1d667f03454ffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php54/zipball/74663d5a2ff3c530c1bc0571500e0feec9094054",
-                "reference": "74663d5a2ff3c530c1bc0571500e0feec9094054",
+                "url": "https://api.github.com/repos/symfony/polyfill-php54/zipball/9ba741ca01c77282ecf5796c2c1d667f03454ffb",
+                "reference": "9ba741ca01c77282ecf5796c2c1d667f03454ffb",
                 "shasum": ""
             },
             "require": {
@@ -822,7 +822,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-01-20 09:13:37"
+            "time": "2016-01-25 19:13:00"
         },
         {
             "name": "symfony/polyfill-php55",
@@ -1348,12 +1348,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/coding-standard.git",
-                "reference": "5872f031c23b0d5c527e0e61e8b6f2cc4a43134e"
+                "reference": "7e859419e15169e4dda1243e684eff0e1a7f4b29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/coding-standard/zipball/5872f031c23b0d5c527e0e61e8b6f2cc4a43134e",
-                "reference": "5872f031c23b0d5c527e0e61e8b6f2cc4a43134e",
+                "url": "https://api.github.com/repos/phpcq/coding-standard/zipball/7e859419e15169e4dda1243e684eff0e1a7f4b29",
+                "reference": "7e859419e15169e4dda1243e684eff0e1a7f4b29",
                 "shasum": ""
             },
             "require": {
@@ -1392,7 +1392,7 @@
             ],
             "description": "PHP code quality project coding standard",
             "homepage": "http://phpcq.org/",
-            "time": "2016-02-05 07:16:08"
+            "time": "2015-08-12 22:32:56"
         },
         {
             "name": "phpcq/phpcq",
@@ -2304,12 +2304,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df"
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/6e7133793a8e5a5714a551a8324337374be209df",
-                "reference": "6e7133793a8e5a5714a551a8324337374be209df",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
+                "reference": "dc7a29032cf72b54f36dac15a1ca5b3a1b6029bf",
                 "shasum": ""
             },
             "require": {
@@ -2346,7 +2346,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2015-12-02 08:37:27"
+            "time": "2016-02-26 18:40:46"
         },
         {
             "name": "sebastian/exporter",
@@ -2692,12 +2692,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "825c050244393fc4231e5bf97f7569c2831795aa"
+                "reference": "be0a7044ec8f664c07f117e86633250122af6dbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/825c050244393fc4231e5bf97f7569c2831795aa",
-                "reference": "825c050244393fc4231e5bf97f7569c2831795aa",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/be0a7044ec8f664c07f117e86633250122af6dbf",
+                "reference": "be0a7044ec8f664c07f117e86633250122af6dbf",
                 "shasum": ""
             },
             "require": {
@@ -2761,7 +2761,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2016-02-22 03:53:15"
+            "time": "2016-02-25 21:37:34"
         },
         {
             "name": "symfony/config",
@@ -2822,12 +2822,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "7cdf5f9ca7d90b768189c759f338b0cf4ca05e76"
+                "reference": "c6c4ab94df002d6f3648b488ca96727c4b9b2df8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/7cdf5f9ca7d90b768189c759f338b0cf4ca05e76",
-                "reference": "7cdf5f9ca7d90b768189c759f338b0cf4ca05e76",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/c6c4ab94df002d6f3648b488ca96727c4b9b2df8",
+                "reference": "c6c4ab94df002d6f3648b488ca96727c4b9b2df8",
                 "shasum": ""
             },
             "require": {
@@ -2873,7 +2873,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-22 01:22:58"
+            "time": "2016-02-28 16:50:15"
         },
         {
             "name": "symfony/yaml",
