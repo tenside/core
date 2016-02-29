@@ -66,12 +66,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
     {
         $paths = array_filter(array_map('trim', explode(PATH_SEPARATOR, getenv('PATH'))));
         if (empty($paths)) {
-            // FIXME: Check for Windows here.
-            $paths = [
-                '/usr/local/bin',
-                '/usr/bin',
-                '/bin',
-            ];
+            $paths = $this->getDefaultPaths();
         }
 
         return $this->isAnyBinaryValid($this->findBinaries($paths));
@@ -201,5 +196,26 @@ class SelfTestCliRuntime extends AbstractSelfTest
         }
 
         return $output[1];
+    }
+
+    /**
+     * Retrieve the list of default paths for the current OS.
+     *
+     * @return string[]
+     */
+    private function getDefaultPaths()
+    {
+        if (defined('PHP_WINDOWS_VERSION_BUILD')) {
+            return [
+                'C:\php',
+                'C:\php5'
+            ];
+        }
+
+        return [
+            '/usr/local/bin',
+            '/usr/bin',
+            '/bin',
+        ];
     }
 }
