@@ -114,7 +114,7 @@ class InstallTask extends Task
         } finally {
             $this->restoreEnvironment();
         }
-        // FIXME: delete recursively?
+
         rmdir($this->tempDir);
     }
 
