@@ -73,7 +73,7 @@ class RepositorySearch extends AbstractSearch
             $repoConfig = $this->repository->getRepoConfig();
             if (!preg_match('{^[\w.]+\??://}', $repoConfig['url'])) {
                 // assume https as the default protocol
-                $repoConfig['url'] = 'https://'.$repoConfig['url'];
+                $repoConfig['url'] = 'https://' . $repoConfig['url'];
             }
             $this->decorateBaseUrl = rtrim($repoConfig['url'], '/') . '/packages/%1$s.json';
         }
@@ -239,7 +239,7 @@ class RepositorySearch extends AbstractSearch
     /**
      * Retrieve the composite repository.
      *
-     * @return RepositoryInterface|null
+     * @return RepositoryInterface
      */
     public function getRepository()
     {
