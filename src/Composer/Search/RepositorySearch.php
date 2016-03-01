@@ -48,7 +48,7 @@ class RepositorySearch extends AbstractSearch
     /**
      * The repository to search on.
      *
-     * @var RepositoryInterface|null
+     * @var RepositoryInterface
      */
     protected $repository;
 
@@ -57,7 +57,7 @@ class RepositorySearch extends AbstractSearch
      *
      * @param RepositoryInterface $repository
      */
-    public function __construct(RepositoryInterface $repository = null)
+    public function __construct(RepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -219,20 +219,6 @@ class RepositorySearch extends AbstractSearch
     public function getRepository()
     {
         return $this->repository;
-    }
-
-    /**
-     * Set the composite repository.
-     *
-     * @param RepositoryInterface $repository The composite repository.
-     *
-     * @return $this
-     */
-    public function setRepository(RepositoryInterface $repository)
-    {
-        $this->repository = $repository;
-
-        return $this;
     }
 
     /**
