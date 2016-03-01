@@ -204,8 +204,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 continue;
             }
             $this->assertEquals(
-                sprintf('%u', $stat['crc']),
-                hexdec(hash_file('crc32b', $destinationDir . DIRECTORY_SEPARATOR . $fileName)),
+                sprintf('%08x', $stat['crc']),
+                hash_file('crc32b', $destinationDir . DIRECTORY_SEPARATOR . $fileName),
                 'CRC mismatch for ' . $fileName
             );
         }
