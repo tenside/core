@@ -23,6 +23,7 @@ namespace Tenside\Core\Composer\Search;
 
 use Composer\IO\BufferIO;
 use Composer\Package\PackageInterface;
+use Composer\Repository\ComposerRepository;
 use Composer\Repository\RepositoryInterface;
 use Composer\Util\RemoteFilesystem;
 use Tenside\Core\Composer\Package\VersionedPackage;
@@ -53,13 +54,29 @@ class RepositorySearch extends AbstractSearch
     protected $repository;
 
     /**
+     * Base url for obtaining meta data (i.e. "https://packagist.org/packages/").
+     *
+     * @var string|null
+     */
+    private $decorateBaseUrl;
+
+    /**
      * Create a new instance.
      *
      * @param RepositoryInterface $repository
      */
     public function __construct(RepositoryInterface $repository)
     {
-        $this->repository = $repository;
+        $this->repository      = $repository;
+        $this->decorateBaseUrl = null;
+        if ($this->repository instanceof ComposerRepository) {
+            $repoConfig = $this->repository->getRepoConfig();
+            if (!preg_match('{^[\w.]+\??://}', $repoConfig['url'])) {
+                // assume https as the default protocol
+                $repoConfig['url'] = 'https://'.$repoConfig['url'];
+            }
+            $this->decorateBaseUrl = rtrim($repoConfig['url'], '/') . '/packages/%1$s.json';
+        }
     }
 
     /**
@@ -190,12 +207,20 @@ class RepositorySearch extends AbstractSearch
      */
     protected function decorateWithPackagistStats(VersionedPackage $package)
     {
+        if (null === $this->decorateBaseUrl) {
+            return $package;
+        }
+
         $rfs        = new RemoteFilesystem(new BufferIO());
-        $requestUrl = sprintf('http://packagist.org/packages/%1$s.json', $package->getName());
-        $jsonData   = $rfs->getContents($requestUrl, $requestUrl);
+        $requestUrl = sprintf($this->decorateBaseUrl, $package->getName());
+        if (!($jsonData = $rfs->getContents($requestUrl, $requestUrl))) {
+            $this->decorateBaseUrl = null;
+            return $package;
+        }
         try {
             $data = new JsonArray($jsonData);
         } catch (\RuntimeException $exception) {
+            $this->decorateBaseUrl = null;
             return  $package;
         }
 
