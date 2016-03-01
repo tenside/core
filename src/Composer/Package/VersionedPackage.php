@@ -253,7 +253,7 @@ class VersionedPackage implements PackageInterface
      */
     public function setId($id)
     {
-        return $this->package->setId($id);
+        $this->package->setId($id);
     }
 
     /**
@@ -301,7 +301,7 @@ class VersionedPackage implements PackageInterface
      */
     public function setInstallationSource($type)
     {
-        return $this->package->setInstallationSource($type);
+        $this->package->setInstallationSource($type);
     }
 
     /**
@@ -509,7 +509,7 @@ class VersionedPackage implements PackageInterface
      */
     public function setRepository(RepositoryInterface $repository)
     {
-        return $this->package->setRepository($repository);
+        $this->package->setRepository($repository);
     }
 
     /**

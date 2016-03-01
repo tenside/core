@@ -162,13 +162,12 @@ class RepositorySearch extends AbstractSearch
      *
      * @param string $packageName The name of the package to decorate.
      *
-     * @return PackageInterface
+     * @return VersionedPackage
      *
      * @throws \InvalidArgumentException When the package could not be found.
      */
     protected function decorate($packageName)
     {
-
         $results = $this->repository->findPackages($packageName);
 
         if (!count($results)) {

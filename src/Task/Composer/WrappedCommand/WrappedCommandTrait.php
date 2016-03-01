@@ -97,7 +97,7 @@ trait WrappedCommandTrait
      *
      * @param \Closure $composerFactory The new factory function.
      *
-     * @return RequireCommand
+     * @return WrappedCommandTrait
      */
     public function setComposerFactory($composerFactory)
     {

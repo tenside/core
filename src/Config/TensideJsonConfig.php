@@ -38,20 +38,20 @@ class TensideJsonConfig extends SourceJson
     /**
      * Retrieve the secret.
      *
-     * @return string
+     * @return string|null
      */
     public function getSecret()
     {
-        return $this->has('secret') ? $this->get('secret') : null;
+        return $this->has('secret') ? (string) $this->get('secret') : null;
     }
 
     /**
-     * Retrieve the secret.
+     * Retrieve the domain.
      *
      * @return string|null
      */
     public function getLocalDomain()
     {
-        return $this->has('domain') ? $this->get('domain') : null;
+        return $this->has('domain') ? (string) $this->get('domain') : null;
     }
 }

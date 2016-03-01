@@ -331,7 +331,7 @@ class ComposerJson extends JsonFile
     private function cleanEmptyArraysInPath($path)
     {
         $subs = $this->getEntries($path);
-        if ($subs) {
+        if (!empty($subs)) {
             foreach ($subs as $subPath) {
                 $this->cleanEmptyArraysInPath($subPath);
             }

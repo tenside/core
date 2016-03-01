@@ -122,7 +122,7 @@ abstract class AbstractSelfTest
     /**
      * Mark this test as successful.
      *
-     * @param string $explain An optional additional explanation.
+     * @param string|null $explain An optional additional explanation.
      *
      * @return void
      */
@@ -137,7 +137,7 @@ abstract class AbstractSelfTest
     /**
      * Mark this test as failing.
      *
-     * @param string $explain An optional additional explanation.
+     * @param string|null $explain An optional additional explanation.
      *
      * @return void
      */
@@ -152,7 +152,7 @@ abstract class AbstractSelfTest
     /**
      * Mark this test as skipped.
      *
-     * @param string $explain An optional additional explanation.
+     * @param string|null $explain An optional additional explanation.
      *
      * @return void
      */
@@ -167,7 +167,7 @@ abstract class AbstractSelfTest
     /**
      * Mark this test as warning.
      *
-     * @param string $explain An optional additional explanation.
+     * @param string|null $explain An optional additional explanation.
      *
      * @return void
      */
