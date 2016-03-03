@@ -18,10 +18,10 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest\Generic;
+namespace Tenside\Core\SelfTest\Generic;
 
 use Symfony\Component\HttpFoundation\Request;
-use Tenside\SelfTest\AbstractSelfTest;
+use Tenside\Core\SelfTest\AbstractSelfTest;
 
 /**
  * This class tests that the file owner matches the user executing php.

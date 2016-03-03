@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest;
+namespace Tenside\Core\SelfTest;
 
 /**
  * This class checks that the current environment is suitable for running tenside.

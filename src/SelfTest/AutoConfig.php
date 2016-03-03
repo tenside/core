@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest;
+namespace Tenside\Core\SelfTest;
 
 /**
  * This class holds all data collected from auto configuration.

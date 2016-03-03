@@ -18,12 +18,12 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest\Cli;
+namespace Tenside\Core\SelfTest\Cli;
 
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
-use Tenside\SelfTest\AbstractSelfTest;
+use Tenside\Core\SelfTest\AbstractSelfTest;
 
 /**
  * This class tests that a valid php-cli binary is available.

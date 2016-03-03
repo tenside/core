@@ -18,9 +18,9 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest\Php;
+namespace Tenside\Core\SelfTest\Php;
 
-use Tenside\SelfTest\AbstractSelfTest;
+use Tenside\Core\SelfTest\AbstractSelfTest;
 
 /**
  * This class tests the current environment for correctly configured suhosin extension is suitable for running tenside.

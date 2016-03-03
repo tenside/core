@@ -18,9 +18,9 @@
  * @filesource
  */
 
-namespace Tenside\SelfTest\Cli;
+namespace Tenside\Core\SelfTest\Cli;
 
-use Tenside\SelfTest\AbstractSelfTest;
+use Tenside\Core\SelfTest\AbstractSelfTest;
 use Tenside\Core\Util\FunctionAvailabilityCheck;
 
 /**

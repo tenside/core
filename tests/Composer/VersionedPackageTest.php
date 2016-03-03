@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Test\Composer;
+namespace Tenside\Core\Test\Composer;
 
 use Composer\Package\PackageInterface;
 use Composer\Repository\RepositoryInterface;
