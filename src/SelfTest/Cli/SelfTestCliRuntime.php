@@ -48,6 +48,11 @@ class SelfTestCliRuntime extends AbstractSelfTest
 
         $this->log = new BufferedOutput();
 
+        // Prefer compile time configuration over path environment.
+        if ($this->isBinaryAvailableFromConstants()) {
+            return;
+        }
+
         if ($this->isBinaryAvailableInPath()) {
             return;
         }
@@ -55,6 +60,21 @@ class SelfTestCliRuntime extends AbstractSelfTest
         $this->markFailed(
             'Could not find any PHP CLI executable, running tenside tasks will not work. ' . $this->log->fetch()
         );
+    }
+
+    /**
+     * Check if any usable php executable is available from the internal constants.
+     *
+     * @return bool
+     */
+    private function isBinaryAvailableFromConstants()
+    {
+        // Prefer the cli version of the running php instance.
+        if (('' === PHP_BINARY) || !file_exists(PHP_BINARY)) {
+            return false;
+        }
+
+        return $this->isAnyBinaryValid([PHP_BINARY]);
     }
 
     /**
@@ -67,6 +87,11 @@ class SelfTestCliRuntime extends AbstractSelfTest
         $paths = array_filter(array_map('trim', explode(PATH_SEPARATOR, getenv('PATH'))));
         if (empty($paths)) {
             $paths = $this->getDefaultPaths();
+        }
+
+        // Prefer the cli version of the running php instance.
+        if ((PHP_BINDIR !== '') && is_dir(PHP_BINDIR)) {
+            array_unshift($paths, PHP_BINDIR);
         }
 
         return $this->isAnyBinaryValid($this->findBinaries($paths));
