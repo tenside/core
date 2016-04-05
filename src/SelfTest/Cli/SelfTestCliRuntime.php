@@ -158,7 +158,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
         }
 
         $finder = new Finder();
-        $finder->in($paths);
+        $finder->ignoreUnreadableDirs()->in($paths);
 
         foreach ($fileNames as $name) {
             $finder->name($name);
