@@ -12,6 +12,7 @@
  *
  * @package    tenside/core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Andreas Schempp <andreas.schempp@terminal42.ch>
  * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
  * @link       https://github.com/tenside/core
@@ -149,6 +150,9 @@ class InstallTask extends Task
         $arguments = [
             'package'   => $this->file->get(self::SETTING_PACKAGE),
             'directory' => $this->tempDir,
+            '--prefer-dist',
+            '--no-dev',
+            '--no-interaction'
         ];
 
         if ($version = $this->file->get(self::SETTING_VERSION)) {
