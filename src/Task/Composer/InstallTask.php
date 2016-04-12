@@ -149,6 +149,9 @@ class InstallTask extends Task
         $arguments = [
             'package'   => $this->file->get(self::SETTING_PACKAGE),
             'directory' => $this->tempDir,
+            '--prefer-dist',
+            '--no-dev',
+            '--no-interaction'
         ];
 
         if ($version = $this->file->get(self::SETTING_VERSION)) {
