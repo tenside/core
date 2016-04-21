@@ -102,6 +102,7 @@ class TaskListTest extends TestCase
         $this->assertContains($taskId, $list->getIds());
         $this->assertInstanceOf(Task::class, $list->getTask($taskId));
         $this->assertInstanceOf(Task::class, $list->getNext());
+        $this->assertEquals(new \DateTime(), $list->getNext()->getCreatedAt(), '', 10);
     }
 
     /**

@@ -77,7 +77,8 @@ class TaskList
         $metaData
             ->set(Task::SETTING_ID, $taskId)
             ->set(Task::SETTING_TYPE, $type)
-            ->set('status', Task::STATE_PENDING);
+            ->set('status', Task::STATE_PENDING)
+            ->set(Task::SETTING_CREATED_AT, date('c'));
 
         $taskFile = new JsonFile($this->taskIdToFileName($taskId));
         $taskFile->setData($metaData->getData());

@@ -43,6 +43,11 @@ abstract class Task
     const SETTING_ID = 'id';
 
     /**
+     * The ISO 8601 date when the task got created.
+     */
+    const SETTING_CREATED_AT = 'created-at';
+
+    /**
      * This state determines that the task is still awaiting to be executed.
      */
     const STATE_PENDING = 'PENDING';
@@ -232,6 +237,16 @@ abstract class Task
     public function getStatus()
     {
         return $this->file->get('status');
+    }
+
+    /**
+     * Retrieve when this task got created as ISO 8601 date string.
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return \DateTime::createFromFormat(DATE_ISO8601, $this->file->get('created-at'));
     }
 
     /**

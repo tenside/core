@@ -42,7 +42,9 @@ class TaskTest extends TestCase
         $test = $this;
         $task = $this
             ->getMockBuilder(Task::class)
-            ->setConstructorArgs([new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING])])
+            ->setConstructorArgs(
+                [new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING, 'created-at' => date('c')])]
+            )
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
 
@@ -58,6 +60,7 @@ class TaskTest extends TestCase
         $this->assertFileExists($logfile);
 
         $this->assertEquals('test-task-id', $task->getId());
+        $this->assertEquals(new \DateTime(), $task->getCreatedAt(), '', 10);
         $task->addOutput('Foo');
         $this->assertEquals('Foo', substr($task->getOutput(), -3));
 
