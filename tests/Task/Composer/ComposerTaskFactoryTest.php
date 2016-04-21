@@ -79,6 +79,21 @@ class ComposerTaskFactoryTest extends TestCase
     }
 
     /**
+     * Test that an unknown task is not supported.
+     *
+     * @return void
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @expectedExceptionMessage Do not know how to create task.
+     */
+    public function testDoesThrowExceptionWhenCreatingUnknownType()
+    {
+        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory->createInstance('unknown-type', new JsonArray());
+    }
+
+    /**
      * Test that an InstallTask task is created properly.
      *
      * @return void
