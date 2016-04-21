@@ -84,6 +84,7 @@ class TaskList
         $taskFile->save();
 
         if (!$this->createTaskFromMetaData($taskFile)) {
+            unlink($taskFile->getFilename());
             throw new \InvalidArgumentException('Could not create task of type "' . $metaData->get('type') . '"');
         }
 
