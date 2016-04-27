@@ -59,7 +59,7 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
      */
     public function getHome()
     {
-        return $this->file->get(self::SETTING_HOME);
+        return (string) $this->file->get(self::SETTING_HOME);
     }
 
     /**
