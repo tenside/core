@@ -20,6 +20,8 @@
 
 namespace Tenside\Core\SelfTest;
 
+use Tenside\Core\Config\TensideJsonConfig;
+
 /**
  * This class is the abstract base for performing checks that the current environment is suitable for running tenside.
  */
@@ -58,13 +60,13 @@ abstract class AbstractSelfTest
     /**
      * Run the test and return the result.
      *
-     * @param AutoConfig $autoConfig The auto config to write config values to.
+     * @param TensideJsonConfig $autoConfig The auto config to write config values to.
      *
      * @return SelfTestResult
      *
      * @throws \RuntimeException When anything went wrong.
      */
-    public function perform(AutoConfig $autoConfig)
+    public function perform(TensideJsonConfig $autoConfig)
     {
         $this->autoConfig = $autoConfig;
 

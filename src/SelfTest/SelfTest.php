@@ -20,6 +20,9 @@
 
 namespace Tenside\Core\SelfTest;
 
+use Tenside\Core\Config\TensideJsonConfig;
+use Tenside\Core\Util\JsonArray;
+
 /**
  * This class checks that the current environment is suitable for running tenside.
  */
@@ -35,7 +38,7 @@ class SelfTest
     /**
      * The auto configuration.
      *
-     * @var AutoConfig
+     * @var TensideJsonConfig
      */
     private $config;
 
@@ -44,7 +47,7 @@ class SelfTest
      */
     public function __construct()
     {
-        $this->config = new AutoConfig();
+        $this->config = new TensideJsonConfig(new JsonArray());
     }
 
     /**
@@ -78,7 +81,7 @@ class SelfTest
     /**
      * Retrieve the auto config.
      *
-     * @return AutoConfig
+     * @return TensideJsonConfig
      */
     public function getAutoConfig()
     {
