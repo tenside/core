@@ -38,6 +38,11 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     const SETTING_HOME = 'home';
 
     /**
+     * The no update flag.
+     */
+    const SETTING_NO_UPDATE = 'no-update';
+
+    /**
      * Retrieve the names of the packages to upgrade or null if none.
      *
      * @return array
@@ -58,11 +63,26 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     }
 
     /**
+     * Check if the update shall be omitted and only the composer.json shall be manipulated.
+     *
+     * @return bool
+     */
+    public function isNoUpdate()
+    {
+        return (bool) $this->file->has(self::SETTING_NO_UPDATE);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function prepareInput()
     {
-        $input = new ArrayInput(['packages' => $this->getPackage()]);
+        $arguments = ['packages' => $this->getPackage()];
+        if ($this->isNoUpdate()) {
+            $arguments['no-update'] = '';
+        }
+
+        $input = new ArrayInput($arguments);
         $input->setInteractive(false);
 
         return $input;
