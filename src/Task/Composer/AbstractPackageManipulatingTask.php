@@ -43,7 +43,7 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     const SETTING_NO_UPDATE = 'no-update';
 
     /**
-     * Retrieve the names of the packages to upgrade or null if none.
+     * Retrieve the names of the packages to manipulate.
      *
      * @return array
      */
