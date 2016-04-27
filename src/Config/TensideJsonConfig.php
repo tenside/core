@@ -46,6 +46,20 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
+     * Set the secret.
+     *
+     * @param string $secret The new secret.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setSecret($secret)
+    {
+        $this->set('secret', $secret);
+
+        return $this;
+    }
+
+    /**
      * Retrieve the domain.
      *
      * @return string|null
@@ -53,6 +67,20 @@ class TensideJsonConfig extends SourceJson
     public function getLocalDomain()
     {
         return $this->getIfNotNull('domain', null);
+    }
+
+    /**
+     * Set the domain.
+     *
+     * @param string $domain The new domain.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setLocalDomain($domain)
+    {
+        $this->set('domain', $domain);
+
+        return $this;
     }
 
     /**
@@ -67,6 +95,20 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
+     * Set the interpreter to use.
+     *
+     * @param string $binary The new interpreter to use.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setPhpCliBinary($binary)
+    {
+        $this->set('php_cli_arguments', $binary);
+
+        return $this;
+    }
+
+    /**
      * Retrieve the arguments to pass to the php process
      *
      * @return string|null
@@ -77,13 +119,41 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
+     * Set the arguments to use.
+     *
+     * @param array $arguments The new arguments to use.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setPhpCliArguments($arguments)
+    {
+        $this->set('php_cli_arguments', $arguments);
+
+        return $this;
+    }
+
+    /**
      * Retrieve the additional environment variables.
      *
-     * @return string|null
+     * @return array|null
      */
     public function getPhpCliEnvironment()
     {
         return $this->getIfNotNull('php_cli_environment', null);
+    }
+
+    /**
+     * Set the additional environment variables.
+     *
+     * @param array $variables The new arguments to use.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setPhpCliEnvironment($variables)
+    {
+        $this->set('php_cli_environment', $variables);
+
+        return $this;
     }
 
     /**
@@ -94,6 +164,20 @@ class TensideJsonConfig extends SourceJson
     public function isForkingAvailable()
     {
         return $this->getIfNotNull('php_can_fork', false);
+    }
+
+    /**
+     * Set the additional environment variables.
+     *
+     * @param bool $available The new arguments to use.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setForkingAvailable($available)
+    {
+        $this->set('php_can_fork', $available);
+
+        return $this;
     }
 
     /**
