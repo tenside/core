@@ -26,16 +26,6 @@ namespace Tenside\Core\Config;
 class TensideJsonConfig extends SourceJson
 {
     /**
-     * Create a new instance.
-     *
-     * @param string $directory The directory where the tenside.json shall be placed.
-     */
-    public function __construct($directory)
-    {
-        parent::__construct($directory . DIRECTORY_SEPARATOR . 'tenside.json');
-    }
-
-    /**
      * Retrieve the secret.
      *
      * @return string|null

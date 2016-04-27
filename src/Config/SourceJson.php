@@ -20,7 +20,7 @@
 
 namespace Tenside\Core\Config;
 
-use Tenside\Core\Util\JsonFile;
+use Tenside\Core\Util\JsonArray;
 
 /**
  * JSON based config.
@@ -30,18 +30,18 @@ class SourceJson implements SourceInterface
     /**
      * The JsonFile.
      *
-     * @var JsonFile
+     * @var JsonArray
      */
-    protected $jsonFile;
+    protected $data;
 
     /**
      * Create a new instance.
      *
-     * @param string $filename The filename.
+     * @param JsonArray $data The json array.
      */
-    public function __construct($filename)
+    public function __construct(JsonArray $data)
     {
-        $this->jsonFile = new JsonFile($filename);
+        $this->data = $data;
     }
 
     /**
@@ -49,7 +49,7 @@ class SourceJson implements SourceInterface
      */
     public function get($path, $forceArray = false)
     {
-        return $this->jsonFile->get($path, $forceArray);
+        return $this->data->get($path, $forceArray);
     }
 
     /**
@@ -57,7 +57,7 @@ class SourceJson implements SourceInterface
      */
     public function has($path)
     {
-        return $this->jsonFile->has($path);
+        return $this->data->has($path);
     }
 
     /**
@@ -65,7 +65,7 @@ class SourceJson implements SourceInterface
      */
     public function set($path, $value)
     {
-        $this->jsonFile->set($path, $value);
+        $this->data->set($path, $value);
 
         return $this;
     }
