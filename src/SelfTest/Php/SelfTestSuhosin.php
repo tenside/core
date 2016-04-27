@@ -42,9 +42,8 @@ class SelfTestSuhosin extends AbstractSelfTest
         }
 
         $this->markFailed(
-            'The php setting allow_url_fopen must be enabled to allow downloading of data. ' .
-            'Note that this does NOT imply any security risk as this is NOT the setting allow_url_include ' .
-            '(which should be disabled).'
+            'The php extension suhosin is loaded. ' .
+            'This extension has been known to create problems in the past, consider deactivating it.'
         );
     }
 
