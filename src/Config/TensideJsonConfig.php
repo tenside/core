@@ -42,7 +42,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function getSecret()
     {
-        return $this->has('secret') ? (string) $this->get('secret') : null;
+        return $this->getIfNotNull('secret', null);
     }
 
     /**
@@ -52,6 +52,61 @@ class TensideJsonConfig extends SourceJson
      */
     public function getLocalDomain()
     {
-        return $this->has('domain') ? (string) $this->get('domain') : null;
+        return $this->getIfNotNull('domain', null);
+    }
+
+    /**
+     * Get the interpreter to use.
+     *
+     * @return string
+     */
+    public function getPhpCliBinary()
+    {
+        // If defined, override the php-cli interpreter.
+        return $this->getIfNotNull('php_cli_arguments', 'php');
+    }
+
+    /**
+     * Retrieve the arguments to pass to the php process
+     *
+     * @return string|null
+     */
+    public function getPhpCliArguments()
+    {
+        return $this->getIfNotNull('php_cli_arguments', null);
+    }
+
+    /**
+     * Retrieve the additional environment variables.
+     *
+     * @return string|null
+     */
+    public function getPhpCliEnvironment()
+    {
+        return $this->getIfNotNull('php_cli_environment', null);
+    }
+
+    /**
+     * Check if forking is available.
+     *
+     * @return string|null
+     */
+    public function isForkingAvailable()
+    {
+        return $this->getIfNotNull('php_can_fork', false);
+    }
+
+    /**
+     * Obtain a value from if it is set or return the default value otherwise.
+     *
+     * @param string $key     The key to obtain.
+     *
+     * @param mixed  $default The default value to return if not set.
+     *
+     * @return mixed
+     */
+    private function getIfNotNull($key, $default = null)
+    {
+        return $this->has($key) ? $this->get($key) : $default;
     }
 }
