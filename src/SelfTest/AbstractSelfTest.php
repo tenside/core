@@ -53,7 +53,7 @@ abstract class AbstractSelfTest
     /**
      * The auto config the test shall write to.
      *
-     * @var AutoConfig
+     * @var TensideJsonConfig
      */
     private $autoConfig;
 
@@ -87,7 +87,7 @@ abstract class AbstractSelfTest
     /**
      * Retrieve autoConfig
      *
-     * @return AutoConfig
+     * @return TensideJsonConfig
      */
     protected function getAutoConfig()
     {
