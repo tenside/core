@@ -81,7 +81,7 @@ class TensideJsonConfig extends SourceJson
     public function getPhpCliBinary()
     {
         // If defined, override the php-cli interpreter.
-        return $this->getIfNotNull('php_cli_arguments', 'php');
+        return $this->getIfNotNull('php_cli', 'php');
     }
 
     /**
@@ -93,7 +93,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setPhpCliBinary($binary)
     {
-        $this->set('php_cli_arguments', $binary);
+        $this->set('php_cli', $binary);
 
         return $this;
     }

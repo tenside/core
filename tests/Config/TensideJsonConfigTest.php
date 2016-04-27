@@ -54,7 +54,7 @@ class TensideJsonConfigTest extends TestCase
             [
                 'setPhpCliBinary',
                 'getPhpCliBinary',
-                'php_cli_arguments',
+                'php_cli',
                 '/usr/bin/php',
                 'php',
             ],
@@ -92,6 +92,8 @@ class TensideJsonConfigTest extends TestCase
      * @param string $configKey The config key in the json array that will get populated.
      *
      * @param mixed  $value     The value to pass.
+     *
+     * @param mixed  $default   The default value that shall be returned if nothing has been set.
      *
      * @return void
      *
