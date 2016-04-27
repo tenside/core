@@ -216,7 +216,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
         }
 
         // Version PHP 5.4.45-0+deb7u1
-        if (!preg_match('#.*PHP ([0-9a-zA-Z\.\-\+]+) \(cli\)#', $process->getOutput(), $output)) {
+        if (!preg_match('#.*PHP ([0-9a-zA-Z\.\-\+\~]+) \(cli\)#', $process->getOutput(), $output)) {
             return null;
         }
 
