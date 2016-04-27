@@ -101,7 +101,7 @@ class TensideJsonConfig extends SourceJson
     /**
      * Retrieve the arguments to pass to the php process
      *
-     * @return string|null
+     * @return array|null
      */
     public function getPhpCliArguments()
     {
