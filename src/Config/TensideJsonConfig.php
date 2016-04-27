@@ -123,6 +123,21 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
+     * Add a command line argument.
+     *
+     * @param string $argument The argument to add.
+     *
+     * @return TensideJsonConfig
+     */
+    public function addCommandLineArgument($argument)
+    {
+        $args = (array) $this->getPhpCliArguments();
+        $this->setPhpCliArguments(array_merge($args, [$argument]));
+
+        return $this;
+    }
+
+    /**
      * Retrieve the additional environment variables.
      *
      * @return array|null

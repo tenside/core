@@ -109,4 +109,19 @@ class TensideJsonConfigTest extends TestCase
         $this->assertEquals($value, $array->get($configKey));
         $this->assertEquals($value, call_user_func([$config, $getter]));
     }
+
+    /**
+     * Test that adding arguments works.
+     *
+     * @return void
+     */
+    public function testAddCommandLineArgument()
+    {
+        $config = new TensideJsonConfig(new JsonArray());
+        $this->assertEquals(null, $config->getPhpCliArguments());
+        $this->assertSame($config, $config->addCommandLineArgument('test1'));
+        $this->assertEquals(['test1'], $config->getPhpCliArguments());
+        $this->assertSame($config, $config->addCommandLineArgument('test2'));
+        $this->assertEquals(['test1', 'test2'], $config->getPhpCliArguments());
+    }
 }
