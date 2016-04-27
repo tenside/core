@@ -115,7 +115,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
                 }
 
                 $this->markSuccess('Found ' . $binary . ' (Version: ' . $version . ')');
-                $this->getAutoConfig()->setPhpInterpreter($binary);
+                $this->getAutoConfig()->setPhpCliBinary($binary);
 
                 return true;
             }

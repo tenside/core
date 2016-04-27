@@ -52,7 +52,7 @@ class SelfTestCliArguments extends AbstractSelfTest
     {
         $this->setMessage('Check which arguments to pass to the PHP CLI executable.');
 
-        if (null === ($this->interpreter = $this->getAutoConfig()->getPhpInterpreter())) {
+        if (null === ($this->interpreter = $this->getAutoConfig()->getPhpCliBinary())) {
             $this->markFailed('No PHP interpreter detected, can not test.');
             return;
         }
