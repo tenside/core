@@ -44,7 +44,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setSecret($secret)
     {
-        $this->set('secret', $secret);
+        $this->set('secret', (string) $secret);
 
         return $this;
     }
@@ -68,7 +68,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setLocalDomain($domain)
     {
-        $this->set('domain', $domain);
+        $this->set('domain', (string) $domain);
 
         return $this;
     }
@@ -93,7 +93,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setPhpCliBinary($binary)
     {
-        $this->set('php_cli', $binary);
+        $this->set('php_cli', (string) $binary);
 
         return $this;
     }
@@ -117,7 +117,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setPhpCliArguments($arguments)
     {
-        $this->set('php_cli_arguments', $arguments);
+        $this->set('php_cli_arguments', (array) $arguments);
 
         return $this;
     }
@@ -156,7 +156,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setPhpCliEnvironment($variables)
     {
-        $this->set('php_cli_environment', $variables);
+        $this->set('php_cli_environment', (array) $variables);
 
         return $this;
     }
@@ -172,7 +172,7 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
-     * Set the additional environment variables.
+     * Set if forking is available.
      *
      * @param bool $available The new arguments to use.
      *
@@ -180,7 +180,7 @@ class TensideJsonConfig extends SourceJson
      */
     public function setForkingAvailable($available)
     {
-        $this->set('php_can_fork', $available);
+        $this->set('php_can_fork', (bool) $available);
 
         return $this;
     }
