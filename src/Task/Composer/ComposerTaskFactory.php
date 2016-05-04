@@ -22,6 +22,7 @@ namespace Tenside\Core\Task\Composer;
 
 use Tenside\Core\Task\TaskFactoryInterface;
 use Tenside\Core\Util\JsonArray;
+use Tenside\CoreBundle\Util\HomePathDeterminator;
 
 /**
  * This class provides loading of the tenside core configuration.
@@ -29,18 +30,18 @@ use Tenside\Core\Util\JsonArray;
 class ComposerTaskFactory implements TaskFactoryInterface
 {
     /**
-     * The home path determinator.
+     * The home path.
      *
-     * @var string
+     * @var HomePathDeterminator
      */
     private $home;
 
     /**
      * Create a new instance.
      *
-     * @param string $home The home path to use.
+     * @param HomePathDeterminator $home The home path to use.
      */
-    public function __construct($home)
+    public function __construct(HomePathDeterminator $home)
     {
         $this->home = $home;
     }
@@ -64,20 +65,35 @@ class ComposerTaskFactory implements TaskFactoryInterface
             case 'install':
                 return new InstallTask($metaData);
             case 'upgrade':
+                $this->ensureHomePath($metaData);
+                if (!$metaData->has(UpgradeTask::SETTING_DATA_DIR)) {
+                    $metaData->set(UpgradeTask::SETTING_DATA_DIR, $this->home->tensideDataDir());
+                }
                 return new UpgradeTask($metaData);
             case 'require-package':
-                if (!$metaData->has(RequirePackageTask::SETTING_HOME)) {
-                    $metaData->set(RequirePackageTask::SETTING_HOME, $this->home);
-                }
+                $this->ensureHomePath($metaData);
                 return new RequirePackageTask($metaData);
             case 'remove-package':
-                if (!$metaData->has(RemovePackageTask::SETTING_HOME)) {
-                    $metaData->set(RemovePackageTask::SETTING_HOME, $this->home);
-                }
+                $this->ensureHomePath($metaData);
                 return new RemovePackageTask($metaData);
             default:
         }
 
         throw new \InvalidArgumentException('Do not know how to create task.');
+    }
+
+    /**
+     * Ensure the home path has been set in the passed meta data.
+     *
+     * @param JsonArray $metaData The meta data to examine.
+     *
+     * @return void
+     */
+    private function ensureHomePath(JsonArray $metaData)
+    {
+        if ($metaData->has(RequirePackageTask::SETTING_HOME)) {
+            return;
+        }
+        $metaData->set(RequirePackageTask::SETTING_HOME, $this->home->homeDir());
     }
 }
