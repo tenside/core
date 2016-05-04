@@ -84,6 +84,10 @@ class PhpProcessSpawner
             $this->getArguments($arguments)
         );
 
+        if ($this->config->isForceToBackgroundEnabled()) {
+            $cmd .= '&';
+        }
+
         return new Process($cmd, $this->homePath, $this->getEnvironment(), null, null);
     }
 

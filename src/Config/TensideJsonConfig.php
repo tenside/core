@@ -186,6 +186,30 @@ class TensideJsonConfig extends SourceJson
     }
 
     /**
+     * Check if force to background is enabled.
+     *
+     * @return string|null
+     */
+    public function isForceToBackgroundEnabled()
+    {
+        return $this->getIfNotNull('php_force_background', false);
+    }
+
+    /**
+     * Set if force to background is enabled.
+     *
+     * @param bool $enabled The new arguments to use.
+     *
+     * @return TensideJsonConfig
+     */
+    public function setForceToBackground($enabled)
+    {
+        $this->set('php_force_background', (bool) $enabled);
+
+        return $this;
+    }
+
+    /**
      * Obtain a value from if it is set or return the default value otherwise.
      *
      * @param string $key     The key to obtain.
