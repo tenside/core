@@ -37,12 +37,21 @@ class SelfTestEnvPopulated extends AbstractSelfTest
         $this->setMessage('Check if $_ENV is populated.');
 
         if (!$this->isConfigured()) {
-            $this->markWarning('The php.ini value variables_order should contain "E".');
+            $this->markSuccess(
+                'The super global $_ENV is not populated. ' .
+                'This is default and correct on production servers. ' .
+                'However, if your processes do not work in the background, you should enable `E` in the php.ini ' .
+                'settings `variables_order` and see if it works. ' .
+                'Please report your findings to the developer team.'
+            );
             return;
         }
 
         if (!$this->isPopulated()) {
-            $this->markWarning('The super global $_ENV is empty, this will impose problems for spawned processes.');
+            $this->markWarning(
+                'The super global $_ENV is not populated but should have been ' .
+                '("variables_order" in php.ini contains "E").'
+            );
             return;
         }
 
