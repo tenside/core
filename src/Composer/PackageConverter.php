@@ -132,6 +132,9 @@ class PackageConverter
             if ($support = $package->getSupport()) {
                 $data->set('support', $support);
             }
+            if ($extra = $package->getExtra()) {
+                $data->set('extra', $extra);
+            }
             $data->set('abandoned', $package->isAbandoned());
             if ($package->isAbandoned()) {
                 $data->set('replacement', $package->getReplacementPackage());
