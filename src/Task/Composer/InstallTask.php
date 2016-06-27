@@ -21,18 +21,16 @@
 
 namespace Tenside\Core\Task\Composer;
 
-use Composer\Command\CreateProjectCommand;
 use Composer\IO\IOInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Tenside\Core\Task\Task;
-use Tenside\Core\Task\TaskOutput;
+use Tenside\Core\Task\Composer\WrappedCommand\CreateProjectCommand;
 
 /**
  * This class holds the information for an upgrade of some or all packages.
  */
-class InstallTask extends Task
+class InstallTask extends AbstractComposerCommandTask
 {
     /**
      * Constant for the package name key.
@@ -107,7 +105,7 @@ class InstallTask extends Task
         $this->preserveEnvironment();
 
         try {
-            $this->fetchProject();
+            parent::doPerform();
             $this->moveFiles();
         } catch (\Exception $exception) {
             $this->restoreEnvironment();
@@ -139,13 +137,17 @@ class InstallTask extends Task
     }
 
     /**
-     * Fetch the project into the given directory.
-     *
-     * @return void
-     *
-     * @throws \RuntimeException When an error occurred.
+     * {@inheritDoc}
      */
-    private function fetchProject()
+    protected function prepareCommand()
+    {
+        return $this->attachComposerFactory(new CreateProjectCommand());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareInput()
     {
         $arguments = [
             'package'   => $this->file->get(self::SETTING_PACKAGE),
@@ -163,18 +165,11 @@ class InstallTask extends Task
             $arguments['--repository-url'] = $repository;
         }
 
-        $command = new CreateProjectCommand();
-        $input   = new ArrayInput($arguments);
-        $input->setInteractive(false);
-        $command->setIO($this->getIO());
+        $input = new ArrayInput($arguments);
 
-        try {
-            if (0 !== ($statusCode = $command->run($input, new TaskOutput($this)))) {
-                throw new \RuntimeException('Command exit code was non zero ' . $statusCode);
-            }
-        } catch (\Exception $exception) {
-            throw new \RuntimeException($exception->getMessage(), $exception->getCode(), $exception);
-        }
+        $input->setInteractive(false);
+
+        return $input;
     }
 
     /**
