@@ -66,6 +66,16 @@ class UpgradeTask extends AbstractComposerCommandTask
     }
 
     /**
+     * Retrieve the home path of tenside.
+     *
+     * @return string
+     */
+    public function getHome()
+    {
+        return (string) $this->file->get(self::SETTING_HOME);
+    }
+
+    /**
      * Retrieve the data path of tenside.
      *
      * @return string
@@ -90,7 +100,7 @@ class UpgradeTask extends AbstractComposerCommandTask
      */
     protected function prepareCommand()
     {
-        RuntimeHelper::setupHome($this->file->get(self::SETTING_HOME));
+        RuntimeHelper::setupHome($this->getHome());
 
         $command = new UpdateCommand();
         $command->setComposer(Factory::create($this->getIO()));
