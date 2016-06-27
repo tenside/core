@@ -91,9 +91,9 @@ class ComposerTaskFactory implements TaskFactoryInterface
      */
     private function ensureHomePath(JsonArray $metaData)
     {
-        if ($metaData->has(RequirePackageTask::SETTING_HOME)) {
+        if ($metaData->has(AbstractPackageManipulatingTask::SETTING_HOME)) {
             return;
         }
-        $metaData->set(RequirePackageTask::SETTING_HOME, $this->home->homeDir());
+        $metaData->set(AbstractPackageManipulatingTask::SETTING_HOME, $this->home->homeDir());
     }
 }
