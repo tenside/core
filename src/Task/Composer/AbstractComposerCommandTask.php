@@ -51,6 +51,8 @@ abstract class AbstractComposerCommandTask extends Task
     /**
      * Add missing definition options to the command usually defined by the application.
      *
+     * See also composer/composer in src/Composer/Console/Application.php
+     *
      * @param BaseCommand $command The command to fix.
      *
      * @return void
@@ -66,6 +68,36 @@ abstract class AbstractComposerCommandTask extends Task
                     'v|vv|vvv',
                     InputOption::VALUE_NONE,
                     'Shows more details including new commits pulled in when updating packages.'
+                )
+            );
+        }
+        if (!$definition->hasOption('profile')) {
+            $definition->addOption(
+                new InputOption(
+                    'profile',
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Display timing and memory usage information'
+                )
+            );
+        }
+        if (!$definition->hasOption('no-plugins')) {
+            $definition->addOption(
+                new InputOption(
+                    'no-plugins',
+                    null,
+                    InputOption::VALUE_NONE,
+                    'Whether to disable plugins.'
+                )
+            );
+        }
+        if (!$definition->hasOption('working-dir')) {
+            $definition->addOption(
+                new InputOption(
+                    'working-dir',
+                    '-d',
+                    InputOption::VALUE_REQUIRED,
+                    'If specified, use the given directory as working directory.'
                 )
             );
         }
