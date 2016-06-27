@@ -41,6 +41,11 @@ class UpgradeTask extends AbstractComposerCommandTask
     const SETTING_HOME = 'home';
 
     /**
+     * The data directory of tenside.
+     */
+    const SETTING_DATA_DIR = 'data-dir';
+
+    /**
      * Retrieve the names of the packages to upgrade or null if none.
      *
      * @return string[]|null
@@ -58,6 +63,16 @@ class UpgradeTask extends AbstractComposerCommandTask
     public function isSelectiveUpgrade()
     {
         return (null !== $this->getPackages());
+    }
+
+    /**
+     * Retrieve the data path of tenside.
+     *
+     * @return string
+     */
+    public function getDataDir()
+    {
+        return (string) $this->file->get(self::SETTING_DATA_DIR);
     }
 
     /**
