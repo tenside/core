@@ -20,21 +20,11 @@
 
 namespace Tenside\Core\SelfTest\Cli;
 
-use Symfony\Component\Process\Process;
-use Tenside\Core\SelfTest\AbstractSelfTest;
-
 /**
  * This class tests that the php-cli can fork sub processes.
  */
-class SelfTestCliCanFork extends AbstractSelfTest
+class SelfTestCliCanFork extends AbstractSelfTestCli
 {
-    /**
-     * The interpreter to use.
-     *
-     * @var string
-     */
-    private $interpreter;
-
     /**
      * Check that we have a correct CLI executable of PHP.
      *
@@ -44,7 +34,7 @@ class SelfTestCliCanFork extends AbstractSelfTest
     {
         $this->setMessage('Check if the PHP CLI executable can fork processes.');
 
-        if (null === ($this->interpreter = $this->getAutoConfig()->getPhpCliBinary())) {
+        if (!$this->hasInterpreter()) {
             $this->markSkipped('No PHP interpreter detected, can not test - assuming forking is not supported.');
             $this->getAutoConfig()->setForkingAvailable(false);
             return;
@@ -74,25 +64,5 @@ class SelfTestCliCanFork extends AbstractSelfTest
         $this->markWarning(
             'Could not determine if forking is possible, assuming not supported (Output : ' . $output .').'
         );
-    }
-
-    /**
-     * Runs the passed test script through the php cli and returns the output.
-     *
-     * @param string $testScript The test script to run.
-     *
-     * @return null|string
-     */
-    private function testCliRuntime($testScript)
-    {
-        $process = new Process(
-            sprintf('%s %s', escapeshellcmd($this->interpreter), escapeshellarg('-r ' . $testScript))
-        );
-
-        if (0 !== $process->run()) {
-            return null;
-        }
-
-        return $process->getOutput();
     }
 }

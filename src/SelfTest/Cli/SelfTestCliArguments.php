@@ -21,13 +21,11 @@
 namespace Tenside\Core\SelfTest\Cli;
 
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Process\Process;
-use Tenside\Core\SelfTest\AbstractSelfTest;
 
 /**
  * This class tests that a valid php-cli binary is available.
  */
-class SelfTestCliArguments extends AbstractSelfTest
+class SelfTestCliArguments extends AbstractSelfTestCli
 {
     /**
      * The output buffer to keep track of the detection.
@@ -35,13 +33,6 @@ class SelfTestCliArguments extends AbstractSelfTest
      * @var BufferedOutput
      */
     private $log;
-
-    /**
-     * The interpreter to use.
-     *
-     * @var string
-     */
-    private $interpreter;
 
     /**
      * Check that we have a correct CLI executable of PHP.
@@ -52,7 +43,7 @@ class SelfTestCliArguments extends AbstractSelfTest
     {
         $this->setMessage('Check which arguments to pass to the PHP CLI executable.');
 
-        if (null === ($this->interpreter = $this->getAutoConfig()->getPhpCliBinary())) {
+        if (!$this->hasInterpreter()) {
             $this->markFailed('No PHP interpreter detected, can not test.');
             return;
         }
@@ -141,36 +132,5 @@ class SelfTestCliArguments extends AbstractSelfTest
         }
 
         return true;
-    }
-
-    /**
-     * Runs the passed test script through the php cli and returns the output.
-     *
-     * @param string $testScript The test script to run.
-     *
-     * @param string $definition Optional definition to override.
-     *
-     * @return null|string
-     */
-    private function testCliRuntime($testScript, $definition = '')
-    {
-        if ($definition) {
-            $definition = escapeshellarg($definition);
-        }
-
-        $process = new Process(
-            sprintf(
-                '%s %s %s',
-                escapeshellcmd($this->interpreter),
-                $definition,
-                escapeshellarg('-r ' . $testScript)
-            )
-        );
-
-        if (0 !== $process->run()) {
-            return null;
-        }
-
-        return $process->getOutput();
     }
 }
