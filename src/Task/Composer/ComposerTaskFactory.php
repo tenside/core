@@ -22,7 +22,7 @@ namespace Tenside\Core\Task\Composer;
 
 use Tenside\Core\Task\TaskFactoryInterface;
 use Tenside\Core\Util\JsonArray;
-use Tenside\CoreBundle\Util\HomePathDeterminator;
+use Tenside\Core\Util\HomePathDeterminator;
 
 /**
  * This class provides loading of the tenside core configuration.

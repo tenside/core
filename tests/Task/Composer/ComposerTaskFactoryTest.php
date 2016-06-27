@@ -27,6 +27,7 @@ use Tenside\Core\Task\Composer\RequirePackageTask;
 use Tenside\Core\Task\Composer\UpgradeTask;
 use Tenside\Core\Task\Task;
 use Tenside\Core\Test\TestCase;
+use Tenside\Core\Util\HomePathDeterminator;
 use Tenside\Core\Util\JsonArray;
 
 /**
@@ -36,6 +37,8 @@ class ComposerTaskFactoryTest extends TestCase
 {
     /**
      * Provide a list of supported task types.
+     *
+     * @return array
      */
     public function supportedTaskTypesProvider()
     {
@@ -58,7 +61,7 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testDoesSupportKnown(Task $task)
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
 
         $this->assertTrue(
             $factory->isTypeSupported($task->getType()),
@@ -73,7 +76,7 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testDoesNotSupportUnknown()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
 
         $this->assertFalse($factory->isTypeSupported('unknown-type'));
     }
@@ -89,7 +92,7 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testDoesThrowExceptionWhenCreatingUnknownType()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
         $factory->createInstance('unknown-type', new JsonArray());
     }
 
@@ -100,7 +103,7 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testOnCreateTaskInstallTask()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
         $task    = $factory->createInstance(
             'install',
             new JsonArray([
@@ -123,7 +126,7 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testOnCreateTaskUpgradeTask()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
+        $factory = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
         $task    = $factory->createInstance(
             'upgrade',
             new JsonArray([
@@ -145,8 +148,8 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testOnCreateTaskRequirePackageTask()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
-        $task    = $factory->createInstance(
+        $factory    = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
+        $task       = $factory->createInstance(
             'require-package',
             $config = new JsonArray([
                 RequirePackageTask::SETTING_TYPE    => 'require-package',
@@ -167,8 +170,8 @@ class ComposerTaskFactoryTest extends TestCase
      */
     public function testOnCreateTaskRemovePackageTask()
     {
-        $factory = new ComposerTaskFactory($this->getTempDir());
-        $task    = $factory->createInstance(
+        $factory    = new ComposerTaskFactory(new HomePathDeterminator($this->getTempDir()));
+        $task       = $factory->createInstance(
             'remove-package',
             $config = new JsonArray([
                 RemovePackageTask::SETTING_TYPE    => 'remove-package',
