@@ -88,7 +88,7 @@ class ComposerTaskFactoryTest extends TestCase
      *
      * @expectedException \InvalidArgumentException
      *
-     * @expectedExceptionMessage Do not know how to create task.
+     * @expectedExceptionMessage Do not know how to create task unknown-type
      */
     public function testDoesThrowExceptionWhenCreatingUnknownType()
     {

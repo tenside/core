@@ -61,25 +61,66 @@ class ComposerTaskFactory implements TaskFactoryInterface
      */
     public function createInstance($taskType, JsonArray $metaData)
     {
-        switch ($taskType) {
-            case 'install':
-                return new InstallTask($metaData);
-            case 'upgrade':
-                $this->ensureHomePath($metaData);
-                if (!$metaData->has(UpgradeTask::SETTING_DATA_DIR)) {
-                    $metaData->set(UpgradeTask::SETTING_DATA_DIR, $this->home->tensideDataDir());
-                }
-                return new UpgradeTask($metaData);
-            case 'require-package':
-                $this->ensureHomePath($metaData);
-                return new RequirePackageTask($metaData);
-            case 'remove-package':
-                $this->ensureHomePath($metaData);
-                return new RemovePackageTask($metaData);
-            default:
+        $methodName = 'create' . implode('', array_map('ucfirst', explode('-', $taskType)));
+        if (method_exists($this, $methodName)) {
+            return call_user_func([$this, $methodName], $metaData);
         }
 
-        throw new \InvalidArgumentException('Do not know how to create task.');
+        throw new \InvalidArgumentException('Do not know how to create task ' . $taskType);
+    }
+
+    /**
+     * Create an install task instance.
+     *
+     * @param JsonArray $metaData The meta data for the task.
+     *
+     * @return InstallTask
+     */
+    protected function createInstall($metaData)
+    {
+        return new InstallTask($metaData);
+    }
+
+    /**
+     * Create an upgrade task instance.
+     *
+     * @param JsonArray $metaData The meta data for the task.
+     *
+     * @return UpgradeTask
+     */
+    protected function createUpgrade($metaData)
+    {
+        $this->ensureHomePath($metaData);
+        if (!$metaData->has(UpgradeTask::SETTING_DATA_DIR)) {
+            $metaData->set(UpgradeTask::SETTING_DATA_DIR, $this->home->tensideDataDir());
+        }
+        return new UpgradeTask($metaData);
+    }
+
+    /**
+     * Create a require package task instance.
+     *
+     * @param JsonArray $metaData The meta data for the task.
+     *
+     * @return RequirePackageTask
+     */
+    protected function createRequirePackage($metaData)
+    {
+        $this->ensureHomePath($metaData);
+        return new RequirePackageTask($metaData);
+    }
+
+    /**
+     * Create a remove package task instance.
+     *
+     * @param JsonArray $metaData The meta data for the task.
+     *
+     * @return RemovePackageTask
+     */
+    protected function createRemovePackage($metaData)
+    {
+        $this->ensureHomePath($metaData);
+        return new RemovePackageTask($metaData);
     }
 
     /**
