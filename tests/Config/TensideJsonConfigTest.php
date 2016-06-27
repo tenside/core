@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace Tenside\Core\Test\Composer;
+namespace Tenside\Core\Test\Config;
 
 use Tenside\Core\Config\TensideJsonConfig;
 use Tenside\Core\Test\TestCase;
