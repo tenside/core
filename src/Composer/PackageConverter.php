@@ -12,6 +12,7 @@
  *
  * @package    tenside/core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Andreas Schempp <andreas.schempp@terminal42.ch>
  * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
  * @link       https://github.com/tenside/core
@@ -118,27 +119,7 @@ class PackageConverter
         }
 
         if ($package instanceof CompletePackageInterface) {
-            $data->set('description', $package->getDescription());
-            $data->set('license', $package->getLicense());
-            if ($keywords = $package->getKeywords()) {
-                $data->set('keywords', $keywords);
-            }
-            if ($homepage = $package->getHomepage()) {
-                $data->set('homepage', $homepage);
-            }
-            if ($authors = $package->getAuthors()) {
-                $data->set('authors', $authors);
-            }
-            if ($support = $package->getSupport()) {
-                $data->set('support', $support);
-            }
-            if ($extra = $package->getExtra()) {
-                $data->set('extra', $extra);
-            }
-            $data->set('abandoned', $package->isAbandoned());
-            if ($package->isAbandoned()) {
-                $data->set('replacement', $package->getReplacementPackage());
-            }
+            $this->convertCompletePackage($package, $data);
         }
 
         return $data;
@@ -236,5 +217,39 @@ class PackageConverter
         }
 
         return null;
+    }
+
+    /**
+     * Convert the data of a complete package to the passed json array.
+     *
+     * @param CompletePackageInterface $package The package to process.
+     *
+     * @param JsonArray                $data    The json array to push the data to.
+     *
+     * @return void
+     */
+    private function convertCompletePackage(CompletePackageInterface $package, $data)
+    {
+        $data->set('description', $package->getDescription());
+        $data->set('license', $package->getLicense());
+        if ($keywords = $package->getKeywords()) {
+            $data->set('keywords', $keywords);
+        }
+        if ($homepage = $package->getHomepage()) {
+            $data->set('homepage', $homepage);
+        }
+        if ($authors = $package->getAuthors()) {
+            $data->set('authors', $authors);
+        }
+        if ($support = $package->getSupport()) {
+            $data->set('support', $support);
+        }
+        if ($extra = $package->getExtra()) {
+            $data->set('extra', $extra);
+        }
+        $data->set('abandoned', $package->isAbandoned());
+        if ($package->isAbandoned()) {
+            $data->set('replacement', $package->getReplacementPackage());
+        }
     }
 }
