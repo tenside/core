@@ -119,4 +119,46 @@ class RequirePackageTaskTest extends TestCase
             'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
         );
     }
+
+    /**
+     * Test that the no-update flag is honored.
+     *
+     * @return void
+     */
+    public function testAllWithNoUpdate()
+    {
+        // Redirect composer config and cache into the test temp dir.
+        putenv('COMPOSER_HOME=' . $this->getTempDir() . DIRECTORY_SEPARATOR . '.composer');
+
+        // First we need a empty installation.
+        $this->createFixture('composer.json', json_encode(
+            [
+                'name'        => 'test/website',
+                'description' => 'Some description',
+                'license'     => 'MIT',
+            ]
+        ));
+
+        $task = new RequirePackageTask(
+            new JsonArray(
+                [
+                    RequirePackageTask::SETTING_TYPE      => 'require-package',
+                    RequirePackageTask::SETTING_ID        => 'require-task-id',
+                    RequirePackageTask::SETTING_PACKAGE   => ['vendor/dependency-name', '1.0.0'],
+                    RequirePackageTask::SETTING_HOME      => $this->getTempDir(),
+                    RequirePackageTask::SETTING_NO_UPDATE => true,
+                    'status'                              => RequirePackageTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $task->perform($this->getTempFile('logs/require-task.log'));
+
+        $this->assertEquals(RequirePackageTask::STATE_FINISHED, $task->getStatus());
+        $this->assertContains('composer.json has been updated', $task->getOutput());
+        $this->assertNotContains('Installing vendor/dependency-name', $task->getOutput());
+        $this->assertFileNotExists(
+            implode(DIRECTORY_SEPARATOR, [$this->getTempDir(), 'vendor', 'vendor', 'dependency-name'])
+        );
+    }
 }

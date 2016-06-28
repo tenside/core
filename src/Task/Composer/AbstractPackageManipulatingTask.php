@@ -79,7 +79,7 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     {
         $arguments = ['packages' => $this->getPackage()];
         if ($this->isNoUpdate()) {
-            $arguments['no-update'] = '';
+            $arguments['--no-update'] = '1';
         }
 
         $input = new ArrayInput($arguments);

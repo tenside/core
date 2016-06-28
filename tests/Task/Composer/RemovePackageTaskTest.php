@@ -141,4 +141,35 @@ class RemovePackageTaskTest extends TestCase
             'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
         );
     }
+
+    /**
+     * Test that the no-update flag is honored.
+     *
+     * @return void
+     */
+    public function testAllWithNoUpdate()
+    {
+        $task = new RemovePackageTask(
+            new JsonArray(
+                [
+                    RemovePackageTask::SETTING_TYPE      => 'remove-package',
+                    RemovePackageTask::SETTING_ID        => 'remove-task-id',
+                    RemovePackageTask::SETTING_PACKAGE   => ['vendor/dependency-name'],
+                    RemovePackageTask::SETTING_HOME      => $this->getTempDir(),
+                    RemovePackageTask::SETTING_NO_UPDATE => true,
+                    'status'                             => RemovePackageTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $task->perform($this->getTempFile('logs/remove-task.log'));
+
+        $this->assertEquals(RemovePackageTask::STATE_FINISHED, $task->getStatus());
+        $this->assertNotContains('Removing vendor/dependency-name', $task->getOutput());
+
+        $this->assertFileExists(
+            $this->getTempDir() . DIRECTORY_SEPARATOR .
+            'vendor' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'dependency-name'
+        );
+    }
 }
