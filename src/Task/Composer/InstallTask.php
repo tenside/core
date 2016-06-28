@@ -129,7 +129,9 @@ class InstallTask extends AbstractComposerCommandTask
         $tempDir = $this->file->get(self::SETTING_DESTINATION_DIR) . DIRECTORY_SEPARATOR . uniqid('install-');
 
         // If the temporary folder could not be created, error out.
-        if (!mkdir($tempDir, 0700)) {
+        // @codingStandardsIgnoreStart - we silence on purpose here as we create an exception on error.
+        if (!@mkdir($tempDir, 0700)) {
+        // @codingStandardsIgnoreEnd
             throw new \RuntimeException('Could not create the temporary directory');
         }
 
