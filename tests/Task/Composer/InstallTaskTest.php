@@ -30,6 +30,35 @@ use Tenside\Core\Util\JsonArray;
 class InstallTaskTest extends TestCase
 {
     /**
+     * Test that the installation will get aborted when the destination dir contains a composer.json.
+     *
+     * @return void
+     *
+     * @expectedException \RuntimeException
+     *
+     * @expectedExceptionMessage Project directory not empty
+     */
+    public function testDoesNotInstallWhenNonEmpty()
+    {
+        $this->createFixture('composer.json', '{}');
+
+        $task = new InstallTask(
+            new JsonArray(
+                [
+                    InstallTask::SETTING_TYPE            => 'install',
+                    InstallTask::SETTING_ID              => 'install-task-id',
+                    InstallTask::SETTING_PACKAGE         => 'vendor/package-name',
+                    InstallTask::SETTING_VERSION         => '1.0.0',
+                    InstallTask::SETTING_DESTINATION_DIR => $this->getTempDir(),
+                    'status'                             => InstallTask::STATE_PENDING
+                ]
+            )
+        );
+
+        $task->perform($this->getTempFile('logs/task.log'));
+    }
+
+    /**
      * Test that the base functionality works.
      *
      * @return void
