@@ -140,7 +140,7 @@ class PhpProcessSpawner
     private function getDefinedEnvironmentVariables()
     {
         $names = array_merge(
-            ['SYMFONY_ENV', 'SYMFONY_DEBUG', 'COMPOSER', 'HOME', 'USER'],
+            ['SYMFONY_ENV', 'SYMFONY_DEBUG', 'COMPOSER', 'HOME', 'USER', 'PATH'],
             array_keys($_ENV)
         );
 
