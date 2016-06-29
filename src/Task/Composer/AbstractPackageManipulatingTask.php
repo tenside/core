@@ -23,12 +23,12 @@ namespace Tenside\Core\Task\Composer;
 use Symfony\Component\Console\Input\ArrayInput;
 
 /**
- * This task provides the basic framework for building tasks that perform composer commands.
+ * This task provides the basic framework for building tasks that perform composer commands manipulating packages.
  */
 abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTask
 {
     /**
-     * The package to install.
+     * The package(s) to manipulate.
      */
     const SETTING_PACKAGE = 'package';
 

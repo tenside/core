@@ -28,7 +28,7 @@ use Symfony\Component\Finder\SplFileInfo;
 use Tenside\Core\Task\Composer\WrappedCommand\CreateProjectCommand;
 
 /**
- * This class holds the information for an upgrade of some or all packages.
+ * This class holds the information for a fresh installation of a project (composer create-project).
  */
 class InstallTask extends AbstractComposerCommandTask
 {

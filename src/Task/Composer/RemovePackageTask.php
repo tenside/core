@@ -24,7 +24,7 @@ use Tenside\Core\Task\Composer\WrappedCommand\RemoveCommand;
 use Tenside\Core\Util\RuntimeHelper;
 
 /**
- * This class holds the information for an installation request of a package.
+ * This class holds the information for an installation request of a package (composer remove).
  */
 class RemovePackageTask extends AbstractPackageManipulatingTask
 {

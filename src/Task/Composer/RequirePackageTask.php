@@ -24,7 +24,7 @@ use Tenside\Core\Task\Composer\WrappedCommand\RequireCommand;
 use Tenside\Core\Util\RuntimeHelper;
 
 /**
- * This class holds the information for an installation request of a package.
+ * This class holds the information for an installation request of a package (composer require).
  */
 class RequirePackageTask extends AbstractPackageManipulatingTask
 {

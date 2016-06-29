@@ -25,7 +25,7 @@ use Tenside\Core\Util\JsonArray;
 use Tenside\Core\Util\HomePathDeterminator;
 
 /**
- * This class provides loading of the tenside core configuration.
+ * This class provides instantiation of composer command tasks.
  */
 class ComposerTaskFactory implements TaskFactoryInterface
 {
