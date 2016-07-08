@@ -20,6 +20,8 @@
 
 namespace Tenside\Core\Test\Task;
 
+use Psr\Log\NullLogger;
+use Symfony\Component\Filesystem\LockHandler;
 use Tenside\Core\Task\Runner;
 use Tenside\Core\Task\Task;
 use Tenside\Core\Test\TestCase;
@@ -37,6 +39,14 @@ class TaskRunnerTest extends TestCase
      */
     public function testReturnsTrueOnSuccess()
     {
+        $lock = $this
+            ->getMockBuilder(LockHandler::class)
+            ->setMethods(['lock', 'release'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lock->expects($this->once())->method('lock')->willReturn(true);
+        $lock->expects($this->once())->method('release');
+
         $task = $this
             ->getMockBuilder(Task::class)
             ->setMethods(['perform', 'getStatus'])
@@ -45,7 +55,7 @@ class TaskRunnerTest extends TestCase
         $task->expects($this->once())->method('perform');
         $task->expects($this->once())->method('getStatus')->willReturn(Task::STATE_FINISHED);
 
-        $runner = new Runner($task);
+        $runner = new Runner($task, $lock, new NullLogger());
 
         $this->assertTrue($runner->run($this->getTempFile()));
     }
@@ -57,6 +67,14 @@ class TaskRunnerTest extends TestCase
      */
     public function testReturnsFalseOnError()
     {
+        $lock = $this
+            ->getMockBuilder(LockHandler::class)
+            ->setMethods(['lock', 'release'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lock->expects($this->once())->method('lock')->willReturn(true);
+        $lock->expects($this->once())->method('release');
+
         $task = $this
             ->getMockBuilder(Task::class)
             ->setMethods(['perform'])
@@ -64,7 +82,7 @@ class TaskRunnerTest extends TestCase
             ->getMockForAbstractClass();
         $task->expects($this->once())->method('perform')->willReturn(Task::STATE_ERROR);
 
-        $runner = new Runner($task);
+        $runner = new Runner($task, $lock, new NullLogger());
 
         $this->assertFalse($runner->run($this->getTempFile()));
     }
