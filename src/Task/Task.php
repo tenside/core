@@ -267,6 +267,16 @@ abstract class Task
     }
 
     /**
+     * Mark the task errored.
+     *
+     * @return void
+     */
+    public function markError()
+    {
+        $this->setStatus(self::STATE_ERROR);
+    }
+
+    /**
      * Set the task state.
      *
      * @param string $status The status code.
