@@ -80,7 +80,7 @@ class TaskList
             ->set('status', Task::STATE_PENDING)
             ->set(Task::SETTING_CREATED_AT, date('c'));
 
-        $taskFile = new JsonFile($this->taskIdToFileName($taskId));
+        $taskFile = new JsonFile($this->taskIdToFileName($taskId), null);
         $taskFile->setData($metaData->getData());
         $taskFile->save();
 
@@ -225,6 +225,6 @@ class TaskList
      */
     private function getConfig()
     {
-        return new JsonFile($this->dataDir . DIRECTORY_SEPARATOR . 'tenside-tasks.json');
+        return new JsonFile($this->dataDir . DIRECTORY_SEPARATOR . 'tenside-tasks.json', null);
     }
 }
