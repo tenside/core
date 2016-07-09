@@ -166,22 +166,6 @@ class PackageConverter
     }
 
     /**
-     * Compare two packages by their names.
-     *
-     * @param array $left  The first package for comparison.
-     *
-     * @param array $right The second package for comparison.
-     *
-     * @return int
-     *
-     * @internal
-     */
-    public function packageCompare($left, $right)
-    {
-        return strnatcasecmp($left['name'], $right['name']);
-    }
-
-    /**
      * Check if a package is locked.
      *
      * @param string $packageName The name of the package to test.
