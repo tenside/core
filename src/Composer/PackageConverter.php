@@ -93,13 +93,13 @@ class PackageConverter
     /**
      * Convert a package to array information used by json API.
      *
-     * @param PackageInterface $package        The package to convert.
+     * @param PackageInterface      $package The package to convert.
      *
-     * @param null|string      $upgradeVersion The package version to show as upgradable to.
+     * @param null|PackageInterface $upgrade The package to show as upgradable to.
      *
      * @return JsonArray
      */
-    public function convertPackageToArray(PackageInterface $package, $upgradeVersion = null)
+    public function convertPackageToArray(PackageInterface $package, PackageInterface $upgrade = null)
     {
         $name = $package->getPrettyName();
         $data = new JsonArray([
@@ -114,8 +114,11 @@ class PackageConverter
             $data->set('time', $releaseDate->format(\DateTime::ATOM));
         }
 
-        if (null !== $upgradeVersion) {
-            $data->set('upgrade_version', $upgradeVersion);
+        if (null !== $upgrade) {
+            $data->set('upgrade_version', $upgrade->getPrettyVersion());
+            if (null !== ($upgradeReleaseDate = $upgrade->getReleaseDate())) {
+                $data->set('upgrade_time', $upgradeReleaseDate->format(\DateTime::ATOM));
+            }
         }
 
         if ($package instanceof CompletePackageInterface) {
@@ -132,14 +135,14 @@ class PackageConverter
      *
      * @param bool                $requiredOnly If true, return only the packages added to the root package as require.
      *
-     * @param null|JsonArray      $upgradeList  The package version to show as upgradable to.
+     * @param RepositoryInterface $upgradeList  The packages available as upgrades.
      *
      * @return JsonArray
      */
     public function convertRepositoryToArray(
         RepositoryInterface $repository,
         $requiredOnly = false,
-        JsonArray $upgradeList = null
+        RepositoryInterface $upgradeList = null
     ) {
         $requires = $requiredOnly ? $this->rootPackage->getRequires() : false;
         $packages = new JsonArray();
@@ -148,13 +151,13 @@ class PackageConverter
             $name = $package->getPrettyName();
             $esc  = $packages->escape($name);
             if (false === $requires || (isset($requires[$name]))) {
-                $upgradeVersion = null;
-                if ($upgradeList && $upgradeList->has($esc)) {
-                    $upgradeVersion = $upgradeList->get($esc);
+                $upgradePkg = null;
+                if ($upgradeList) {
+                    $upgradePkg = $upgradeList->findPackage($name, '*');
                 }
                 $packages->set(
                     $esc,
-                    $this->convertPackageToArray($package, $upgradeVersion)->getData()
+                    $this->convertPackageToArray($package, $upgradePkg)->getData()
                 );
             }
         }

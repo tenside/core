@@ -107,7 +107,11 @@ class PackageConverterTest extends TestCase
         );
         $package->setAbandoned('another/package');
 
-        $converted = PackageConverter::create($package)->convertPackageToArray($package, '1.1.1.1');
+        $upgrade = new CompletePackage('test/package', '1.1.1.1', '1.1.1.1');
+
+        $upgrade->setReleaseDate($upgradeTime = new \DateTime('+7 day'));
+
+        $converted = PackageConverter::create($package)->convertPackageToArray($package, $upgrade);
 
         $this->assertEquals(
             [
@@ -118,6 +122,7 @@ class PackageConverterTest extends TestCase
                 'locked',
                 'time',
                 'upgrade_version',
+                'upgrade_time',
                 'description',
                 'license',
                 'keywords',
@@ -138,6 +143,7 @@ class PackageConverterTest extends TestCase
         $this->assertEquals($package->getLicense(), $converted->get('license'));
         $this->assertEquals($time->format(\DateTime::ATOM), $converted->get('time'));
         $this->assertEquals('1.1.1.1', $converted->get('upgrade_version'));
+        $this->assertEquals($upgradeTime->format(\DateTime::ATOM), $converted->get('upgrade_time'));
         $this->assertEquals($package->getDescription(), $converted->get('description'));
         $this->assertEquals($package->getKeywords(), $converted->get('keywords'));
         $this->assertEquals($package->getHomepage(), $converted->get('homepage'));
