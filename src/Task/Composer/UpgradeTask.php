@@ -46,6 +46,11 @@ class UpgradeTask extends AbstractComposerCommandTask
     const SETTING_DATA_DIR = 'data-dir';
 
     /**
+     * The dry-run flag
+     */
+    const SETTING_DRY_RUN = 'dry-run';
+
+    /**
      * Retrieve the names of the packages to upgrade or null if none.
      *
      * @return string[]|null
@@ -86,6 +91,16 @@ class UpgradeTask extends AbstractComposerCommandTask
     }
 
     /**
+     * Check if the upgrade is a dry-run.
+     *
+     * @return bool
+     */
+    public function isDryRun()
+    {
+        return (bool) $this->file->get(self::SETTING_DRY_RUN);
+    }
+
+    /**
      * Returns 'upgrade'.
      *
      * {@inheritdoc}
@@ -117,6 +132,10 @@ class UpgradeTask extends AbstractComposerCommandTask
 
         if ($this->isSelectiveUpgrade()) {
             $arguments['packages'] = $this->getPackages();
+        }
+
+        if ($this->isDryRun()) {
+            $arguments['--dry-run'] = true;
         }
 
         $input = new ArrayInput($arguments);
