@@ -22,7 +22,11 @@ namespace Tenside\Core\Task\Composer;
 
 use Composer\Command\UpdateCommand;
 use Composer\Factory;
+use Composer\Installer\InstallerEvent;
+use Composer\Installer\InstallerEvents;
 use Symfony\Component\Console\Input\ArrayInput;
+use Tenside\Core\Composer\Installer\InstallationManager;
+use Tenside\Core\Util\JsonFile;
 use Tenside\Core\Util\RuntimeHelper;
 
 /**
@@ -119,6 +123,19 @@ class UpgradeTask extends AbstractComposerCommandTask
 
         $command = new UpdateCommand();
         $command->setComposer(Factory::create($this->getIO()));
+
+        if ($this->isDryRun()) {
+            $pendingUpgrades     = $this->getDataDir() . DIRECTORY_SEPARATOR . 'upgrades.json';
+            $installationManager = new InstallationManager(new JsonFile($pendingUpgrades, null));
+            $command->getComposer()->setInstallationManager($installationManager);
+
+            $command->getComposer()->getEventDispatcher()->addListener(
+                InstallerEvents::PRE_DEPENDENCIES_SOLVING,
+                function (InstallerEvent $event) use ($installationManager) {
+                    $installationManager->setPool($event->getPool());
+                }
+            );
+        }
 
         return $command;
     }
