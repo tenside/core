@@ -85,9 +85,9 @@ class SelfTestCliArguments extends AbstractSelfTestCli
     {
         $output = $this->testCliRuntime('echo ini_get(\'memory_limit\');');
         if ('-1' !== $output) {
-            if ($this->testOverride('echo ini_get(\'memory_limit\');', '-d memory_limit=1G', '1G')) {
-                $this->getAutoConfig()->addCommandLineArgument('-d memory_limit=1G');
-                $this->log->writeln('Will override memory_limit of ' . $output . ' with 1G.');
+            if ($this->testOverride('echo ini_get(\'memory_limit\');', '-d memory_limit=2G', '2G')) {
+                $this->getAutoConfig()->addCommandLineArgument('-d memory_limit=2G');
+                $this->log->writeln('Will override memory_limit of ' . $output . ' with 2G.');
             }
         }
 
