@@ -102,7 +102,7 @@ class SelfTestCliArguments extends AbstractSelfTestCli
     private function testMaxExecutionTime()
     {
         $output = $this->testCliRuntime('echo ini_get(\'max_execution_time\');');
-        if (900 > intval($output)) {
+        if ((0 !== intval($output)) && (900 > intval($output))) {
             if ($this->testOverride('echo ini_get(\'max_execution_time\');', '-d max_execution_time=900', '900')) {
                 $this->getAutoConfig()->addCommandLineArgument('-d max_execution_time=900');
                 $this->log->writeln('Will override max_execution_time of ' . $output . ' with 900 seconds.');
