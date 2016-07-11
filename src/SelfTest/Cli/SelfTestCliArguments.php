@@ -84,7 +84,7 @@ class SelfTestCliArguments extends AbstractSelfTestCli
     private function testMemoryLimit()
     {
         $output = $this->testCliRuntime('echo ini_get(\'memory_limit\');');
-        if ('-1' !== $output) {
+        if ('-1' !== $output && ($this->memoryInBytes($output) < 2 * 1024 * 1024 * 1024)) {
             if ($this->testOverride('echo ini_get(\'memory_limit\');', '-d memory_limit=2G', '2G')) {
                 $this->getAutoConfig()->addCommandLineArgument('-d memory_limit=2G');
                 $this->log->writeln('Will override memory_limit of ' . $output . ' with 2G.');
@@ -132,5 +132,32 @@ class SelfTestCliArguments extends AbstractSelfTestCli
         }
 
         return true;
+    }
+
+    /**
+     * Convert a human readable memory amount to the exact byte count.
+     *
+     * @param string $value The human readable memory string.
+     *
+     * @return int
+     */
+    private function memoryInBytes($value)
+    {
+        $unit  = strtolower(substr($value, -1, 1));
+        $value = (int) $value;
+        switch ($unit) {
+            case 'g':
+                $value *= 1024;
+            // no break (cumulative multiplier)
+            case 'm':
+                $value *= 1024;
+            // no break (cumulative multiplier)
+            case 'k':
+                $value *= 1024;
+                break;
+            default:
+        }
+
+        return $value;
     }
 }
