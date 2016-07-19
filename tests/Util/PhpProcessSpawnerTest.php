@@ -57,4 +57,25 @@ class PhpProcessSpawnerTest extends TestCase
         $this->assertEquals('TESTVALUE1G', $process->getOutput());
         $this->assertEquals('', $process->getErrorOutput());
     }
+
+    /**
+     * Test that the spawner spawns the process in background.
+     *
+     * @return void
+     */
+    public function testRunBackground()
+    {
+        $config = new TensideJsonConfig(new JsonArray());
+        $config->setForceToBackground(true);
+
+        $process = PhpProcessSpawner::create($config, $this->getTempDir())->spawn(['--version']);
+
+        $cli = $process->getCommandLine();
+
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->assertEquals('start /B ' . escapeshellarg('php') . ' ' . escapeshellarg('--version') . ' &', $cli);
+        } else {
+            $this->assertEquals(escapeshellarg('php') . ' ' . escapeshellarg('--version') . ' &', $cli);
+        }
+    }
 }
