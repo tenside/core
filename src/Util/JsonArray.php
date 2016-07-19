@@ -342,7 +342,7 @@ class JsonArray implements \JsonSerializable
     /**
      * Return the data which should be serialized to JSON.
      *
-     * @return array
+     * @return object
      */
     public function jsonSerialize()
     {
