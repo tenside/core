@@ -215,7 +215,9 @@ class SelfTestCliRuntime extends AbstractSelfTest
             return null;
         }
 
-        // Version PHP 5.4.45-0+deb7u1
+        // Examples for version output, add other examples here if the regex must get altered:
+        // "PHP 5.6.22-0+deb8u1 (cli)" (obtained from Debian jessie)
+        // "PHP 7.0.8-1~dotdeb+8.1 (cli) ( NTS )" (obtained from Debian jessie)
         if (!preg_match('#.*PHP ([0-9a-zA-Z\.\-\+\~]+) \(cli\)#', $process->getOutput(), $output)) {
             return null;
         }
