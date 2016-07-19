@@ -62,7 +62,7 @@ class SelfTestCliCanFork extends AbstractSelfTestCli
         $this->getAutoConfig()->setForkingAvailable(false);
 
         $this->markWarning(
-            'Could not determine if forking is possible, assuming not supported (Output : ' . $output .').'
+            'Could not determine if forking is possible, assuming not supported (Output : ' . $output . ').'
         );
     }
 }

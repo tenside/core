@@ -76,7 +76,7 @@ class ProcessBuilder
     /**
      * The timeout value.
      *
-     * @var int|null
+     * @var float|null
      */
     private $timeout = 60;
 
@@ -189,7 +189,7 @@ class ProcessBuilder
      */
     public function setWorkingDirectory($workingDirectory)
     {
-        if ($workingDirectory && !is_dir($workingDirectory)) {
+        if ((null !== $workingDirectory) && !is_dir($workingDirectory)) {
             throw new InvalidArgumentException('The working directory must exist.');
         }
 

@@ -42,11 +42,7 @@ abstract class AbstractSelfTestCli extends AbstractSelfTest
      */
     protected function hasInterpreter()
     {
-        if (null === ($this->interpreter = $this->getAutoConfig()->getPhpCliBinary())) {
-            return false;
-        }
-
-        return true;
+        return (null !== ($this->interpreter = $this->getAutoConfig()->getPhpCliBinary()));
     }
 
     /**

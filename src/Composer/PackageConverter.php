@@ -131,11 +131,12 @@ class PackageConverter
     /**
      * Convert the information of all packages in a repository to an array used by json API.
      *
-     * @param RepositoryInterface $repository   The repository holding the packages to convert.
+     * @param RepositoryInterface      $repository   The repository holding the packages to convert.
      *
-     * @param bool                $requiredOnly If true, return only the packages added to the root package as require.
+     * @param bool                     $requiredOnly If true, return only the packages added to the root package as
+     *                                               require.
      *
-     * @param RepositoryInterface $upgradeList  The packages available as upgrades.
+     * @param null|RepositoryInterface $upgradeList  The packages available as upgrades.
      *
      * @return JsonArray
      */
