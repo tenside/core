@@ -73,7 +73,7 @@ class PhpProcessSpawnerTest extends TestCase
         $cli = $process->getCommandLine();
 
         if ('\\' === DIRECTORY_SEPARATOR) {
-            $this->assertEquals('start /B ' . escapeshellarg('php') . ' ' . escapeshellarg('--version') . ' &', $cli);
+            $this->assertEquals('start /B ' . escapeshellarg('php') . ' ' . escapeshellarg('--version'), $cli);
         } else {
             $this->assertEquals(escapeshellarg('php') . ' ' . escapeshellarg('--version') . ' &', $cli);
         }
