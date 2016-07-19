@@ -108,7 +108,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
     {
         foreach ($binaries as $binary) {
             if ($version = $this->testCliRuntime($binary)) {
-                if (version_compare($version, '5.4', '<')) {
+                if (version_compare($version, '5.6', '<')) {
                     $this->log->writeln(sprintf('%s version is too low (%s)', $binary, $version));
 
                     return false;
