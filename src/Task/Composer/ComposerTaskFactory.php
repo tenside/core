@@ -20,14 +20,14 @@
 
 namespace Tenside\Core\Task\Composer;
 
-use Tenside\Core\Task\TaskFactoryInterface;
+use Tenside\Core\Task\AbstractTaskFactory;
 use Tenside\Core\Util\JsonArray;
 use Tenside\Core\Util\HomePathDeterminator;
 
 /**
  * This class provides instantiation of composer command tasks.
  */
-class ComposerTaskFactory implements TaskFactoryInterface
+class ComposerTaskFactory extends AbstractTaskFactory
 {
     /**
      * The home path.
@@ -44,29 +44,6 @@ class ComposerTaskFactory implements TaskFactoryInterface
     public function __construct(HomePathDeterminator $home)
     {
         $this->home = $home;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isTypeSupported($taskType)
-    {
-        return in_array($taskType, ['install', 'upgrade', 'require-package', 'remove-package']);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException For unsupported task types.
-     */
-    public function createInstance($taskType, JsonArray $metaData)
-    {
-        $methodName = 'create' . implode('', array_map('ucfirst', explode('-', $taskType)));
-        if (method_exists($this, $methodName)) {
-            return call_user_func([$this, $methodName], $metaData);
-        }
-
-        throw new \InvalidArgumentException('Do not know how to create task ' . $taskType);
     }
 
     /**
