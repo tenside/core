@@ -48,7 +48,7 @@ class PhpProcessSpawnerTest extends TestCase
 
         $cli = $process->getCommandLine();
         $this->assertEquals(
-            'php '. escapeshellarg('-dmemory_limit=1G') . ' ' .
+            escapeshellarg('php') . ' ' . escapeshellarg('-dmemory_limit=1G') . ' ' .
             escapeshellarg('-r') . ' ' .
             escapeshellarg('echo getenv(\'TESTVAR\') . ini_get(\'memory_limit\');'),
             $cli

@@ -70,87 +70,44 @@ class PhpProcessSpawner
     }
 
     /**
-     * Run the process.
+     * Create the process (automatically forcing to background if configured).
      *
      * @param array $arguments The additional arguments to add to the call.
      *
      * @return Process
      */
-    public function spawn($arguments)
+    public function spawn(array $arguments)
     {
-        $cmd = sprintf(
-            '%s %s',
-            escapeshellcmd($this->config->getPhpCliBinary()),
-            $this->getArguments($arguments)
-        );
-
-        if ($this->config->isForceToBackgroundEnabled()) {
-            $cmd .= '&';
-        }
-
-        return new Process($cmd, $this->homePath, $this->getEnvironment(), null, null);
+        return $this
+            ->buildInternal($arguments)
+            ->setForceBackground($this->config->isForceToBackgroundEnabled())
+            ->generate();
     }
 
     /**
-     * Retrieve the command line arguments to use.
+     * Build the internal process builder.
      *
-     * @param array $additionalArguments The additional arguments to add to the call.
+     * @param array $arguments The arguments.
      *
-     * @return string
+     * @return ProcessBuilder
      */
-    private function getArguments($additionalArguments)
+    private function buildInternal(array $arguments)
     {
-        $arguments = [];
+        $builder = ProcessBuilder::create($this->config->getPhpCliBinary());
+
         if (null !== ($cliArguments = $this->config->getPhpCliArguments())) {
-            foreach ($cliArguments as $argument) {
-                $arguments[] = $argument;
+            $builder->addArguments($cliArguments);
+        }
+        $builder->addArguments($arguments);
+
+        if (null !== ($environment = $this->config->getPhpCliEnvironment())) {
+            foreach ($environment as $name => $value) {
+                $builder->setEnv($name, $value);
             }
         }
-        $arguments = array_map('escapeshellarg', array_merge($arguments, $additionalArguments));
+        // MUST be kept last.
+        $builder->setEnv('COMPOSER', $this->homePath . DIRECTORY_SEPARATOR . 'composer.json');
 
-        return implode(' ', $arguments);
-    }
-
-    /**
-     * Retrieve the command line environment variables to use.
-     *
-     * @return array
-     */
-    private function getEnvironment()
-    {
-        $variables = $this->getDefinedEnvironmentVariables();
-
-        if (null === ($environment = $this->config->getPhpCliEnvironment())) {
-            return $variables;
-        }
-
-        $variables = array_merge($variables, $environment);
-
-        return $variables;
-    }
-
-    /**
-     * Retrieve the passed environment variables from the current session and return them.
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
-     */
-    private function getDefinedEnvironmentVariables()
-    {
-        $names = array_merge(
-            ['SYMFONY_ENV', 'SYMFONY_DEBUG', 'COMPOSER', 'HOME', 'USER', 'PATH'],
-            array_keys($_ENV)
-        );
-
-        $variables = [];
-        foreach ($names as $name) {
-            if (false !== ($composerEnv = getenv($name))) {
-                $variables[$name] = $composerEnv;
-            }
-        }
-
-        return $variables;
+        return $builder;
     }
 }
