@@ -43,9 +43,9 @@ class FunctionAvailabilityCheck
     /**
      * Check if function is defined.
      *
-     * @param string $function  The function to test.
+     * @param string      $function  The function to test.
      *
-     * @param string $extension The optional name of an php extension providing said function.
+     * @param string|null $extension The optional name of an php extension providing said function.
      *
      * @return bool
      */
@@ -83,11 +83,11 @@ class FunctionAvailabilityCheck
             return false;
         }
 
-        if (!isset(static::$blackListSuhosin)) {
-            static::$blackListSuhosin = static::prepareList(ini_get('suhosin.executor.func.blacklist'));
+        if (!isset(self::$blackListSuhosin)) {
+            self::$blackListSuhosin = static::prepareList(ini_get('suhosin.executor.func.blacklist'));
         }
 
-        return static::isFunctionsMentionedInList($function, static::$blackListSuhosin);
+        return static::isFunctionsMentionedInList($function, self::$blackListSuhosin);
     }
 
     /**
@@ -99,11 +99,11 @@ class FunctionAvailabilityCheck
      */
     public static function isFunctionBlacklistedInPhpIni($function)
     {
-        if (!isset(static::$blackListPhpIni)) {
-            static::$blackListPhpIni = static::prepareList(ini_get('disable_functions'));
+        if (!isset(self::$blackListPhpIni)) {
+            self::$blackListPhpIni = static::prepareList(ini_get('disable_functions'));
         }
 
-        return static::isFunctionsMentionedInList($function, static::$blackListPhpIni);
+        return static::isFunctionsMentionedInList($function, self::$blackListPhpIni);
     }
 
     /**

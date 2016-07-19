@@ -344,7 +344,7 @@ class ProcessBuilder
      */
     public function setForceBackground($forceBackground = true)
     {
-        $this->forceBackground = $forceBackground;
+        $this->forceBackground = (bool) $forceBackground;
 
         return $this;
     }

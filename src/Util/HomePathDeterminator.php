@@ -35,7 +35,7 @@ class HomePathDeterminator
     /**
      * Create a new instance.
      *
-     * @param string $home The home dir if desired to override (null to autodetect).
+     * @param string|null $home The home dir if desired to override (null to autodetect).
      */
     public function __construct($home = null)
     {

@@ -188,7 +188,7 @@ class TensideJsonConfig extends SourceJson
     /**
      * Check if force to background is enabled.
      *
-     * @return bool|null
+     * @return bool
      */
     public function isForceToBackgroundEnabled()
     {
