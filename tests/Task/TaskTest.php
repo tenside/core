@@ -43,7 +43,12 @@ class TaskTest extends TestCase
         $task = $this
             ->getMockBuilder(Task::class)
             ->setConstructorArgs(
-                [new JsonArray(['id' => 'test-task-id', 'status' => Task::STATE_PENDING, 'created-at' => date('c')])]
+                [new JsonArray([
+                    'id'         => 'test-task-id',
+                    'status'     => Task::STATE_PENDING,
+                    'created-at' => date('c'),
+                    'user-data'  => ['custom' => ['payload', 'values']]
+                ])]
             )
             ->setMethods(['getType', 'doPerform'])
             ->getMockForAbstractClass();
@@ -52,6 +57,8 @@ class TaskTest extends TestCase
         $task->expects($this->once())->method('doPerform')->willReturnCallback(function () use ($test, $task) {
             $this->assertEquals(Task::STATE_RUNNING, $task->getStatus());
         });
+
+        $this->assertEquals(['custom' => ['payload', 'values']], $task->getUserData());
 
         $logfile = $this->getTempDir() . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'task.log';
         /** @var Task $task */

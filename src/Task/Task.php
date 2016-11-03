@@ -48,6 +48,11 @@ abstract class Task
     const SETTING_CREATED_AT = 'created-at';
 
     /**
+     * The user data.
+     */
+    const SETTING_USER_DATA = 'user-data';
+
+    /**
      * This state determines that the task is still awaiting to be executed.
      */
     const STATE_PENDING = 'PENDING';
@@ -247,6 +252,16 @@ abstract class Task
     public function getCreatedAt()
     {
         return \DateTime::createFromFormat(DATE_ISO8601, $this->file->get(self::SETTING_CREATED_AT));
+    }
+
+    /**
+     * Retrieve the user submitted payload.
+     *
+     * @return array
+     */
+    public function getUserData()
+    {
+        return $this->file->get(self::SETTING_USER_DATA);
     }
 
     /**
