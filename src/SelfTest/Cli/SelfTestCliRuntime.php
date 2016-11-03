@@ -133,7 +133,7 @@ class SelfTestCliRuntime extends AbstractSelfTest
      *
      * @return string[]
      */
-    private function findBinaries($paths, $fileNames = ['php', 'php.exe'])
+    private function findBinaries($paths, $fileNames = ['php', 'php-cli', 'php.exe'])
     {
         // We have to work around the problem that the symfony Finder will try to follow the symlink when a file
         // i.e. /var/bin/foo is symlinked to /usr/bin/foo and therefore raise a warning that /var/bin is not in
