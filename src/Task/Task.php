@@ -246,7 +246,7 @@ abstract class Task
      */
     public function getCreatedAt()
     {
-        return \DateTime::createFromFormat(DATE_ISO8601, $this->file->get('created-at'));
+        return \DateTime::createFromFormat(DATE_ISO8601, $this->file->get(self::SETTING_CREATED_AT));
     }
 
     /**
