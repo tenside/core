@@ -148,7 +148,8 @@ class AuthJsonTest extends TestCase
         $this->assertSame('123456789', $auth->getBitbucketOAuthKey());
         $this->assertSame('987654321', $auth->getBitbucketOAuthSecret());
         $this->assertSame($auth, $auth->removeBitbucketOAuth());
-        $this->assertNull($auth->getGitlabPrivateToken());
+        $this->assertNull($auth->getBitbucketOAuthKey());
+        $this->assertNull($auth->getBitbucketOAuthSecret());
     }
 
     /**
@@ -191,7 +192,8 @@ class AuthJsonTest extends TestCase
         $this->assertSame($auth, $auth->setHttpBasic('eugen', 'v3ry53cr3t', 'contao.org'));
         $this->assertSame('eugen', $auth->getHttpBasicUser('contao.org'));
         $this->assertSame('v3ry53cr3t', $auth->getHttpBasicPassword('contao.org'));
-        $this->assertSame($auth, $auth->removeBitbucketOAuth());
-        $this->assertNull($auth->getGitlabPrivateToken());
+        $this->assertSame($auth, $auth->removeHttpBasic('contao.org'));
+        $this->assertNull($auth->getHttpBasicUser('contao.org'));
+        $this->assertNull($auth->getHttpBasicPassword('contao.org'));
     }
 }
