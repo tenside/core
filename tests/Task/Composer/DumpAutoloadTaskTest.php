@@ -12,6 +12,7 @@
  *
  * @package    tenside/core
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Yanick Witschi <yanick.witschi@terminal42.ch>
  * @copyright  2015 Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    https://github.com/tenside/core/blob/master/LICENSE MIT
  * @link       https://github.com/tenside/core
@@ -30,7 +31,9 @@ use Tenside\Core\Util\JsonArray;
 class DumpAutoloadTaskTest extends TestCase
 {
     /**
-     * Test the the autoload file is dumped
+     * Test the the autoload file is dumped.
+     *
+     * @return void
      */
     public function testAutoloadIsDumped()
     {
@@ -41,7 +44,7 @@ class DumpAutoloadTaskTest extends TestCase
                 ]
             ]
         ];
-        $dummyClass = '<?php namespace Foo\Bar; class Dummy {}';
+        $dummyClass   = '<?php namespace Foo\Bar; class Dummy {}';
 
         $this->createFixture('composer.json', json_encode($composerJson));
         $this->createFixture('/src/DummyClass.php', $dummyClass);
@@ -60,8 +63,12 @@ class DumpAutoloadTaskTest extends TestCase
         $this->assertFileExists($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/autoload.php');
         $this->assertFileExists($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php');
 
-        $psr4FileContent = file_get_contents($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php');
-        $classMapContent = file_get_contents($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_classmap.php');
+        $psr4FileContent = file_get_contents(
+            $this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php'
+        );
+        $classMapContent = file_get_contents(
+            $this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_classmap.php'
+        );
 
         $this->assertContains("'Foo\\\\Bar\\\\' => array(\$baseDir . '/src')", $psr4FileContent);
 
@@ -71,6 +78,8 @@ class DumpAutoloadTaskTest extends TestCase
 
     /**
      * Tests if the --optimize option is executed
+     *
+     * @return void
      */
     public function testAutoloadIsDumpedWithOptimizeOption()
     {
@@ -82,7 +91,7 @@ class DumpAutoloadTaskTest extends TestCase
                 ]
             ]
         ];
-        $dummyClass = '<?php namespace Foo\Bar; class Dummy {}';
+        $dummyClass   = '<?php namespace Foo\Bar; class Dummy {}';
 
         $this->createFixture('composer.json', json_encode($composerJson));
         $this->createFixture('/src/DummyClass.php', $dummyClass);
@@ -93,7 +102,8 @@ class DumpAutoloadTaskTest extends TestCase
                 DumpAutoloadTask::SETTING_ID        => 'dumpautoload-task-id',
                 'status'                            => DumpAutoloadTask::STATE_PENDING,
                 DumpAutoloadTask::SETTING_HOME      => $this->getTempDir(),
-                DumpAutoloadTask::SETTING_OPTIMIZE  => true, // Key for this test
+                // Key for this test:
+                DumpAutoloadTask::SETTING_OPTIMIZE  => true,
             ]
         ));
 
@@ -102,8 +112,12 @@ class DumpAutoloadTaskTest extends TestCase
         $this->assertFileExists($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/autoload.php');
         $this->assertFileExists($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php');
 
-        $psr4FileContent = file_get_contents($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php');
-        $classMapContent = file_get_contents($this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_classmap.php');
+        $psr4FileContent = file_get_contents(
+            $this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_psr4.php'
+        );
+        $classMapContent = file_get_contents(
+            $this->getTempDir() . DIRECTORY_SEPARATOR . '/vendor/composer/autoload_classmap.php'
+        );
 
         $this->assertContains("'Foo\\\\Bar\\\\' => array(\$baseDir . '/src')", $psr4FileContent);
 
