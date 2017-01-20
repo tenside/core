@@ -113,7 +113,8 @@ class UpgradeTaskTest extends TestCase
         $this->assertEquals('upgrade-task-id', $task->getId());
         $this->assertEquals(UpgradeTask::STATE_FINISHED, $task->getStatus());
 
-        $this->assertContains('Installing vendor/dependency-name (1.1.0)', $task->getOutput());
+        $this->assertContains('Updating vendor/dependency-name (1.0.0 => 1.1.0)', $task->getOutput());
+        $this->assertContains('Finished without error.', $task->getOutput());
 
         $this->assertZipHasBeenUnpackedTo(
             $this->getFixturesDirectory() . DIRECTORY_SEPARATOR . $newZip,
