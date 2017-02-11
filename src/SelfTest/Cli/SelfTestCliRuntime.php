@@ -157,6 +157,10 @@ class SelfTestCliRuntime extends AbstractSelfTest
             return [];
         }
 
+        $paths = array_filter($paths, function($path) {
+            return is_dir($path);
+        });
+
         $finder = new Finder();
         $finder->ignoreUnreadableDirs()->in($paths);
 
