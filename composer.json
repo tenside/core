@@ -22,7 +22,6 @@
     "ext-openssl": "*",
     "composer/composer": "~1.0",
     "composer/semver": "~1.2",
-    "firebase/php-jwt": "~2.2",
     "symfony/console": "~3.0",
     "symfony/finder": "~3.0",
     "symfony/http-foundation": "~3.0",
