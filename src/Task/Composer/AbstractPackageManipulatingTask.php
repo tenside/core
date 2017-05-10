@@ -77,9 +77,15 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
      */
     protected function prepareInput()
     {
-        $arguments = ['packages' => $this->getPackage()];
+        $arguments = [
+            'packages' => $this->getPackage(),
+            '--prefer-dist' => true,
+        ];
+
         if ($this->isNoUpdate()) {
-            $arguments['--no-update'] = '1';
+            $arguments['--no-update'] = true;
+        } else {
+            $arguments['--update-no-dev'] = true;
         }
 
         $input = new ArrayInput($arguments);

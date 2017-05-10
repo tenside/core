@@ -154,9 +154,8 @@ class InstallTask extends AbstractComposerCommandTask
         $arguments = [
             'package'   => $this->file->get(self::SETTING_PACKAGE),
             'directory' => $this->tempDir,
-            '--prefer-dist',
-            '--no-dev',
-            '--no-interaction'
+            '--prefer-dist' => true,
+            '--no-dev' => true,
         ];
 
         if ($version = $this->file->get(self::SETTING_VERSION)) {

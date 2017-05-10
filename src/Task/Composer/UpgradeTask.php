@@ -145,7 +145,10 @@ class UpgradeTask extends AbstractComposerCommandTask
      */
     protected function prepareInput()
     {
-        $arguments = [];
+        $arguments = [
+            '--prefer-dist' => true,
+            '--no-dev' => true,
+        ];
 
         if ($this->isSelectiveUpgrade()) {
             $arguments['packages'] = $this->getPackages();
