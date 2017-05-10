@@ -79,8 +79,11 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     {
         $arguments = [
             'packages' => $this->getPackage(),
-            '--prefer-dist' => true,
         ];
+
+        if ($this instanceof RequirePackageTask) {
+            $arguments['--prefer-dist'] = true;
+        }
 
         if ($this->isNoUpdate()) {
             $arguments['--no-update'] = true;
