@@ -83,7 +83,7 @@ class Runner
     public function run($logfile)
     {
         $this->shutdownHandlerActive = true;
-        $this->acquireLock();
+        //$this->acquireLock();
 
         try {
             $this->task->perform($logfile);
@@ -92,7 +92,7 @@ class Runner
             $this->logger->error($this->task->getOutput());
         }
 
-        $this->releaseLock();
+        //$this->releaseLock();
 
         $this->shutdownHandlerActive = false;
 
