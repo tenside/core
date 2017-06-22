@@ -20,8 +20,6 @@
 
 namespace Tenside\Core\Task\Composer;
 
-use Symfony\Component\Console\Input\ArrayInput;
-
 /**
  * This task provides the basic framework for building tasks that perform composer commands manipulating packages.
  */
@@ -70,30 +68,5 @@ abstract class AbstractPackageManipulatingTask extends AbstractComposerCommandTa
     public function isNoUpdate()
     {
         return (bool) $this->file->has(self::SETTING_NO_UPDATE);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function prepareInput()
-    {
-        $arguments = [
-            'packages' => $this->getPackage(),
-        ];
-
-        if ($this instanceof RequirePackageTask) {
-            $arguments['--prefer-dist'] = true;
-        }
-
-        if ($this->isNoUpdate()) {
-            $arguments['--no-update'] = true;
-        } else {
-            $arguments['--update-no-dev'] = true;
-        }
-
-        $input = new ArrayInput($arguments);
-        $input->setInteractive(false);
-
-        return $input;
     }
 }

@@ -148,6 +148,10 @@ class UpgradeTask extends AbstractComposerCommandTask
         $arguments = [
             '--prefer-dist' => true,
             '--no-dev' => true,
+            '--no-progress' => true,
+            '--no-suggest' => true,
+            '--with-dependencies' => true,
+            '--optimize-autoloader' => true,
         ];
 
         if ($this->isSelectiveUpgrade()) {

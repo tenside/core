@@ -20,6 +20,7 @@
 
 namespace Tenside\Core\Task\Composer;
 
+use Symfony\Component\Console\Input\ArrayInput;
 use Tenside\Core\Task\Composer\WrappedCommand\RemoveCommand;
 use Tenside\Core\Util\RuntimeHelper;
 
@@ -48,5 +49,29 @@ class RemovePackageTask extends AbstractPackageManipulatingTask
         RuntimeHelper::setupHome($this->getHome());
 
         return $this->attachComposerFactory(new RemoveCommand());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareInput()
+    {
+        $arguments = [
+            'packages' => $this->getPackage(),
+            '--prefer-dist' => true,
+            '--no-progress' => true,
+            '--optimize-autoloader' => true,
+        ];
+
+        if ($this->isNoUpdate()) {
+            $arguments['--no-update'] = true;
+        } else {
+            $arguments['--update-no-dev'] = true;
+        }
+
+        $input = new ArrayInput($arguments);
+        $input->setInteractive(false);
+
+        return $input;
     }
 }

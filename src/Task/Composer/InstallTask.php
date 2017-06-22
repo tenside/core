@@ -156,6 +156,7 @@ class InstallTask extends AbstractComposerCommandTask
             'directory' => $this->tempDir,
             '--prefer-dist' => true,
             '--no-dev' => true,
+            '--no-progress' => true,
         ];
 
         if ($version = $this->file->get(self::SETTING_VERSION)) {
