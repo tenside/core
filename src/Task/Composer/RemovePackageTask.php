@@ -58,7 +58,6 @@ class RemovePackageTask extends AbstractPackageManipulatingTask
     {
         $arguments = [
             'packages' => $this->getPackage(),
-            '--prefer-dist' => true,
             '--no-progress' => true,
             '--optimize-autoloader' => true,
         ];
