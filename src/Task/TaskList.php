@@ -59,16 +59,16 @@ class TaskList
      * Add the task to the list.
      *
      * @param string         $type     The type name.
-     *
      * @param JsonArray|null $metaData The (optional) meta data.
+     * @param null           $taskId
      *
      * @return string
-     *
-     * @throws \InvalidArgumentException When no task instance can be created from the meta data.
      */
-    public function queue($type, JsonArray $metaData = null)
+    public function queue($type, JsonArray $metaData = null, $taskId = null)
     {
-        $taskId = $this->generateId();
+        if (null === $taskId) {
+            $taskId = $this->generateId();
+        }
 
         if (null === $metaData) {
             $metaData = new JsonArray();
