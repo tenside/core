@@ -168,7 +168,7 @@ abstract class Task
             $this->file->set('log', $logFile);
 
             $this->setStatus(self::STATE_RUNNING);
-            $this->addOutput('Task ' . $this->getId() . ' started.' . "\n");
+            //$this->addOutput('Task ' . $this->getId() . ' started.' . "\n");
 
             $this->doPerform();
         } catch (\Exception $exception) {
@@ -191,7 +191,7 @@ abstract class Task
             );
         }
 
-        $this->addOutput('Finished without error.' . "\n");
+        //$this->addOutput('Finished without error.' . "\n");
         $this->setStatus(self::STATE_FINISHED);
     }
 
