@@ -150,9 +150,14 @@ class UpgradeTask extends AbstractComposerCommandTask
             '--no-dev' => true,
             '--no-progress' => true,
             '--no-suggest' => true,
+            '--no-interaction' => true,
             '--with-dependencies' => true,
             '--optimize-autoloader' => true,
         ];
+
+        if ($this->file->get('debug')) {
+            $arguments['--profile'] = true;
+        }
 
         if ($this->isSelectiveUpgrade()) {
             $arguments['packages'] = $this->getPackages();

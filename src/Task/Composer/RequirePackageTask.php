@@ -65,6 +65,10 @@ class RequirePackageTask extends AbstractPackageManipulatingTask
             '--optimize-autoloader' => true,
         ];
 
+        if ($this->file->get('debug')) {
+            $arguments['--profile'] = true;
+        }
+
         if ($this->isNoUpdate()) {
             $arguments['--no-update'] = true;
         } else {

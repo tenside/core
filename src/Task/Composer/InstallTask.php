@@ -159,6 +159,10 @@ class InstallTask extends AbstractComposerCommandTask
             '--no-progress' => true,
         ];
 
+        if ($this->file->get('debug')) {
+            $arguments['--profile'] = true;
+        }
+
         if ($version = $this->file->get(self::SETTING_VERSION)) {
             $arguments['version'] = $version;
         }
