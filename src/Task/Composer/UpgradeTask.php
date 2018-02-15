@@ -150,7 +150,6 @@ class UpgradeTask extends AbstractComposerCommandTask
             '--no-dev' => true,
             '--no-progress' => true,
             '--no-suggest' => true,
-            '--no-interaction' => true,
             '--with-dependencies' => true,
             '--optimize-autoloader' => true,
         ];
